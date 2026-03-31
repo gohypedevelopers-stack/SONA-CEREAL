@@ -4,8 +4,8 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Sona Cereal Rewards - Register Now",
-  description: "Transform your SNTE Rice purchase into premium rewards. Register your voucher today and claim your instant UPI cashback and more.",
+  title: "Sona Cereal Retailer Portal - Premium Grain Rewards",
+  description: "Official retailer portal for Sona Cereal. Register your rice purchases, track your metrics, and claim elite lifestyle rewards including bikes, gold, and tech gadgets.",
 };
 
 export default function RootLayout({
@@ -25,7 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-background text-on-surface font-body selection:bg-secondary-container selection:text-on-secondary-container antialiased">
+      <body className="bg-white text-zinc-900 font-body selection:bg-primary selection:text-black antialiased">
         <Header />
         <main>{children}</main>
         <Footer />

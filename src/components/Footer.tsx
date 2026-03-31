@@ -9,9 +9,9 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-zinc-950 text-white relative overflow-hidden pt-24 pb-12">
+    <footer className="bg-zinc-900 text-white relative overflow-hidden pt-24 pb-12">
       {/* Giant Watermark Background */}
-      <div className="absolute -bottom-10 -left-10 text-[18vw] font-headline font-black italic text-white/[0.03] leading-none pointer-events-none select-none uppercase tracking-tighter">
+      <div className="absolute -bottom-10 -left-10 text-[18vw] font-headline font-black italic text-white/[0.02] leading-none pointer-events-none select-none uppercase tracking-tighter">
         SONA PORTAL
       </div>
 
@@ -34,10 +34,8 @@ export default function Footer() {
                 </span>
               </div>
             </Link>
-            <p className="text-zinc-400 font-medium leading-relaxed max-w-sm">
-              Defining the next generation of consumer rewards through
-              high-performance grains and seamless digital redemption. Join the
-              Sona Cereal elite circle today.
+            <p className="text-zinc-500 font-medium leading-relaxed max-w-sm italic">
+              Empowering the next generation of retailers through premium grains and performance-driven digital rewards. Experience the Sona Cereal standard.
             </p>
             <div className="flex gap-4">
               <a
@@ -82,6 +80,12 @@ export default function Footer() {
                   className="text-zinc-400 hover:text-white transition-colors font-medium"
                 >
                   Registration
+                </Link>
+                <Link
+                  href="/milestones"
+                  className="text-zinc-400 hover:text-white transition-colors font-medium"
+                >
+                  Slab Milestones
                 </Link>
                 <Link
                   href="/redeem"

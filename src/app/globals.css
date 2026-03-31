@@ -1,10 +1,10 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f9f9f9;
-  --foreground: #1a1c1c;
-  --primary: #b60100;
-  --secondary: #705d00;
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+  --primary: #CBA35C;
+  --secondary: #f9f9f9;
 }
 
 @theme inline {
@@ -12,41 +12,41 @@
   --font-body: "Inter", sans-serif;
   --font-label: "Inter", sans-serif;
 
-  --color-primary: #b60100;
-  --color-on-primary: #ffffff;
-  --color-primary-container: #e50000;
-  --color-on-primary-container: #fff6f4;
+  --color-primary: #CBA35C;
+  --color-on-primary: #000000;
+  --color-primary-container: #1A1A1A;
+  --color-on-primary-container: #CBA35C;
   
-  --color-secondary: #705d00;
-  --color-on-secondary: #ffffff;
-  --color-secondary-container: #fcd400;
-  --color-on-secondary-container: #6e5c00;
+  --color-secondary: #f4f1ea;
+  --color-on-secondary: #1a1a1a;
+  --color-secondary-container: #e4e4e7;
+  --color-on-secondary-container: #1a1a1a;
   
-  --color-tertiary: #595959;
-  --color-on-tertiary: #ffffff;
-  --color-tertiary-container: #717171;
-  --color-on-tertiary-container: #f7f7f7;
+  --color-tertiary: #A6A6A6;
+  --color-on-tertiary: #000000;
+  --color-tertiary-container: #f4f4f5;
+  --color-on-tertiary-container: #1a1a1a;
   
-  --color-error: #ba1a1a;
+  --color-error: #ef4444;
   --color-on-error: #ffffff;
-  --color-error-container: #ffdad6;
-  --color-on-error-container: #93000a;
+  --color-error-container: #fee2e2;
+  --color-on-error-container: #991b1b;
   
-  --color-background: #f9f9f9;
-  --color-on-background: #1a1c1c;
-  --color-surface: #f9f9f9;
-  --color-on-surface: #1a1c1c;
-  --color-surface-variant: #e2e2e2;
-  --color-on-surface-variant: #5f3f3a;
+  --color-background: #ffffff;
+  --color-on-background: #1a1a1a;
+  --color-surface: #ffffff;
+  --color-on-surface: #1a1a1a;
+  --color-surface-variant: #f4f4f5;
+  --color-on-surface-variant: #52525b;
   
-  --color-outline: #946e68;
-  --color-outline-variant: #e9bcb5;
+  --color-outline: #CBA35C;
+  --color-outline-variant: #e4e4e7;
   
   --color-surface-container-lowest: #ffffff;
-  --color-surface-container-low: #f3f3f3;
-  --color-surface-container: #eeeeee;
-  --color-surface-container-high: #e8e8e8;
-  --color-surface-container-highest: #e2e2e2;
+  --color-surface-container-low: #fafafa;
+  --color-surface-container: #f4f4f5;
+  --color-surface-container-high: #e4e4e7;
+  --color-surface-container-highest: #d4d4d8;
 
   --border-radius-default: 0.125rem;
   --border-radius-lg: 0.25rem;
@@ -60,7 +60,7 @@
 }
 
 .hero-rays {
-    background: repeating-conic-gradient(from 0deg, #b60100 0deg 15deg, #fcd400 15deg 30deg);
+    background: repeating-conic-gradient(from 0deg, #CBA35C 0deg 15deg, #f9f9f9 15deg 30deg);
     animation: rotate-slow 60s linear infinite;
 }
 
@@ -71,26 +71,27 @@
 
 .noise-overlay {
     background-image: url("https://grainy-gradients.vercel.app/noise.svg");
-    opacity: 0.15;
+    opacity: 0.08;
     pointer-events: none;
     mix-blend-mode: overlay;
 }
 
 .shadow-text-premium {
-    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 80px rgba(182, 1, 0, 0.3);
+    text-shadow: 0 10px 30px rgba(0, 0, 0, 0.3), 0 0 80px rgba(203, 163, 92, 0.2);
 }
 
 .form-inset-input {
-    background-color: #f3f3f3;
-    border: none;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.2s ease;
+    background-color: #f9f9f9;
+    border: 1px solid #e4e4e7;
+    color: #1a1a1a;
+    transition: all 0.2s ease;
 }
 
 .form-inset-input:focus {
     outline: none;
-    border-bottom-color: #b60100;
-    box-shadow: none;
+    border-color: #CBA35C;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 2px rgba(203, 163, 92, 0.1);
 }
 
 .editorial-skew {
@@ -98,19 +99,19 @@
 }
 
 .editorial-text-shadow {
-    text-shadow: 4px 4px 0px rgba(182, 1, 0, 0.2);
+    text-shadow: 4px 4px 0px rgba(203, 163, 92, 0.1);
 }
 
 .bg-sunburst {
-    background: radial-gradient(circle at 50% -20%, #ffdad4 0%, #f9f9f9 60%);
+    background: radial-gradient(circle at 50% -20%, #ffffff 0%, #f9f9f9 60%);
 }
 
 .editorial-shadow {
-    box-shadow: 0 24px 48px -12px rgba(182, 1, 0, 0.08);
+    box-shadow: 0 24px 48px -12px rgba(203, 163, 92, 0.1);
 }
 
 .sunburst-bg {
-    background: radial-gradient(circle at 50% 120%, #fcd400 0%, #b60100 70%);
+    background: radial-gradient(circle at 50% 120%, #CBA35C 0%, #ffffff 70%);
 }
 
 .clip-slant {

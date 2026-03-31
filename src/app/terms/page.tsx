@@ -10,7 +10,7 @@ export default function TermsPage() {
   return (
     <>
       {/* Hero Banner Section */}
-      <section className="relative min-h-[480px] flex items-center bg-primary-container overflow-hidden editorial-skew pt-16">
+      <section className="relative min-h-[480px] flex items-center bg-zinc-50 overflow-hidden editorial-skew pt-16">
         {/* Sunburst Effect */}
         <div className="absolute inset-0 hero-rays opacity-10 pointer-events-none"></div>
         <div className="container mx-auto px-6 relative z-10 py-24">
@@ -18,13 +18,13 @@ export default function TermsPage() {
             <span className="inline-block bg-secondary-container text-on-secondary-fixed-variant px-4 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6">
               Official Rules
             </span>
-            <h1 className="font-headline font-black text-white text-6xl md:text-8xl italic uppercase leading-[0.85] tracking-tighter editorial-text-shadow">
+            <h1 className="font-headline font-black text-zinc-900 text-6xl md:text-8xl italic uppercase leading-[0.85] tracking-tighter editorial-text-shadow">
               Terms &amp; <br />
-              <span className="text-secondary-container">Conditions</span>
+              <span className="text-primary">Conditions</span>
             </h1>
             <div className="mt-10 flex items-center gap-4">
-              <div className="h-1 w-20 bg-secondary-container"></div>
-              <p className="text-sm font-bold uppercase tracking-widest text-white/90 font-headline">
+              <div className="h-1 w-20 bg-primary"></div>
+              <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 font-headline">
                 Last Updated: October 2024
               </p>
             </div>
@@ -34,26 +34,26 @@ export default function TermsPage() {
 
       {/* Terms Content */}
       <section className="max-w-5xl mx-auto px-6 pb-20 -mt-10 relative z-20">
-        <div className="bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden">
+        <div className="bg-white rounded-[2rem] shadow-2xl shadow-zinc-200/50 overflow-hidden border border-zinc-100">
           <div className="p-8 md:p-12 space-y-16">
             {/* Introduction */}
             <div className="group">
               <div className="flex items-start gap-6">
-                <span className="text-4xl font-black font-headline italic text-zinc-200 group-hover:text-secondary transition-colors leading-none">
+                <span className="text-4xl font-black font-headline italic text-zinc-100 group-hover:text-primary transition-colors leading-none">
                   01
                 </span>
                 <div>
                   <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
                     Introduction
                   </h2>
-                  <p className="text-body-md leading-relaxed text-on-surface-variant mb-4">
+                  <p className="text-body-md leading-relaxed text-zinc-600 mb-4">
                     Welcome to the Sona Cereal Rewards program. By participating
                     in this promotion, you agree to be bound by these Terms and
                     Conditions. This loyalty program is designed to reward our
                     dedicated members for their continued support and engagement
                     with our premium rice products.
                   </p>
-                  <p className="text-body-md leading-relaxed text-on-surface-variant">
+                  <p className="text-body-md leading-relaxed text-zinc-600">
                     Please read these terms carefully. If you do not agree with
                     any part of these terms, you must refrain from
                     participating in the rewards campaign.
@@ -65,7 +65,7 @@ export default function TermsPage() {
             {/* Eligibility */}
             <div className="group">
               <div className="flex items-start gap-6">
-                <span className="text-4xl font-black font-headline italic text-zinc-200 group-hover:text-secondary transition-colors leading-none">
+                <span className="text-4xl font-black font-headline italic text-zinc-100 group-hover:text-primary transition-colors leading-none">
                   02
                 </span>
                 <div>
@@ -73,21 +73,21 @@ export default function TermsPage() {
                     Eligibility
                   </h2>
                   <ul className="space-y-4">
-                    <li className="flex items-center gap-4 text-on-surface-variant">
+                    <li className="flex items-center gap-4 text-zinc-600">
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
                       <span>
                         Must be a registered member of Sona Cereal with a valid
                         membership ID.
                       </span>
                     </li>
-                    <li className="flex items-center gap-4 text-on-surface-variant">
+                    <li className="flex items-center gap-4 text-zinc-600">
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
                       <span>
                         Participants must be at least 18 years of age at the
                         time of entry.
                       </span>
                     </li>
-                    <li className="flex items-center gap-4 text-on-surface-variant">
+                    <li className="flex items-center gap-4 text-zinc-600">
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
                       <span>Legal residents of the promotion territory only.</span>
                     </li>
@@ -97,16 +97,16 @@ export default function TermsPage() {
             </div>
 
             {/* Promotion Period */}
-            <div className="group hover:bg-zinc-50/50 transition-all duration-500 -mx-8 md:-mx-12 p-8 md:p-12 rounded-3xl">
+            <div className="group hover:bg-zinc-50 transition-all duration-500 -mx-8 md:-mx-12 p-8 md:p-12 rounded-3xl">
               <div className="flex items-start gap-6">
-                <span className="text-4xl font-black font-headline italic text-zinc-200 group-hover:text-secondary transition-colors leading-none">
+                <span className="text-4xl font-black font-headline italic text-zinc-100 group-hover:text-primary transition-colors leading-none">
                   03
                 </span>
                 <div>
                   <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
                     Promotion Period
                   </h2>
-                  <p className="text-body-md leading-relaxed text-on-surface-variant">
+                  <p className="text-body-md leading-relaxed text-zinc-600">
                     The Sona Cereal Rewards campaign commences on{" "}
                     <span className="font-bold text-primary">
                       November 1, 2024
@@ -134,11 +134,11 @@ export default function TermsPage() {
                     How to Participate
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
-                    <div className="p-6 bg-surface-container rounded-lg">
+                    <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
                       <h4 className="font-headline font-bold uppercase text-sm mb-3 text-primary">
                         Step A: Purchase
                       </h4>
-                      <p className="text-sm text-on-surface-variant">
+                      <p className="text-sm text-zinc-600">
                         Buy any participating Sona Cereal Premium Rice packs
                         (5kg or 10kg) from authorized retailers during the
                         campaign period.
@@ -251,7 +251,7 @@ export default function TermsPage() {
         <div className="mt-12 text-center">
           <button
             onClick={scrollToTop}
-            className="inline-flex items-center gap-3 bg-surface-container-high px-8 py-4 rounded-full font-headline font-bold uppercase tracking-wider text-on-surface hover:bg-primary hover:text-on-primary transition-all group"
+            className="inline-flex items-center gap-3 bg-white px-8 py-4 rounded-full font-headline font-bold uppercase tracking-wider text-zinc-900 hover:bg-primary hover:text-black transition-all group border border-zinc-200"
           >
             <span className="material-symbols-outlined group-hover:-translate-y-1 transition-transform">
               arrow_upward
