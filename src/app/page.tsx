@@ -49,15 +49,17 @@ export default function HomePage() {
                   <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
                      <button 
                         onClick={scrollToRegistration}
-                        className="bg-[#CBA35C] text-black px-10 py-5 rounded-full font-headline font-black text-lg uppercase tracking-[0.1em] shadow-2xl shadow-[#CBA35C]/20 hover:scale-105 active:scale-95 transition-all"
+                        className="bg-[#CBA35C] text-black px-10 py-5 rounded-full font-headline font-black text-lg uppercase tracking-[0.1em] shadow-2xl shadow-[#CBA35C]/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
                      >
                         Start Registration
+                        <span className="material-symbols-outlined text-xl">arrow_forward</span>
                      </button>
                      <Link 
                         href="/milestones"
                         className="bg-white text-zinc-900 px-10 py-5 rounded-full font-headline font-black text-lg uppercase tracking-[0.1em] border-2 border-zinc-100 hover:bg-zinc-50 transition-all flex items-center justify-center gap-3"
                      >
                         View Slabs
+                        <span className="material-symbols-outlined text-xl">account_tree</span>
                      </Link>
                   </div>
                </div>
@@ -82,10 +84,11 @@ export default function HomePage() {
 
          {/* Registration Section - Streamlined to 3 Steps */}
          <section id="registration-section" className="py-24 bg-zinc-50 border-y border-zinc-100 scroll-mt-24">
-            <div className="container mx-auto px-6">
-               <div className="grid lg:grid-cols-12 gap-0 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.15)] rounded-[4rem] overflow-hidden bg-white border border-zinc-200 min-h-[800px]">
-                  {/* Sidebar - Branding */}
-                  <div className="lg:col-span-4 bg-zinc-900 p-12 flex flex-col justify-between text-white relative overflow-hidden">
+            <div className="container mx-auto px-0 md:px-6">
+               <div className="grid lg:grid-cols-12 gap-0 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.15)] md:rounded-[4rem] overflow-hidden bg-white border border-zinc-200 min-h-[700px]">
+                  
+                  {/* Sidebar - Desktop Only Branding */}
+                  <div className="hidden lg:flex lg:col-span-4 bg-zinc-900 p-12 flex-col justify-between text-white relative overflow-hidden">
                      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black opacity-90"></div>
                      <div className="absolute -top-24 -left-24 w-64 h-64 bg-[#CBA35C]/20 rounded-full blur-[100px]"></div>
 
@@ -127,25 +130,37 @@ export default function HomePage() {
                            <span className="text-4xl font-headline font-black italic text-[#CBA35C]">{Math.round(progress)}%</span>
                         </div>
                         <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                           <div className="h-full bg-[#CBA35C] transition-all duration-700 ease-out shadow-[0_0_15px_rgba(233,151,1,0.4)]" style={{ width: `${progress}%` }}></div>
+                           <div className="h-full bg-[#CBA35C] transition-all duration-700 ease-out shadow-[0_0_15px_rgba(203,163,92,0.4)]" style={{ width: `${progress}%` }}></div>
                         </div>
                      </div>
                   </div>
 
                   {/* Form Content Area */}
-                  <div className="lg:col-span-8 p-12 lg:p-24 bg-white relative">
+                  <div className="lg:col-span-8 p-8 md:p-24 bg-white relative">
+                     
+                     {/* Mobile Only Progress Line */}
+                     <div className="lg:hidden mb-12 space-y-4">
+                        <div className="flex justify-between items-end">
+                           <span className="text-[10px] font-black uppercase tracking-[.25em] text-[#CBA35C] italic">Step 0{step} Progress</span>
+                           <span className="text-2xl font-headline font-black italic text-zinc-900">{Math.round(progress)}%</span>
+                        </div>
+                        <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
+                           <div className="h-full bg-[#CBA35C] transition-all duration-700 ease-out" style={{ width: `${progress}%` }}></div>
+                        </div>
+                     </div>
+
                      <div className="mb-12 text-left">
-                        <span className="text-[#CBA35C] font-black uppercase tracking-widest text-xs">Phse {step} of 3</span>
-                        <h3 className="text-6xl font-headline font-black uppercase text-zinc-900 mt-2 leading-none italic">
+                        <span className="text-[#CBA35C] font-black uppercase tracking-widest text-xs">Phase {step} of 3</span>
+                        <h3 className="text-5xl md:text-6xl font-headline font-black uppercase text-zinc-900 mt-2 leading-none italic">
                            {step === 1 ? "IDENTITY" : step === 2 ? "SYSTEMS" : "VALIDATE"}
                         </h3>
                         <div className="w-24 h-2 bg-[#CBA35C] mt-6"></div>
                      </div>
 
-                     <form className="space-y-10" onSubmit={(e) => e.preventDefault()}>
+                     <form className="space-y-8 md:space-y-10" onSubmit={(e) => e.preventDefault()}>
                         {step === 1 && (
-                           <div className="space-y-10 animate-in fade-in duration-500">
-                              <div className="grid md:grid-cols-2 gap-10 text-left">
+                           <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
+                              <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
                                  <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
                                        <span className="material-symbols-outlined text-sm text-[#CBA35C]">person</span> Propriertor Name
@@ -181,8 +196,8 @@ export default function HomePage() {
                         )}
 
                         {step === 2 && (
-                           <div className="space-y-10 animate-in fade-in duration-500">
-                              <div className="grid md:grid-cols-2 gap-10 text-left">
+                           <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
+                              <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
                                  <div className="space-y-2">
                                     <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
                                        <span className="material-symbols-outlined text-sm text-[#CBA35C]">account_balance_wallet</span> UPI ID / VPA
@@ -203,7 +218,8 @@ export default function HomePage() {
                                  </div>
                               </div>
                               <div className="flex items-center gap-6 pt-12 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(step - 1)} className="flex-1 h-20 border border-zinc-200 rounded-[2rem] font-headline font-black text-sm uppercase tracking-widest hover:bg-zinc-50 transition-all flex items-center justify-center gap-3">
+                                 <button type="button" onClick={() => setStep(step - 1)} className="flex-1 h-20 border border-zinc-200 rounded-[2rem] font-headline font-black text-sm uppercase tracking-widest hover:bg-zinc-50 transition-all flex items-center justify-center gap-3 text-zinc-900 group">
+                                    <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-2">arrow_back</span>
                                     BACK
                                  </button>
                                  <button type="button" onClick={() => setStep(3)} className="flex-[2] h-20 bg-[#CBA35C] text-black rounded-[2rem] font-headline font-black text-lg uppercase tracking-widest shadow-2xl shadow-[#CBA35C]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group">
@@ -215,43 +231,44 @@ export default function HomePage() {
                         )}
 
                         {step === 3 && (
-                           <div className="space-y-10 animate-in fade-in duration-500">
-                              <div className="grid md:grid-cols-2 gap-10">
-                                 <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-12 text-center flex flex-col items-center gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
-                                    <div className="w-24 h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
-                                       <span className="material-symbols-outlined text-5xl text-[#CBA35C] font-black">badge</span>
+                           <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
+                              <div className="grid md:grid-cols-2 gap-8 md:gap-10">
+                                 <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
+                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                                       <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">badge</span>
                                     </div>
                                     <div className="space-y-2">
-                                       <h4 className="text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Identity Asset</h4>
+                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Identity Asset</h4>
                                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Aadhar / Business Registration</p>
                                     </div>
-                                    <label className="px-12 py-5 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
+                                    <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
                                        CLICK TO SELECT
                                        <input type="file" className="hidden" />
                                     </label>
                                  </div>
 
-                                 <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-12 text-center flex flex-col items-center gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
-                                    <div className="w-24 h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
-                                       <span className="material-symbols-outlined text-5xl text-[#CBA35C] font-black">receipt_long</span>
+                                 <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
+                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                                       <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">receipt_long</span>
                                     </div>
                                     <div className="space-y-2">
-                                       <h4 className="text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Bill Asset</h4>
+                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Bill Asset</h4>
                                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Valid GST / Purchase Invoice</p>
                                     </div>
-                                    <label className="px-12 py-5 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
+                                    <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
                                        CLICK TO SELECT
                                        <input type="file" className="hidden" />
                                     </label>
                                  </div>
                               </div>
                               <div className="flex items-center gap-6 pt-12 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(step - 1)} className="flex-1 h-20 border border-zinc-200 rounded-[2rem] font-headline font-black text-sm uppercase tracking-widest hover:bg-zinc-50 transition-all flex items-center justify-center gap-3">
+                                 <button type="button" onClick={() => setStep(step - 1)} className="flex-1 h-20 border border-zinc-200 rounded-[2rem] font-headline font-black text-sm uppercase tracking-widest hover:bg-zinc-50 transition-all flex items-center justify-center gap-3 text-zinc-900 group">
+                                    <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-2">arrow_back</span>
                                     BACK
                                  </button>
                                  <button type="button" className="flex-[2] h-20 bg-[#CBA35C] text-black rounded-[2rem] font-headline font-black text-lg uppercase tracking-widest shadow-2xl shadow-[#CBA35C]/30 transition-all flex items-center justify-center gap-3 group">
                                     SUBMIT APPLICATION
-                                    <span className="material-symbols-outlined text-2xl font-black">verified</span>
+                                    <span className="material-symbols-outlined text-2xl font-black transition-transform group-hover:translate-x-1">check_circle</span>
                                  </button>
                               </div>
                            </div>

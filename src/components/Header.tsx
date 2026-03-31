@@ -47,10 +47,8 @@ export default function Header() {
       >
         <div className="max-w-[1440px] mx-auto bg-white/90 backdrop-blur-2xl border border-zinc-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)] rounded-[2.5rem] px-6 md:px-10 py-3 flex items-center justify-between relative transition-all duration-500">
           {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-2 md:gap-3 group min-w-0">
-            <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shrink-0 group-hover:rotate-12 transition-transform">
-               <span className="text-black font-headline font-black italic text-xl">S</span>
-            </div>
+          <Link href="/" className="flex items-center gap-3 group min-w-0">
+             <img src="/logo-blank.png" alt="Sona Cereal" className="h-10 w-auto group-hover:scale-105 transition-transform" />
              <div className="flex flex-col min-w-0">
               <span className="text-sm md:text-xl font-headline font-black italic uppercase leading-none text-zinc-900 group-hover:text-primary transition-colors truncate">
                 SONA CEREAL
@@ -129,12 +127,8 @@ export default function Header() {
           }`}
         >
            <div className="flex justify-between items-center mb-16">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
-                <span className="text-black font-headline font-black italic text-xl">
-                  S
-                </span>
-              </div>
+            <div className="flex items-center gap-3">
+              <img src="/logo-blank.png" alt="Sona Cereal" className="h-10 w-auto" />
               <span className="text-xl font-headline font-black italic uppercase text-zinc-900">
                 SONA MENU
               </span>

@@ -28,7 +28,7 @@ export default function MilestonesPage() {
             <span className="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
             <span className="text-[10px] font-black uppercase tracking-widest">Sona Elite Tiers 2025</span>
           </div>
-          <h1 className="font-headline font-black text-6xl md:text-8xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter mb-8">
+          <h1 className="font-headline font-black text-4xl md:text-[4.5rem] italic uppercase text-zinc-900 leading-none tracking-tight mb-8">
             REWARD <br />
             <span className="text-primary">ARCHITECTURE.</span>
           </h1>
@@ -134,7 +134,7 @@ export default function MilestonesPage() {
           <div className="absolute inset-0 hero-rays opacity-[0.05]"></div>
           
           <div className="relative z-10 space-y-12">
-            <h2 className="text-6xl md:text-9xl font-headline font-black italic uppercase text-white tracking-widest leading-[0.8] drop-shadow-2xl">
+            <h2 className="text-5xl md:text-[6rem] font-headline font-black italic uppercase text-white tracking-widest leading-none drop-shadow-2xl">
                READY <br />
                TO <span className="text-primary italic">SCALE?</span>
             </h2>
