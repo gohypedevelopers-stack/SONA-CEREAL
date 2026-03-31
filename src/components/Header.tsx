@@ -47,10 +47,10 @@ export default function Header() {
       >
         <div className="max-w-[1440px] mx-auto bg-white/90 backdrop-blur-2xl border border-zinc-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)] rounded-[2.5rem] px-6 md:px-10 py-3 flex items-center justify-between relative transition-all duration-500">
           {/* Logo Section */}
-          <Link href="/" className="flex items-center gap-3 group min-w-0">
-             <img src="/logo-blank.png" alt="Sona Cereal" className="h-10 w-auto group-hover:scale-105 transition-transform" />
+          <Link href="/" className="flex items-center gap-2 md:gap-3 group min-w-0 flex-1 md:flex-none">
+             <img src="/logo-blank.png" alt="Sona Cereal" className="h-8 md:h-10 w-auto group-hover:scale-105 transition-transform" />
              <div className="flex flex-col min-w-0">
-              <span className="text-sm md:text-xl font-headline font-black italic uppercase leading-none text-zinc-900 group-hover:text-primary transition-colors truncate">
+              <span className="text-xs md:text-xl font-headline font-black italic uppercase leading-none text-zinc-900 group-hover:text-primary transition-colors truncate">
                 SONA CEREAL
               </span>
               <span className="hidden md:block text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400 group-hover:text-primary/70 transition-colors">
@@ -89,7 +89,7 @@ export default function Header() {
             <button className="hidden lg:flex items-center gap-2 text-zinc-400 hover:text-primary transition-colors">
               <span className="material-symbols-outlined text-xl">search</span>
             </button>
-            <button className="bg-zinc-900 text-white hover:bg-primary hover:text-black px-4 md:px-8 py-2 md:py-2.5 rounded-full font-headline font-black uppercase tracking-wider md:tracking-widest text-[10px] md:text-xs shadow-xl transition-all shrink-0">
+            <button className="hidden md:flex bg-zinc-900 text-white hover:bg-primary hover:text-black px-8 py-2.5 rounded-full font-headline font-black uppercase tracking-widest text-xs shadow-xl transition-all shrink-0">
               Portal Access
             </button>
 

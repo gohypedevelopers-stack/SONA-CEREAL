@@ -130,8 +130,7 @@ export default function MilestonesPage() {
 
         {/* Global Performance CTA */}
         <div className="mt-24 bg-zinc-900 p-12 md:p-32 rounded-[4rem] text-center overflow-hidden relative shadow-2xl border border-white/5">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#333_0%,transparent_70%)] opacity-50"></div>
-          <div className="absolute inset-0 hero-rays opacity-[0.05]"></div>
+
           
           <div className="relative z-10 space-y-12">
             <h2 className="text-5xl md:text-[6rem] font-headline font-black italic uppercase text-white tracking-widest leading-none drop-shadow-2xl">
@@ -141,10 +140,12 @@ export default function MilestonesPage() {
             <p className="text-zinc-400 text-xl font-medium italic max-w-2xl mx-auto leading-relaxed">
                Calculate your trajectory and start injecting sales artifacts into the Sona Portal for instant validation and elite reward redemption.
             </p>
-            <div className="flex flex-col sm:flex-row gap-8 justify-center items-center">
-              <Link href="/" className="group bg-primary text-black px-16 py-6 rounded-full font-headline font-black text-2xl uppercase tracking-[0.2em] shadow-2xl shadow-primary/40 hover:scale-105 active:scale-95 transition-all flex items-center gap-4">
-                Enter Portal
-                <span className="material-symbols-outlined text-4xl group-hover:translate-x-2 transition-transform">rocket_launch</span>
+            <div className="flex justify-center pt-8">
+              <Link href="/" className="group flex items-center gap-6 text-white hover:text-primary transition-all p-4 active:scale-95">
+                <span className="font-headline font-black text-2xl md:text-5xl uppercase tracking-widest italic">Enter Portal</span>
+                <div className="w-16 h-16 md:w-24 md:h-24 rounded-full border-2 border-white/10 flex items-center justify-center group-hover:border-primary group-hover:bg-primary group-hover:text-black transition-all">
+                  <span className="material-symbols-outlined text-4xl md:text-6xl font-black transition-transform group-hover:translate-x-2">arrow_forward</span>
+                </div>
               </Link>
             </div>
             <div className="pt-12 flex justify-center gap-12 border-t border-white/5">

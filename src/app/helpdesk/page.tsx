@@ -34,11 +34,7 @@ export default function HelpdeskPage() {
     <div className="min-h-screen bg-white">
       {/* Helpdesk Hero Header */}
       <section className="relative min-h-[480px] flex items-center bg-zinc-50 overflow-hidden pt-16 -skew-y-3 origin-left translate-y-[-5%]">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_0%,#f0f0f0_0%,transparent_70%)] opacity-50"></div>
-        <div className="absolute inset-0 opacity-10 pointer-events-none overflow-hidden">
-          {/* Asymmetric decorative element */}
-          <div className="absolute -top-10 -right-20 w-96 h-96 bg-secondary-container rounded-full blur-3xl"></div>
-        </div>
+
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center skew-y-3">
           <h1 className="font-headline font-black text-zinc-900 text-6xl md:text-8xl italic uppercase leading-[0.8] tracking-tighter mb-6">
             Support <br />

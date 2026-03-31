@@ -11,8 +11,7 @@ export default function TermsPage() {
     <>
       {/* Hero Banner Section */}
       <section className="relative min-h-[480px] flex items-center bg-zinc-50 overflow-hidden editorial-skew pt-16">
-        {/* Sunburst Effect */}
-        <div className="absolute inset-0 hero-rays opacity-10 pointer-events-none"></div>
+
         <div className="container mx-auto px-6 relative z-10 py-24">
           <div className="max-w-4xl">
             <span className="inline-block bg-secondary-container text-on-secondary-fixed-variant px-4 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6">

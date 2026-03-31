@@ -47,14 +47,14 @@ export default function HomePage() {
                   </p>
 
                   <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
-                     <button 
+                     <button
                         onClick={scrollToRegistration}
                         className="bg-[#CBA35C] text-black px-10 py-5 rounded-full font-headline font-black text-lg uppercase tracking-[0.1em] shadow-2xl shadow-[#CBA35C]/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
                      >
                         Start Registration
                         <span className="material-symbols-outlined text-xl">arrow_forward</span>
                      </button>
-                     <Link 
+                     <Link
                         href="/milestones"
                         className="bg-white text-zinc-900 px-10 py-5 rounded-full font-headline font-black text-lg uppercase tracking-[0.1em] border-2 border-zinc-100 hover:bg-zinc-50 transition-all flex items-center justify-center gap-3"
                      >
@@ -68,25 +68,25 @@ export default function HomePage() {
 
          {/* Essential Milestone Snapshot */}
          <section className="py-12 bg-white flex justify-center border-t border-zinc-100">
-             <div className="flex gap-16 md:gap-32 items-center overflow-x-auto px-6 no-scrollbar py-4">
-                {[
-                   { label: "Active Retailers", val: "10K+" },
-                   { label: "Rewards Tier", val: "Elite" },
-                   { label: "Validation", val: "Instant" }
-                ].map(stat => (
-                   <div key={stat.label} className="text-center shrink-0">
-                      <span className="block text-4xl font-headline font-black text-zinc-900 italic tracking-tighter">{stat.val}</span>
-                      <span className="text-[10px] font-black text-[#CBA35C] uppercase tracking-[0.3em]">{stat.label}</span>
-                   </div>
-                ))}
-             </div>
+            <div className="flex gap-16 md:gap-32 items-center overflow-x-auto px-6 no-scrollbar py-4">
+               {[
+                  { label: "Active Retailers", val: "10K+" },
+                  { label: "Rewards Tier", val: "Elite" },
+                  { label: "Validation", val: "Instant" }
+               ].map(stat => (
+                  <div key={stat.label} className="text-center shrink-0">
+                     <span className="block text-4xl font-headline font-black text-zinc-900 italic tracking-tighter">{stat.val}</span>
+                     <span className="text-[10px] font-black text-[#CBA35C] uppercase tracking-[0.3em]">{stat.label}</span>
+                  </div>
+               ))}
+            </div>
          </section>
 
          {/* Registration Section - Streamlined to 3 Steps */}
          <section id="registration-section" className="py-24 bg-zinc-50 border-y border-zinc-100 scroll-mt-24">
             <div className="container mx-auto px-0 md:px-6">
                <div className="grid lg:grid-cols-12 gap-0 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.15)] md:rounded-[4rem] overflow-hidden bg-white border border-zinc-200 min-h-[700px]">
-                  
+
                   {/* Sidebar - Desktop Only Branding */}
                   <div className="hidden lg:flex lg:col-span-4 bg-zinc-900 p-12 flex-col justify-between text-white relative overflow-hidden">
                      <div className="absolute inset-0 bg-gradient-to-br from-zinc-900 to-black opacity-90"></div>
@@ -137,7 +137,7 @@ export default function HomePage() {
 
                   {/* Form Content Area */}
                   <div className="lg:col-span-8 p-8 md:p-24 bg-white relative">
-                     
+
                      {/* Mobile Only Progress Line */}
                      <div className="lg:hidden mb-12 space-y-4">
                         <div className="flex justify-between items-end">
@@ -186,10 +186,12 @@ export default function HomePage() {
                                     <input className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400" placeholder="City, State" type="text" />
                                  </div>
                               </div>
-                              <div className="flex items-center gap-6 pt-12 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(2)} className="w-full h-20 bg-[#CBA35C] text-black rounded-[2rem] font-headline font-black text-xl uppercase tracking-[0.2em] shadow-2xl shadow-[#CBA35C]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-4 group">
-                                    NEXT SECTION
-                                    <span className="material-symbols-outlined text-2xl transition-transform group-hover:translate-x-2">arrow_forward</span>
+                              <div className="flex items-center justify-end pt-10 border-t border-zinc-100">
+                                 <button type="button" onClick={() => setStep(2)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                    <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Next Section</span>
+                                    <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
+                                       <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                    </div>
                                  </button>
                               </div>
                            </div>
@@ -217,14 +219,18 @@ export default function HomePage() {
                                     </select>
                                  </div>
                               </div>
-                              <div className="flex items-center gap-6 pt-12 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(step - 1)} className="flex-1 h-20 border border-zinc-200 rounded-[2rem] font-headline font-black text-sm uppercase tracking-widest hover:bg-zinc-50 transition-all flex items-center justify-center gap-3 text-zinc-900 group">
-                                    <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-2">arrow_back</span>
-                                    BACK
+                              <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
+                                 <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
+                                    <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
+                                       <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
+                                    </div>
+                                    <span className="font-headline font-black text-[10px] md:text-sm uppercase tracking-widest italic">Back</span>
                                  </button>
-                                 <button type="button" onClick={() => setStep(3)} className="flex-[2] h-20 bg-[#CBA35C] text-black rounded-[2rem] font-headline font-black text-lg uppercase tracking-widest shadow-2xl shadow-[#CBA35C]/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-3 group">
-                                    VERIFICATION
-                                    <span className="material-symbols-outlined text-xl transition-transform group-hover:translate-x-2">arrow_forward</span>
+                                 <button type="button" onClick={() => setStep(3)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                    <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Verification</span>
+                                    <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
+                                       <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                    </div>
                                  </button>
                               </div>
                            </div>
@@ -238,8 +244,8 @@ export default function HomePage() {
                                        <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">badge</span>
                                     </div>
                                     <div className="space-y-2">
-                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Identity Asset</h4>
-                                       <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Aadhar / Business Registration</p>
+                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Aadhar Card</h4>
+                                       <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Aadhar Registration</p>
                                     </div>
                                     <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
                                        CLICK TO SELECT
@@ -252,7 +258,7 @@ export default function HomePage() {
                                        <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">receipt_long</span>
                                     </div>
                                     <div className="space-y-2">
-                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Bill Asset</h4>
+                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Invoice</h4>
                                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Valid GST / Purchase Invoice</p>
                                     </div>
                                     <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
@@ -261,14 +267,18 @@ export default function HomePage() {
                                     </label>
                                  </div>
                               </div>
-                              <div className="flex items-center gap-6 pt-12 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(step - 1)} className="flex-1 h-20 border border-zinc-200 rounded-[2rem] font-headline font-black text-sm uppercase tracking-widest hover:bg-zinc-50 transition-all flex items-center justify-center gap-3 text-zinc-900 group">
-                                    <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-2">arrow_back</span>
-                                    BACK
+                              <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
+                                 <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
+                                    <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
+                                       <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
+                                    </div>
+                                    <span className="font-headline font-black text-[10px] md:text-sm uppercase tracking-widest italic">Back</span>
                                  </button>
-                                 <button type="button" className="flex-[2] h-20 bg-[#CBA35C] text-black rounded-[2rem] font-headline font-black text-lg uppercase tracking-widest shadow-2xl shadow-[#CBA35C]/30 transition-all flex items-center justify-center gap-3 group">
-                                    SUBMIT APPLICATION
-                                    <span className="material-symbols-outlined text-2xl font-black transition-transform group-hover:translate-x-1">check_circle</span>
+                                 <button type="button" className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                    <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Submit</span>
+                                    <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
+                                       <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">check_circle</span>
+                                    </div>
                                  </button>
                               </div>
                            </div>
