@@ -57,10 +57,17 @@ export default function HomePage() {
       }
 
       const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
-      const user = submissions.find((s: any) => s.phone.replace(/\D/g, "") === loginPhone.replace(/\D/g, ""));
+      const sanitizedLoginPhone = loginPhone.replace(/\D/g, "");
+      const user = submissions.find((s: any) => s.phone.replace(/\D/g, "") === sanitizedLoginPhone);
+
+      // Persist the login session
+      localStorage.setItem("current_user_phone", loginPhone);
 
       if (user) {
          setFormData(user);
+      } else {
+         // If no previous registration, still tie future inputs to this phone number
+         setFormData(prev => ({ ...prev, phone: loginPhone }));
       }
       
       setMode('register');
@@ -380,6 +387,17 @@ export default function HomePage() {
 
                               {step === 2 && (
                                  <div className="space-y-8 md:space-y-10">
+                                    {formData.name && (
+                                       <div className="bg-zinc-900 p-6 rounded-3xl border border-[#CBA35C]/20 flex items-center justify-between animate-in slide-in-from-top-4">
+                                          <div className="space-y-1">
+                                             <span className="text-[10px] font-black uppercase tracking-widest text-[#CBA35C]">Connected Record</span>
+                                             <h4 className="text-white font-headline font-black italic uppercase text-lg">Welcome Back, {formData.name}</h4>
+                                          </div>
+                                          <Link href="/redeem" className="bg-[#CBA35C] text-black px-6 py-2 rounded-full font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-all">
+                                             VIEW STATUS
+                                          </Link>
+                                       </div>
+                                    )}
                                     <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">

@@ -189,60 +189,77 @@ export default function RedeemPage() {
                      </div>
                   ) : userData ? (
                      <div className="space-y-16 animate-in slide-in-from-bottom-8 duration-700">
-                        {/* ULTRA-SLIM DASHBOARD COMMAND ROW */}
-                        <div className="bg-white rounded-full border border-zinc-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] p-3 px-12 relative overflow-hidden group w-full border-b-2">
+                        {/* ULTRA-RESPONSIVE DASHBOARD COMMAND ROW */}
+                        <div className="bg-white rounded-[2rem] lg:rounded-full border border-zinc-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] p-6 lg:p-3 lg:px-12 relative overflow-hidden group w-full border-b-2">
                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#CBA35C]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                           <div className="grid grid-cols-12 items-center gap-6 relative z-10 py-1">
-                              <div className="col-span-1 border-r border-zinc-50 pr-6">
-                                 <span className="text-[#CBA35C] text-[8px] font-black uppercase tracking-[0.3em] block mb-1 scale-75 origin-left">Level</span>
-                                 <h3 className="text-6xl font-headline font-black text-zinc-50 italic leading-none opacity-50">{getSlabData(userData.capacity).level}</h3>
+                           
+                           <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-8 lg:gap-6 relative z-10 py-2">
+                              
+                              {/* Slab Section */}
+                              <div className="lg:col-span-1 border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 lg:pr-6 w-full lg:w-auto text-center lg:text-left">
+                                 <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.3em] block mb-1 origin-left">SLAB</span>
+                                 <h3 className="text-4xl lg:text-6xl font-headline font-black text-zinc-500 italic leading-none opacity-40">{getSlabData(userData.capacity).level}</h3>
                               </div>
-                              <div className="col-span-3 text-center border-r border-zinc-50 px-6">
-                                 <span className="text-[#CBA35C] text-[8px] font-black uppercase tracking-[0.3em] block mb-1">Milestone Target</span>
+
+                              {/* Milestone Target Section */}
+                              <div className="lg:col-span-3 text-center border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 lg:px-6 w-full lg:w-auto">
+                                 <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.3em] block mb-1">Milestone Target</span>
                                  <div className="flex items-center justify-center gap-1">
-                                    <span className="text-7xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{getSlabData(userData.capacity).target}</span>
-                                    <span className="text-zinc-300 text-[10px] font-black uppercase mt-6 ml-1">QTL</span>
+                                    <span className="text-5xl lg:text-7xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{getSlabData(userData.capacity).target}</span>
+                                    <span className="text-zinc-300 text-[10px] font-black uppercase mt-4 lg:mt-6 ml-1">QTL</span>
                                  </div>
                               </div>
-                              <div className="col-span-5 flex items-center justify-center gap-12 px-6 border-r border-zinc-50">
-                                 <div className="flex flex-col items-center gap-1">
-                                    <div className={`w-14 h-14 rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-500 flex items-center justify-center p-2 relative 
-                                       ${selectedGift === getSlabData(userData.capacity).giftA ? 'border-[#CBA35C] shadow-lg ring-4 ring-[#CBA35C]/5' : 'border-zinc-100'}
-                                    `}>
-                                       <img src={getSlabData(userData.capacity).giftAImg} alt="Gift A" className="w-full h-full object-contain" />
-                                       {selectedGift === getSlabData(userData.capacity).giftA && (
-                                          <div className="absolute inset-0 bg-[#CBA35C]/10 flex items-center justify-center">
-                                             <div className="bg-[#CBA35C] text-black rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
-                                                <span className="material-symbols-outlined font-black text-sm">check</span>
+
+                              {/* Gift Preview Section */}
+                              <div className="lg:col-span-5 flex items-center justify-center gap-8 lg:gap-12 px-6 border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 w-full lg:w-auto">
+                                 {(!selectedGift || selectedGift === getSlabData(userData.capacity).giftA) && (
+                                    <div className="flex flex-col items-center gap-2">
+                                       <div className={`w-16 h-16 lg:w-14 lg:h-14 rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-500 flex items-center justify-center p-2 relative 
+                                          ${selectedGift === getSlabData(userData.capacity).giftA ? 'border-green-500 shadow-lg ring-4 ring-green-500/5' : 'border-zinc-100'}
+                                       `}>
+                                          <img src={getSlabData(userData.capacity).giftAImg} alt="Gift A" className="w-full h-full object-contain" />
+                                          {selectedGift === getSlabData(userData.capacity).giftA && (
+                                             <div className="absolute top-1 left-1 z-20">
+                                                <div className="bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                                                   <span className="material-symbols-outlined font-black text-[12px]">check</span>
+                                                </div>
                                              </div>
-                                          </div>
-                                       )}
+                                          )}
+                                       </div>
+                                       <span className={`text-[9px] lg:text-[8px] font-black uppercase tracking-widest ${selectedGift === getSlabData(userData.capacity).giftA ? 'text-green-600' : 'text-zinc-600'}`}>
+                                          {getSlabData(userData.capacity).giftA}
+                                       </span>
                                     </div>
-                                    <span className={`text-[8px] font-black uppercase tracking-widest ${selectedGift === getSlabData(userData.capacity).giftA ? 'text-[#CBA35C]' : 'text-zinc-600'}`}>
-                                       {getSlabData(userData.capacity).giftA}
-                                    </span>
-                                 </div>
-                                 <span className="text-zinc-200 text-[9px] font-black italic tracking-widest">— OR —</span>
-                                 <div className="flex flex-col items-center gap-1">
-                                    <div className={`w-14 h-14 rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-500 flex items-center justify-center p-2 relative 
-                                       ${selectedGift === getSlabData(userData.capacity).giftB ? 'border-[#CBA35C] shadow-lg ring-4 ring-[#CBA35C]/5' : 'border-zinc-100'}
-                                    `}>
-                                       <img src={getSlabData(userData.capacity).giftBImg} alt="Gift B" className="w-full h-full object-contain" />
-                                       {selectedGift === getSlabData(userData.capacity).giftB && (
-                                          <div className="absolute inset-0 bg-[#CBA35C]/10 flex items-center justify-center">
-                                             <div className="bg-[#CBA35C] text-black rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
-                                                <span className="material-symbols-outlined font-black text-sm">check</span>
+                                 )}
+
+                                 {!selectedGift && (
+                                    <span className="text-zinc-200 text-[9px] font-black italic tracking-widest">— OR —</span>
+                                 )}
+
+                                 {(!selectedGift || selectedGift === getSlabData(userData.capacity).giftB) && (
+                                    <div className="flex flex-col items-center gap-2">
+                                       <div className={`w-16 h-16 lg:w-14 lg:h-14 rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-500 flex items-center justify-center p-2 relative 
+                                          ${selectedGift === getSlabData(userData.capacity).giftB ? 'border-green-500 shadow-lg ring-4 ring-green-500/5' : 'border-zinc-100'}
+                                       `}>
+                                          <img src={getSlabData(userData.capacity).giftBImg} alt="Gift B" className="w-full h-full object-contain" />
+                                          {selectedGift === getSlabData(userData.capacity).giftB && (
+                                             <div className="absolute top-1 left-1 z-20">
+                                                <div className="bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
+                                                   <span className="material-symbols-outlined font-black text-[12px]">check</span>
+                                                </div>
                                              </div>
-                                          </div>
-                                       )}
+                                          )}
+                                       </div>
+                                       <span className={`text-[9px] lg:text-[8px] font-black uppercase tracking-widest ${selectedGift === getSlabData(userData.capacity).giftB ? 'text-green-600' : 'text-zinc-600'}`}>
+                                          {getSlabData(userData.capacity).giftB}
+                                       </span>
                                     </div>
-                                    <span className={`text-[8px] font-black uppercase tracking-widest ${selectedGift === getSlabData(userData.capacity).giftB ? 'text-[#CBA35C]' : 'text-zinc-600'}`}>
-                                       {getSlabData(userData.capacity).giftB}
-                                    </span>
-                                 </div>
+                                 )}
                               </div>
-                              <div className="col-span-3 text-center px-6">
-                                 <div className={`inline-flex px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-md ${userData.status === 'claimed' ? 'bg-[#CBA35C] text-black shadow-[#CBA35C]/10' :
+
+                              {/* Status Section */}
+                              <div className="lg:col-span-3 text-center px-6 w-full lg:w-auto">
+                                 <div className={`inline-flex w-full lg:w-auto justify-center px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-md ${userData.status === 'claimed' ? 'bg-[#CBA35C] text-black shadow-[#CBA35C]/10' :
                                     userData.status === 'accepted' ? 'bg-green-500 text-white shadow-green-100' :
                                        userData.status === 'pending' ? 'bg-zinc-100 text-zinc-500' :
                                           'bg-red-50 text-red-500'
