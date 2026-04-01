@@ -4,9 +4,27 @@ import React from "react";
 import Link from "next/link";
 
 export default function HomePage() {
-   const [step, setStep] = React.useState(1);
+   const [step, setStep] = React.useState(0);
+   const [mode, setMode] = React.useState<'selection' | 'login' | 'register'>('selection');
    const totalSteps = 3;
-   const progress = (step / totalSteps) * 100;
+   const progress = step === 0 ? 0 : (step / totalSteps) * 100;
+
+   // Login/Register credential state
+   const [email, setEmail] = React.useState("");
+   const [password, setPassword] = React.useState("");
+   const [confirmPassword, setConfirmPassword] = React.useState("");
+   const [loginError, setLoginError] = React.useState("");
+
+   // Dashboard form data
+   const [formData, setFormData] = React.useState({
+      name: "",
+      shopName: "",
+      phone: "",
+      city: "",
+      date: "",
+      invoiceNo: "",
+      capacity: ""
+   });
 
    // Handle smooth scroll to form
    const scrollToRegistration = () => {
@@ -14,6 +32,57 @@ export default function HomePage() {
       if (element) {
          element.scrollIntoView({ behavior: "smooth" });
       }
+   };
+
+   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({ ...prev, [name]: value }));
+   };
+
+   const handleLoginSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
+      const user = submissions.find((s: any) => s.email === email && s.password === password);
+
+      if (user) {
+         setFormData(user);
+         setMode('register');
+         setStep(1);
+         setTimeout(scrollToRegistration, 100);
+      } else {
+         setLoginError("Invalid email or password.");
+      }
+   };
+
+   const handleRegisterSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (password !== confirmPassword) {
+         alert("Passwords do not match.");
+         return;
+      }
+
+      setStep(1); // Move to Identity Step
+   };
+
+   const handleFinalSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+
+      const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
+      const newSubmission = {
+         ...formData,
+         email,
+         password,
+         id: Date.now().toString(),
+         status: "pending",
+         timestamp: new Date().toLocaleString()
+      };
+
+      localStorage.setItem("sona_submissions", JSON.stringify([...submissions, newSubmission]));
+      localStorage.setItem("current_user_phone", formData.phone);
+
+      alert("Registration submitted! Redirecting to check your status...");
+      window.location.href = "/redeem";
    };
 
    return (
@@ -33,12 +102,12 @@ export default function HomePage() {
                   </div>
 
                   <div className="space-y-4">
-                     <h1 className="font-headline font-black text-4xl md:text-[4.5rem] leading-none tracking-tight italic uppercase text-zinc-900">
+                     <h1 className="font-headline font-black text-3xl md:text-[3.5rem] leading-none tracking-tight italic uppercase text-zinc-900">
                         SONA <br />
                         <span className="text-[#CBA35C]">CEREAL.</span>
                      </h1>
                      <p className="font-headline font-bold text-sm md:text-xl uppercase tracking-[0.3em] text-zinc-400 italic">
-                        Premium Rewards <span className="text-zinc-900">Program</span> 2025
+                        Premium Rewards <span className="text-zinc-900">Program</span> 2026
                      </p>
                   </div>
 
@@ -51,7 +120,7 @@ export default function HomePage() {
                         onClick={scrollToRegistration}
                         className="bg-[#CBA35C] text-black px-10 py-5 rounded-full font-headline font-black text-lg uppercase tracking-[0.1em] shadow-2xl shadow-[#CBA35C]/20 hover:scale-105 active:scale-95 transition-all flex items-center gap-3"
                      >
-                        Start Registration
+                        Enter Portal
                         <span className="material-symbols-outlined text-xl">arrow_forward</span>
                      </button>
                      <Link
@@ -82,7 +151,7 @@ export default function HomePage() {
             </div>
          </section>
 
-         {/* Registration Section - Streamlined to 3 Steps */}
+         {/* Entry Section */}
          <section id="registration-section" className="py-24 bg-zinc-50 border-y border-zinc-100 scroll-mt-24">
             <div className="container mx-auto px-0 md:px-6">
                <div className="grid lg:grid-cols-12 gap-0 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.15)] md:rounded-[4rem] overflow-hidden bg-white border border-zinc-200 min-h-[700px]">
@@ -98,22 +167,23 @@ export default function HomePage() {
                               <div className="h-1 w-12 bg-[#CBA35C]"></div>
                               <div className="h-1 w-4 bg-white/20"></div>
                            </div>
-                           <h3 className="text-4xl font-headline font-black uppercase leading-tight italic">
+                           <h3 className="text-3xl font-headline font-black uppercase leading-tight italic">
                               RETAILER <br />
-                              <span className="text-[#CBA35C]">ONBOARDING.</span>
+                              <span className="text-[#CBA35C]">SYSTEMS.</span>
                            </h3>
-                           <p className="text-zinc-400 font-medium text-sm">Enter your mission-critical data points for instant validation.</p>
+                           <p className="text-zinc-400 font-medium text-sm">Secure data-driven validation for elite partners.</p>
                         </div>
 
                         <div className="space-y-8">
                            {[
+                              { id: 0, label: "Security Entry", sub: mode === 'selection' ? 'Auth Choices' : 'Credentials' },
                               { id: 1, label: "Identity Check", sub: "Retailer Details" },
-                              { id: 2, label: "Business Info", sub: "Performance Data" },
+                              { id: 2, label: "Achievement", sub: "Sales Records" },
                               { id: 3, label: "Asset Upload", sub: "Verification" },
                            ].map((s) => (
                               <div key={s.id} className={`flex items-center gap-4 transition-all duration-500 ${step >= s.id ? 'opacity-100 translate-x-1' : 'opacity-30'}`}>
                                  <div className={`w-10 h-10 rounded-full border-2 flex items-center justify-center font-black transition-all ${step > s.id ? 'bg-[#CBA35C] border-[#CBA35C] text-black' : step === s.id ? 'bg-white border-white text-black ring-4 ring-white/10' : 'border-white/20 text-white/50'}`}>
-                                    {step > s.id ? <span className="material-symbols-outlined text-base">check</span> : `0${s.id}`}
+                                    {step > s.id && s.id !== 0 ? <span className="material-symbols-outlined text-base">check</span> : (s.id === 0 && step > 0) ? <span className="material-symbols-outlined text-base">lock_open</span> : `0${s.id}`}
                                  </div>
                                  <div className="hidden sm:block">
                                     <span className={`block text-[10px] font-black uppercase tracking-widest ${step >= s.id ? 'text-[#CBA35C]' : 'text-white/40'}`}>{s.sub}</span>
@@ -136,154 +206,330 @@ export default function HomePage() {
                   </div>
 
                   {/* Form Content Area */}
-                  <div className="lg:col-span-8 p-8 md:p-24 bg-white relative">
+                  <div className="lg:col-span-8 p-8 md:p-24 bg-white relative flex flex-col justify-center min-h-[600px]">
 
-                     {/* Mobile Only Progress Line */}
-                     <div className="lg:hidden mb-12 space-y-4">
-                        <div className="flex justify-between items-end">
-                           <span className="text-[10px] font-black uppercase tracking-[.25em] text-[#CBA35C] italic">Step 0{step} Progress</span>
-                           <span className="text-2xl font-headline font-black italic text-zinc-900">{Math.round(progress)}%</span>
+                     {mode === 'selection' ? (
+                        <div className="space-y-12 text-center animate-in fade-in duration-700 slide-in-from-bottom-8">
+                           <div className="space-y-4">
+                              <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
+                                 CHOOSE YOUR <span className="text-[#CBA35C]">ENTRY.</span>
+                              </h3>
+                              <p className="text-zinc-500 text-lg font-medium italic">Welcome to the Sona Cereal Official Infrastructure.</p>
+                           </div>
+
+                           <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto pt-8">
+                              <button onClick={() => setMode('login')} className="group p-10 bg-zinc-900 rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center">
+                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#CBA35C]/20 rounded-full blur-3xl group-hover:bg-[#CBA35C]/40 transition-all"></div>
+                                 <span className="material-symbols-outlined text-5xl text-[#CBA35C] mb-6 block group-hover:rotate-12 transition-transform">login</span>
+                                 <h4 className="text-2xl font-headline font-black uppercase italic leading-none mb-2 text-white">LOGIN</h4>
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Retailer Portal</p>
+                              </button>
+
+                              <button onClick={() => setMode('register')} className="group p-10 bg-zinc-50 rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center">
+                                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#CBA35C]/5 rounded-full blur-3xl group-hover:bg-[#CBA35C]/10 transition-all"></div>
+                                 <span className="material-symbols-outlined text-5xl text-zinc-400 mb-6 block group-hover:rotate-12 transition-transform">how_to_reg</span>
+                                 <h4 className="text-2xl font-headline font-black uppercase italic leading-none mb-2 text-zinc-900">REGISTER</h4>
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">New Partner Portal</p>
+                              </button>
+                           </div>
                         </div>
-                        <div className="w-full h-1.5 bg-zinc-100 rounded-full overflow-hidden">
-                           <div className="h-full bg-[#CBA35C] transition-all duration-700 ease-out" style={{ width: `${progress}%` }}></div>
+                     ) : mode === 'login' ? (
+                        <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-right-8">
+                           <div className="text-left space-y-4">
+                              <button onClick={() => setMode('selection')} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                                 <span className="material-symbols-outlined">west</span> Back to Choices
+                              </button>
+                              <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
+                                 SECURE <span className="text-[#CBA35C]">LOGIN.</span>
+                              </h3>
+                              <p className="text-zinc-400 text-lg font-medium italic">Enter your credentials to access your reward status.</p>
+                           </div>
+
+                           <form onSubmit={handleLoginSubmit} className="space-y-6 max-w-md">
+                              <div className="space-y-2">
+                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Official Email</label>
+                                 <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Retailer@email.com"
+                                    className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                    required
+                                 />
+                              </div>
+                              <div className="space-y-2">
+                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Security Password</label>
+                                 <input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                    required
+                                 />
+                              </div>
+                              {loginError && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest">{loginError}</p>}
+                              <button type="submit" className="w-full bg-zinc-900 text-white hover:bg-[#CBA35C] hover:text-black py-5 rounded-2xl font-headline font-black uppercase text-lg transition-all shadow-xl">
+                                 Enter Marketplace Dashboard
+                              </button>
+                           </form>
                         </div>
-                     </div>
+                     ) : mode === 'register' && step === 0 ? (
+                        <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-left-8">
+                           <div className="text-left space-y-4">
+                              <button onClick={() => setMode('selection')} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                                 <span className="material-symbols-outlined">west</span> Back to Choices
+                              </button>
+                              <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
+                                 PARTNER <span className="text-[#CBA35C]">AUTH.</span>
+                              </h3>
+                              <p className="text-zinc-400 text-lg font-medium italic">Create your secure partner credentials to begin onboarding.</p>
+                           </div>
 
-                     <div className="mb-12 text-left">
-                        <span className="text-[#CBA35C] font-black uppercase tracking-widest text-xs">Phase {step} of 3</span>
-                        <h3 className="text-5xl md:text-6xl font-headline font-black uppercase text-zinc-900 mt-2 leading-none italic">
-                           {step === 1 ? "IDENTITY" : step === 2 ? "SYSTEMS" : "VALIDATE"}
-                        </h3>
-                        <div className="w-24 h-2 bg-[#CBA35C] mt-6"></div>
-                     </div>
-
-                     <form className="space-y-8 md:space-y-10" onSubmit={(e) => e.preventDefault()}>
-                        {step === 1 && (
-                           <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
-                              <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
+                           <form onSubmit={handleRegisterSubmit} className="space-y-6 max-w-md">
+                              <div className="space-y-2">
+                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Official Email</label>
+                                 <input
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="Retailer@email.com"
+                                    className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                    required
+                                 />
+                              </div>
+                              <div className="grid md:grid-cols-2 gap-4">
                                  <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                                       <span className="material-symbols-outlined text-sm text-[#CBA35C]">person</span> Propriertor Name
-                                    </label>
-                                    <input className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400" placeholder="Full name" type="text" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Password</label>
+                                    <input
+                                       type="password"
+                                       value={password}
+                                       onChange={(e) => setPassword(e.target.value)}
+                                       placeholder="••••••••"
+                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                       required
+                                    />
                                  </div>
                                  <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                                       <span className="material-symbols-outlined text-sm text-[#CBA35C]">storefront</span> Shop / Entity Name
-                                    </label>
-                                    <input className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400" placeholder="Firm name" type="text" />
-                                 </div>
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                                       <span className="material-symbols-outlined text-sm text-[#CBA35C]">smartphone</span> Primary Contact
-                                    </label>
-                                    <input className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400" placeholder="+91 00000 00000" type="tel" />
-                                 </div>
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                                       <span className="material-symbols-outlined text-sm text-[#CBA35C]">location_on</span> City / Region
-                                    </label>
-                                    <input className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400" placeholder="City, State" type="text" />
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Confirm</label>
+                                    <input
+                                       type="password"
+                                       value={confirmPassword}
+                                       onChange={(e) => setConfirmPassword(e.target.value)}
+                                       placeholder="••••••••"
+                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                       required
+                                    />
                                  </div>
                               </div>
-                              <div className="flex items-center justify-end pt-10 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(2)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
-                                    <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Next Section</span>
-                                    <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
-                                       <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>
-                                    </div>
-                                 </button>
+                              <button type="submit" className="w-full bg-[#CBA35C] text-black py-5 rounded-2xl font-headline font-black uppercase text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#CBA35C]/20">
+                                 Continue Onboarding
+                              </button>
+                           </form>
+                        </div>
+                     ) : (
+                        <div className="animate-in fade-in duration-700 slide-in-from-right-8 h-full flex flex-col justify-center">
+                           <div className="mb-12 text-left space-y-4">
+                              <button onClick={() => { setStep(0); }} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                                 <span className="material-symbols-outlined">west</span> Back to Credentials
+                              </button>
+                              <div>
+                                 <span className="text-[#CBA35C] font-black uppercase tracking-widest text-xs">Phase {step} of 3</span>
+                                 <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 mt-2 leading-none italic">
+                                    {step === 1 ? "IDENTITY" : step === 2 ? "SYSTEMS" : "VALIDATE"}
+                                 </h3>
+                                 <div className="w-24 h-2 bg-[#CBA35C] mt-6"></div>
                               </div>
                            </div>
-                        )}
 
-                        {step === 2 && (
-                           <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
-                              <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                                       <span className="material-symbols-outlined text-sm text-[#CBA35C]">account_balance_wallet</span> UPI ID / VPA
-                                    </label>
-                                    <input className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400" placeholder="username@upi" type="text" />
-                                 </div>
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
-                                       <span className="material-symbols-outlined text-sm text-[#CBA35C]">reorder</span> Monthly Capacity (WT)
-                                    </label>
-                                    <select className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium outline-none focus:border-[#CBA35C] appearance-none text-lg text-zinc-900">
-                                       <option value="">Select Capacity</option>
-                                       <option value="200">200 WT+</option>
-                                       <option value="500">500 WT+</option>
-                                       <option value="1000">1000 WT+</option>
-                                       <option value="2500">2500 WT+</option>
-                                    </select>
-                                 </div>
-                              </div>
-                              <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
-                                    <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
-                                       <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
+                           <form className="space-y-8 md:space-y-10" onSubmit={step === 3 ? handleFinalSubmit : (e) => e.preventDefault()}>
+                              {step === 1 && (
+                                 <div className="space-y-8 md:space-y-10">
+                                    <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
+                                       <div className="space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">person</span> Propriertor Name
+                                          </label>
+                                          <input
+                                             name="name"
+                                             value={formData.name}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             placeholder="Full name"
+                                             type="text"
+                                             required
+                                          />
+                                       </div>
+                                       <div className="space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">storefront</span> Shop / Entity Name
+                                          </label>
+                                          <input
+                                             name="shopName"
+                                             value={formData.shopName}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             placeholder="Firm name"
+                                             type="text"
+                                             required
+                                          />
+                                       </div>
+                                       <div className="space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">smartphone</span> Primary Contact
+                                          </label>
+                                          <input
+                                             name="phone"
+                                             value={formData.phone}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             placeholder="+91 00000 00000"
+                                             type="tel"
+                                             required
+                                          />
+                                       </div>
+                                       <div className="space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">location_on</span> City / Region
+                                          </label>
+                                          <input
+                                             name="city"
+                                             value={formData.city}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             placeholder="City, State"
+                                             type="text"
+                                             required
+                                          />
+                                       </div>
                                     </div>
-                                    <span className="font-headline font-black text-[10px] md:text-sm uppercase tracking-widest italic">Back</span>
-                                 </button>
-                                 <button type="button" onClick={() => setStep(3)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
-                                    <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Verification</span>
-                                    <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
-                                       <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                    <div className="flex items-center justify-end pt-10 border-t border-zinc-100">
+                                       <button type="button" onClick={() => setStep(2)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                          <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Next Section</span>
+                                          <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
+                                             <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                          </div>
+                                       </button>
                                     </div>
-                                 </button>
-                              </div>
-                           </div>
-                        )}
+                                 </div>
+                              )}
 
-                        {step === 3 && (
-                           <div className="space-y-8 md:space-y-10 animate-in fade-in duration-500">
-                              <div className="grid md:grid-cols-2 gap-8 md:gap-10">
-                                 <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
-                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
-                                       <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">badge</span>
+                              {step === 2 && (
+                                 <div className="space-y-8 md:space-y-10">
+                                    <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
+                                       <div className="space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">calendar_month</span> Invoice Date
+                                          </label>
+                                          <input
+                                             name="date"
+                                             value={formData.date}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900"
+                                             type="date"
+                                             required
+                                          />
+                                       </div>
+                                       <div className="space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">reorder</span> weight (QUINTAL)
+                                          </label>
+                                          <select
+                                             name="capacity"
+                                             value={formData.capacity}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium outline-none focus:border-[#CBA35C] appearance-none text-lg text-zinc-900"
+                                             required
+                                          >
+                                             <option value="">Select Capacity</option>
+                                             <option value="200">200 Qtl+</option>
+                                             <option value="500">500 Qtl+</option>
+                                             <option value="1000">1000 Qtl+</option>
+                                             <option value="2500">2500 Qtl+</option>
+                                          </select>
+                                       </div>
+                                       <div className="md:col-span-2 space-y-2">
+                                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">description</span> Invoice Number
+                                          </label>
+                                          <input
+                                             name="invoiceNo"
+                                             value={formData.invoiceNo}
+                                             onChange={handleInputChange}
+                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             placeholder="INV-00000"
+                                             type="text"
+                                             required
+                                          />
+                                       </div>
                                     </div>
-                                    <div className="space-y-2">
-                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Aadhar Card</h4>
-                                       <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Aadhar Registration</p>
+                                    <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
+                                       <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
+                                          <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
+                                             <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
+                                          </div>
+                                          <span className="font-headline font-black text-sm uppercase tracking-widest italic">Back</span>
+                                       </button>
+                                       <button type="button" onClick={() => setStep(3)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                          <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Verification</span>
+                                          <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
+                                             <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>
+                                          </div>
+                                       </button>
                                     </div>
-                                    <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
-                                       CLICK TO SELECT
-                                       <input type="file" className="hidden" />
-                                    </label>
                                  </div>
+                              )}
 
-                                 <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
-                                    <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
-                                       <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">receipt_long</span>
+                              {step === 3 && (
+                                 <div className="space-y-8 md:space-y-10">
+                                    <div className="grid md:grid-cols-2 gap-8 md:gap-10">
+                                       <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
+                                          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                                             <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">badge</span>
+                                          </div>
+                                          <div className="space-y-2">
+                                             <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Aadhar Card</h4>
+                                             <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Front Image</p>
+                                          </div>
+                                          <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
+                                             CLICK TO SELECT
+                                             <input type="file" className="hidden" />
+                                          </label>
+                                       </div>
+
+                                       <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
+                                          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                                             <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">receipt_long</span>
+                                          </div>
+                                          <div className="space-y-2">
+                                             <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Aadhar Card</h4>
+                                             <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Back Image</p>
+                                          </div>
+                                          <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
+                                             CLICK TO SELECT
+                                             <input type="file" className="hidden" />
+                                          </label>
+                                       </div>
                                     </div>
-                                    <div className="space-y-2">
-                                       <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">Invoice</h4>
-                                       <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Valid GST / Purchase Invoice</p>
+                                    <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
+                                       <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
+                                          <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
+                                             <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
+                                          </div>
+                                          <span className="font-headline font-black text-sm uppercase tracking-widest italic">Back</span>
+                                       </button>
+                                       <button type="submit" className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                          <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Submit</span>
+                                          <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
+                                             <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">check_circle</span>
+                                          </div>
+                                       </button>
                                     </div>
-                                    <label className="px-10 py-4 bg-zinc-900 text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all">
-                                       CLICK TO SELECT
-                                       <input type="file" className="hidden" />
-                                    </label>
                                  </div>
-                              </div>
-                              <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
-                                 <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
-                                    <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
-                                       <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
-                                    </div>
-                                    <span className="font-headline font-black text-[10px] md:text-sm uppercase tracking-widest italic">Back</span>
-                                 </button>
-                                 <button type="button" className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
-                                    <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">Submit</span>
-                                    <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
-                                       <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">check_circle</span>
-                                    </div>
-                                 </button>
-                              </div>
-                           </div>
-                        )}
-                     </form>
+                              )}
+                           </form>
+                        </div>
+                     )}
                   </div>
                </div>
             </div>
