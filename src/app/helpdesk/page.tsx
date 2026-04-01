@@ -108,7 +108,7 @@ export default function HelpdeskPage() {
             <p className="text-zinc-500 group-hover:text-black/70 text-sm">
               Cashback tracking, bank link issues, and payout times.
             </p>
-           </div>
+          </div>
           {/* Prizes & Rewards */}
           <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
             <div className="bg-primary group-hover:bg-white w-14 h-14 rounded-full flex items-center justify-center mb-6 transition-colors">
@@ -137,29 +137,25 @@ export default function HelpdeskPage() {
             {faqs.map((faq) => (
               <div
                 key={faq.id}
-                className={`bg-white rounded-xl overflow-hidden shadow-sm transition-all border border-zinc-100 ${
-                  openFaq === faq.id ? "border-l-4 border-l-primary" : ""
-                }`}
+                className={`bg-white rounded-xl overflow-hidden shadow-sm transition-all border border-zinc-100 ${openFaq === faq.id ? "border-l-4 border-l-primary" : ""
+                  }`}
               >
                 <button
                   onClick={() => setOpenFaq(openFaq === faq.id ? null : faq.id)}
-                  className={`w-full flex items-center justify-between p-6 text-left transition-colors ${
-                    openFaq === faq.id ? "bg-zinc-50" : "hover:bg-zinc-50"
-                  }`}
+                  className={`w-full flex items-center justify-between p-6 text-left transition-colors ${openFaq === faq.id ? "bg-zinc-50" : "hover:bg-zinc-50"
+                    }`}
                 >
                   <span className="font-bold text-lg text-zinc-900">{faq.question}</span>
                   <span
-                    className={`material-symbols-outlined text-primary transition-transform duration-300 ${
-                      openFaq === faq.id ? "rotate-180" : ""
-                    }`}
+                    className={`material-symbols-outlined text-primary transition-transform duration-300 ${openFaq === faq.id ? "rotate-180" : ""
+                      }`}
                   >
                     expand_more
                   </span>
                 </button>
                 <div
-                  className={`px-6 text-zinc-600 text-sm border-t border-zinc-100 transition-all ${
-                    openFaq === faq.id ? "py-6 opacity-100 block" : "h-0 opacity-0 hidden"
-                  }`}
+                  className={`px-6 text-zinc-600 text-sm border-t border-zinc-100 transition-all ${openFaq === faq.id ? "py-6 opacity-100 block" : "h-0 opacity-0 hidden"
+                    }`}
                 >
                   {faq.answer}
                 </div>
@@ -191,17 +187,18 @@ export default function HelpdeskPage() {
             <div className="flex flex-wrap gap-4 relative z-10">
               <a
                 className="bg-black text-primary flex items-center gap-2 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform"
-                href="#"
+                href="https://wa.me/919012182182"
+                target="_blank"
               >
                 <span className="material-symbols-outlined">chat</span>
-                WhatsApp Support
+                WhatsApp
               </a>
               <a
-                className="bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center gap-2 px-6 py-3 rounded-full font-bold hover:bg-white/20 transition-all"
-                href="#"
+                className="bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center gap-2 px-6 py-3 rounded-full font-bold hover:bg-white/20 transition-all text-sm md:text-base"
+                href="mailto:garv@sonacereal.com"
               >
                 <span className="material-symbols-outlined">mail</span>
-                Email Us
+
               </a>
             </div>
           </div>
@@ -265,6 +262,6 @@ export default function HelpdeskPage() {
           </div>
         </div>
       </section>
-      </div>
-   );
+    </div>
+  );
 }
