@@ -308,8 +308,7 @@ export default function RedeemPage() {
                         <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-white shadow-xl flex items-center justify-center p-4 text-center">
                            <img src={slab.img} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.wt} />
                         </div>
-                        <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-1">{slab.wt} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
-                        <p className="text-[8px] font-black text-[#CBA35C] uppercase tracking-widest mb-4">Target: ₹{slab.sale}</p>
+                        <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-4">{slab.wt} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
                         <span className="text-[9px] font-black text-zinc-950 uppercase tracking-widest border-t border-zinc-100 pt-4 w-full">{slab.gift}</span>
                      </div>
                   ))}

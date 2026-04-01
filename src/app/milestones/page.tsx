@@ -24,18 +24,18 @@ export default function MilestonesPage() {
             <div className="absolute inset-0" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')" }}></div>
          </div>
 
-         <div className="container mx-auto px-6 pt-32 relative z-10">
+         <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 relative z-10">
             {/* Header Section */}
-            <div className="max-w-4xl mb-32 border-l-8 border-[#CBA35C] pl-12 bg-zinc-50/50 p-16 rounded-r-[4rem] shadow-sm">
-               <div className="inline-flex items-center gap-3 bg-zinc-900 text-white px-5 py-2.5 rounded-full mb-10 border border-white/10 shadow-2xl">
+            <div className="max-w-4xl mb-24 md:mb-32 border-l-8 border-[#CBA35C] pl-8 md:pl-12 bg-zinc-50/50 p-8 md:p-16 rounded-r-3xl md:rounded-r-[4rem] shadow-sm">
+               <div className="inline-flex items-center gap-3 bg-zinc-900 text-white px-5 py-2.5 rounded-full mb-8 md:mb-10 border border-white/10 shadow-2xl">
                   <span className="w-2 h-2 bg-[#CBA35C] rounded-full animate-pulse"></span>
-                  <span className="text-[11px] font-black uppercase tracking-[0.4em] text-[#CBA35C]">Sona Elite Tiers 2025</span>
+                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-[#CBA35C]">Sona Elite Tiers 2025</span>
                </div>
-               <h1 className="font-headline font-black text-4xl md:text-[5rem] italic uppercase text-zinc-900 leading-[0.8] tracking-tighter mb-10">
+               <h1 className="font-headline font-black text-4xl md:text-[5rem] italic uppercase text-zinc-900 leading-[0.9] md:leading-[0.8] tracking-tighter mb-8 md:mb-10">
                   REWARD <br />
                   <span className="text-[#CBA35C]">ARCHITECTURE.</span>
                </h1>
-               <p className="text-zinc-500 text-lg md:text-xl max-w-2xl font-medium leading-relaxed italic border-l-4 border-zinc-200 pl-8 ml-2 mt-8">
+               <p className="text-zinc-500 text-base md:text-xl max-w-2xl font-medium leading-relaxed italic border-l-4 border-zinc-200 pl-6 md:pl-8 ml-1 md:ml-2 mt-6 md:mt-8">
                   Reach the weight milestones to unlock exclusive assets. Elite validation for Sona Cereal market leaders.
                </p>
             </div>
@@ -48,50 +48,50 @@ export default function MilestonesPage() {
             </div>
 
             {/* Milestone Grid */}
-            <div className="space-y-3 max-w-[1440px] mx-auto pb-32 px-4">
+            <div className="space-y-6 max-w-6xl mx-auto pb-32 px-4">
                {SLAB_DATA.map((slab, idx) => (
                   <div
                      key={idx}
-                     className={`group bg-white rounded-full border border-zinc-100 shadow-[0_4px_25px_-10px_rgba(0,0,0,0.04)] py-6 px-16 relative overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.01] hover:border-[#CBA35C]/30 duration-500 flex items-center`}
+                     className="group bg-white rounded-3xl md:rounded-full border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-8 md:py-6 px-8 md:px-16 relative overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.01] hover:border-[#CBA35C]/30 duration-500"
                   >
                      {/* Restored High-Altitude Tag - Now a subtle notch */}
                      {idx >= 4 && (
-                        <div className="absolute top-0 right-32 py-1.5 px-10 bg-zinc-900 text-[#CBA35C] font-black text-[9px] uppercase tracking-[0.4em] rounded-b-2xl italic flex items-center gap-2 z-20">
+                        <div className="absolute top-0 right-12 md:right-32 py-1.5 px-6 md:px-10 bg-zinc-900 text-[#CBA35C] font-black text-[9px] uppercase tracking-[0.4em] rounded-b-2xl italic flex items-center gap-2 z-20">
                            <span className="w-1.5 h-1.5 bg-[#CBA35C] rounded-full animate-pulse"></span>
                            Elite
                         </div>
                      )}
 
-                     <div className="grid grid-cols-12 items-center w-full relative z-10 gap-4">
+                     <div className="grid grid-cols-1 md:grid-cols-12 items-center w-full relative z-10 gap-8 md:gap-4">
                         {/* Tier Indicator */}
-                        <div className="col-span-2 border-r border-zinc-50 flex flex-col justify-center">
-                           <span className="text-[#CBA35C] text-[8px] font-black uppercase tracking-[0.4em] mb-1.5">SLAB</span>
-                           <h3 className="text-5xl font-headline font-black text-zinc-100 italic leading-none group-hover:text-zinc-200 transition-all duration-500">
+                        <div className="col-span-1 md:col-span-2 md:border-r border-zinc-100 flex flex-col justify-center items-center md:items-start">
+                           <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5">SLAB</span>
+                           <h3 className="text-5xl md:text-6xl font-headline font-black text-zinc-100 italic leading-none group-hover:text-[#CBA35C]/10 transition-all duration-500">
                               {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
                            </h3>
                         </div>
 
                         {/* Milestone Target */}
-                        <div className="col-span-3 border-r border-zinc-50 px-8">
-                           <span className="text-[#CBA35C] text-[8px] font-black uppercase tracking-[0.4em] mb-1.5 block opacity-60">TARGET</span>
+                        <div className="col-span-1 md:col-span-3 md:border-r border-zinc-100 md:px-8 flex flex-col items-center md:items-start text-center md:text-left">
+                           <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5 block opacity-60">TARGET</span>
                            <div className="flex items-baseline gap-2 group-hover:translate-x-1 transition-transform duration-500">
-                              <span className="text-5xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{slab.weight}</span>
-                              <span className="text-zinc-400 text-[11px] font-black uppercase">QTL</span>
+                              <span className="text-5xl md:text-5xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{slab.weight}</span>
+                              <span className="text-zinc-400 text-xs font-black uppercase">QTL</span>
                            </div>
                         </div>
 
                         {/* Portfolio Options */}
-                        <div className="col-span-7 flex items-center justify-end gap-12">
-                           <div className="text-right">
-                              <span className="text-zinc-300 text-[8px] font-black uppercase tracking-[0.4em] mb-2 block">PORTFOLIO</span>
-                              <div className="flex items-center gap-5 justify-end">
-                                 <h4 className="text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500">
+                        <div className="col-span-1 md:col-span-7 flex flex-col md:flex-row items-center md:justify-end gap-6 md:gap-12 group-hover:translate-x-[-4px] transition-transform duration-500">
+                           <div className="flex flex-col items-center md:items-end w-full">
+                              <span className="text-zinc-300 text-[10px] font-black uppercase tracking-[0.4em] mb-3 block">PORTFOLIO</span>
+                              <div className="flex flex-wrap items-center gap-4 justify-center md:justify-end">
+                                 <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
                                     {slab.items[0]}
                                  </h4>
                                  {slab.items[1] && (
                                     <>
-                                       <span className="text-zinc-400 text-[10px] font-black italic tracking-[0.2em] uppercase px-4">OR</span>
-                                       <h4 className="text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500">
+                                       <span className="text-zinc-300 text-[11px] font-black italic tracking-[0.1em] uppercase bg-zinc-50 px-3 py-1 rounded-md border border-zinc-100">OR</span>
+                                       <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
                                           {slab.items[1]}
                                        </h4>
                                     </>
@@ -100,6 +100,11 @@ export default function MilestonesPage() {
                            </div>
                         </div>
                      </div>
+
+                     {/* Background Number Accent */}
+                     <span className="absolute -bottom-10 right-10 text-[12rem] font-headline font-black text-zinc-50 leading-none select-none -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                        {idx + 1}
+                     </span>
                   </div>
                ))}
             </div>

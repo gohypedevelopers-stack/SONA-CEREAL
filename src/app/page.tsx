@@ -10,10 +10,10 @@ export default function HomePage() {
    const progress = step === 0 ? 0 : (step / totalSteps) * 100;
 
    // Login/Register credential state
-   const [email, setEmail] = React.useState("");
-   const [password, setPassword] = React.useState("");
-   const [confirmPassword, setConfirmPassword] = React.useState("");
    const [loginError, setLoginError] = React.useState("");
+   const [loginPhone, setLoginPhone] = React.useState("");
+   const [loginOtp, setLoginOtp] = React.useState("");
+   const [loginStep, setLoginStep] = React.useState<'phone' | 'otp'>('phone');
 
    // Dashboard form data
    const [formData, setFormData] = React.useState({
@@ -39,30 +39,38 @@ export default function HomePage() {
       setFormData(prev => ({ ...prev, [name]: value }));
    };
 
+   const handleSendOtp = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (loginPhone.length < 10) {
+         setLoginError("Please enter a valid phone number.");
+         return;
+      }
+      setLoginStep('otp');
+      setLoginError("");
+   };
+
    const handleLoginSubmit = (e: React.FormEvent) => {
       e.preventDefault();
+      if (loginOtp !== "1234") { // Mock OTP validation
+         setLoginError("Invalid OTP. Use 1234 for testing.");
+         return;
+      }
+
       const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
-      const user = submissions.find((s: any) => s.email === email && s.password === password);
+      const user = submissions.find((s: any) => s.phone.replace(/\D/g, "") === loginPhone.replace(/\D/g, ""));
 
       if (user) {
          setFormData(user);
-         setMode('register');
-         setStep(1);
-         setTimeout(scrollToRegistration, 100);
-      } else {
-         setLoginError("Invalid email or password.");
       }
+      
+      setMode('register');
+      setStep(2); // Directly to Achievement (Step 2)
+      setTimeout(scrollToRegistration, 100);
    };
 
    const handleRegisterSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-
-      if (password !== confirmPassword) {
-         alert("Passwords do not match.");
-         return;
-      }
-
-      setStep(1); // Move to Identity Step
+      setStep(1); // Move to Identity Step (Step 1)
    };
 
    const handleFinalSubmit = (e: React.FormEvent) => {
@@ -71,8 +79,6 @@ export default function HomePage() {
       const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
       const newSubmission = {
          ...formData,
-         email,
-         password,
          id: Date.now().toString(),
          status: "pending",
          timestamp: new Date().toLocaleString()
@@ -218,14 +224,14 @@ export default function HomePage() {
                            </div>
 
                            <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto pt-8">
-                              <button onClick={() => setMode('login')} className="group p-10 bg-zinc-900 rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center">
+                              <button onClick={() => { setMode('login'); setLoginStep('phone'); setLoginError(""); }} className="group p-10 bg-zinc-900 rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center">
                                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#CBA35C]/20 rounded-full blur-3xl group-hover:bg-[#CBA35C]/40 transition-all"></div>
                                  <span className="material-symbols-outlined text-5xl text-[#CBA35C] mb-6 block group-hover:rotate-12 transition-transform">login</span>
                                  <h4 className="text-2xl font-headline font-black uppercase italic leading-none mb-2 text-white">LOGIN</h4>
                                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Retailer Portal</p>
                               </button>
 
-                              <button onClick={() => setMode('register')} className="group p-10 bg-zinc-50 rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center">
+                              <button onClick={() => { setMode('register'); setStep(1); }} className="group p-10 bg-zinc-50 rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center">
                                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#CBA35C]/5 rounded-full blur-3xl group-hover:bg-[#CBA35C]/10 transition-all"></div>
                                  <span className="material-symbols-outlined text-5xl text-zinc-400 mb-6 block group-hover:rotate-12 transition-transform">how_to_reg</span>
                                  <h4 className="text-2xl font-headline font-black uppercase italic leading-none mb-2 text-zinc-900">REGISTER</h4>
@@ -242,96 +248,54 @@ export default function HomePage() {
                               <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
                                  SECURE <span className="text-[#CBA35C]">LOGIN.</span>
                               </h3>
-                              <p className="text-zinc-400 text-lg font-medium italic">Enter your credentials to access your reward status.</p>
+                              <p className="text-zinc-400 text-lg font-medium italic">
+                                 {loginStep === 'phone' ? 'Enter your registered phone number to receive a secure code.' : 'Enter the 4-digit code sent to your device.'}
+                              </p>
                            </div>
 
-                           <form onSubmit={handleLoginSubmit} className="space-y-6 max-w-md">
-                              <div className="space-y-2">
-                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Official Email</label>
-                                 <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Retailer@email.com"
-                                    className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
-                                    required
-                                 />
-                              </div>
-                              <div className="space-y-2">
-                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Security Password</label>
-                                 <input
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    placeholder="••••••••"
-                                    className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
-                                    required
-                                 />
-                              </div>
+                           <form onSubmit={loginStep === 'phone' ? handleSendOtp : handleLoginSubmit} className="space-y-6 max-w-md">
+                              {loginStep === 'phone' ? (
+                                 <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Registered Phone</label>
+                                    <input
+                                       type="tel"
+                                       value={loginPhone}
+                                       onChange={(e) => setLoginPhone(e.target.value)}
+                                       placeholder="+91 00000 00000"
+                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                       required
+                                    />
+                                    <p className="text-[9px] text-zinc-400 italic">Secure validation for authorized partners only.</p>
+                                 </div>
+                              ) : (
+                                 <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Secure OTP Code</label>
+                                    <input
+                                       type="text"
+                                       value={loginOtp}
+                                       onChange={(e) => setLoginOtp(e.target.value)}
+                                       placeholder="Enter 1234"
+                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium text-center text-3xl tracking-[0.5em]"
+                                       maxLength={4}
+                                       required
+                                    />
+                                    <button type="button" onClick={() => setLoginStep('phone')} className="text-[10px] font-black uppercase tracking-widest text-[#CBA35C] hover:underline mt-2">Change Number</button>
+                                 </div>
+                              )}
+                              
                               {loginError && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest">{loginError}</p>}
-                              <button type="submit" className="w-full bg-zinc-900 text-white hover:bg-[#CBA35C] hover:text-black py-5 rounded-2xl font-headline font-black uppercase text-lg transition-all shadow-xl">
-                                 Enter Marketplace Dashboard
-                              </button>
-                           </form>
-                        </div>
-                     ) : mode === 'register' && step === 0 ? (
-                        <div className="space-y-10 animate-in fade-in duration-700 slide-in-from-left-8">
-                           <div className="text-left space-y-4">
-                              <button onClick={() => setMode('selection')} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
-                                 <span className="material-symbols-outlined">west</span> Back to Choices
-                              </button>
-                              <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
-                                 PARTNER <span className="text-[#CBA35C]">AUTH.</span>
-                              </h3>
-                              <p className="text-zinc-400 text-lg font-medium italic">Create your secure partner credentials to begin onboarding.</p>
-                           </div>
-
-                           <form onSubmit={handleRegisterSubmit} className="space-y-6 max-w-md">
-                              <div className="space-y-2">
-                                 <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Official Email</label>
-                                 <input
-                                    type="email"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
-                                    placeholder="Retailer@email.com"
-                                    className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
-                                    required
-                                 />
-                              </div>
-                              <div className="grid md:grid-cols-2 gap-4">
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Password</label>
-                                    <input
-                                       type="password"
-                                       value={password}
-                                       onChange={(e) => setPassword(e.target.value)}
-                                       placeholder="••••••••"
-                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
-                                       required
-                                    />
-                                 </div>
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Confirm</label>
-                                    <input
-                                       type="password"
-                                       value={confirmPassword}
-                                       onChange={(e) => setConfirmPassword(e.target.value)}
-                                       placeholder="••••••••"
-                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
-                                       required
-                                    />
-                                 </div>
-                              </div>
-                              <button type="submit" className="w-full bg-[#CBA35C] text-black py-5 rounded-2xl font-headline font-black uppercase text-lg hover:scale-[1.02] active:scale-[0.98] transition-all shadow-xl shadow-[#CBA35C]/20">
-                                 Continue Onboarding
+                              
+                              <button type="submit" className="w-full bg-zinc-900 text-white hover:bg-[#CBA35C] hover:text-black py-5 rounded-2xl font-headline font-black uppercase text-lg transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95">
+                                 {loginStep === 'phone' ? 'GENERATE SECURE CODE' : 'VALIDATE & ACCESS PORTAL'}
+                                 <span className="material-symbols-outlined">{loginStep === 'phone' ? 'send' : 'verified_user'}</span>
                               </button>
                            </form>
                         </div>
                      ) : (
                         <div className="animate-in fade-in duration-700 slide-in-from-right-8 h-full flex flex-col justify-center">
                            <div className="mb-12 text-left space-y-4">
-                              <button onClick={() => { setStep(0); }} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
-                                 <span className="material-symbols-outlined">west</span> Back to Credentials
+                              <button onClick={() => { setMode('selection'); setStep(0); }} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
+                                 <span className="material-symbols-outlined">west</span> Back to Choices
                               </button>
                               <div>
                                  <span className="text-[#CBA35C] font-black uppercase tracking-widest text-xs">Phase {step} of 3</span>
