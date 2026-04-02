@@ -174,26 +174,28 @@ export default function HomePage() {
 
    return (
       <div className="bg-white">
-         {/* Standard-Position Hero Carousel */}
-         <section className="relative min-h-[90vh] overflow-hidden bg-white select-none">
-            <div className="absolute inset-0 z-0">
-               {/* Slides Mapping */}
+         {/* Optimized Responsive Hero Carousel */}
+         <section className="relative md:min-h-[90vh] h-auto overflow-hidden bg-white select-none">
+            <div className="md:absolute md:inset-0 relative z-0">
+               {/* Slides Mapping - Height Fix for Mobile */}
                {slides.map((slide, idx) => (
                   <div
                      key={idx}
-                     className={`absolute inset-0 transition-opacity duration-1000 ease-in-out 
-                         ${idx === activeSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+                     className={`transition-opacity duration-1000 ease-in-out 
+                         ${idx === activeSlide 
+                           ? 'relative opacity-100' 
+                           : 'absolute inset-0 opacity-0 pointer-events-none'}`}
                   >
-                     {/* Desktop Image */}
+                     {/* Desktop Image - Stays Exactly as It Is */}
                      <img
                         src={slide.desktop}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-cover hidden md:block" 
                         alt={`Sona Cereal Banner ${idx + 1}`}
                      />
-                     {/* Mobile Image */}
+                     {/* Mobile Image - Natural Un-zoomed Fit */}
                      <img
                         src={slide.mobile}
-                        className="w-full h-full object-contain md:hidden bg-white"
+                        className="w-full h-auto md:hidden block bg-white"
                         alt={`Banner Mobile ${idx + 1}`}
                      />
                   </div>
