@@ -2,8 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export default function Footer() {
+  const pathname = usePathname();
+
+  if (pathname?.startsWith("/admin")) return null;
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -43,7 +48,6 @@ export default function Footer() {
                 className="w-10 h-10 bg-white/5 rounded-full flex items-center justify-center hover:bg-primary transition-colors"
                 aria-label="X (formerly Twitter)"
               >
-                {/* FontAwesome icons would need to be added, using a placeholder for now or standard SVG */}
                 <svg
                   className="w-4 h-4 fill-current"
                   viewBox="0 0 24 24"

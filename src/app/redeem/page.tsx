@@ -10,40 +10,43 @@ export default function RedeemPage() {
    const [searched, setSearched] = useState(false);
    const [selectedGift, setSelectedGift] = useState<string | null>(null);
 
-   const checkStatus = () => {
-      const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
-      const sanitizedPhoneInput = phone.replace(/\D/g, "");
-      const user = [...submissions].reverse().find((s: any) => {
-         const sanitizedStored = s.phone.replace(/\D/g, "");
-         return sanitizedStored === sanitizedPhoneInput;
-      });
-
-      setSearched(true);
-      if (user) {
-         setUserData(user);
-         setError("");
-         setSelectedGift(user.claimedGift || null);
-      } else {
-         setError("No registration found with this phone number.");
-         setUserData(null);
-      }
-   };
+    const checkStatus = async () => {
+       if (!phone) return;
+       const cleanPhone = phone.replace(/\D/g, '');
+       setSearched(true);
+       try {
+          const res = await fetch(`/api/submissions?phone=${encodeURIComponent(cleanPhone)}`);
+          const data = await res.json();
+          if (data.submissions && data.submissions.length > 0) {
+             // Pick the latest submission for redemption (API returns desc order, so index 0 is newest)
+             const latest = data.submissions[0];
+             setUserData(latest);
+             setSelectedGift(latest.claimedGift || null);
+             setError("");
+          } else {
+             setError("No active registration found.");
+             setUserData(null);
+          }
+       } catch (err) {
+          setError("Connection error.");
+       }
+    };
 
    useEffect(() => {
       const storedPhone = localStorage.getItem("current_user_phone");
       if (storedPhone) {
-         const sanitizedStored = storedPhone.replace(/\D/g, "");
+         const clean = storedPhone.replace(/\D/g, '');
          setPhone(storedPhone);
-         const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
-         const user = [...submissions].reverse().find((s: any) => {
-            const storedNum = s.phone.replace(/\D/g, "");
-            return storedNum === sanitizedStored;
-         });
-         if (user) {
-            setUserData(user);
-            setSearched(true);
-            setSelectedGift(user.claimedGift || null);
-         }
+         fetch(`/api/submissions?phone=${encodeURIComponent(clean)}`)
+            .then(res => res.json())
+            .then(data => {
+               if (data.submissions && data.submissions.length > 0) {
+                  const latest = data.submissions[0];
+                  setUserData(latest);
+                  setSelectedGift(latest.claimedGift || null);
+                  setSearched(true);
+               }
+            });
       }
    }, []);
 
@@ -82,17 +85,25 @@ export default function RedeemPage() {
       ];
    };
 
-   const handleGiftSelect = (giftName: string) => {
+   const handleGiftSelect = async (giftName: string) => {
       if (!userData || selectedGift) return;
-      const submissions = JSON.parse(localStorage.getItem("sona_submissions") || "[]");
-      const updatedSubmissions = submissions.map((s: any) =>
-         (s.phone === userData.phone && s.id === userData.id)
-            ? { ...s, claimedGift: giftName, status: 'claimed' }
-            : s
-      );
-      localStorage.setItem("sona_submissions", JSON.stringify(updatedSubmissions));
-      setSelectedGift(giftName);
-      setUserData({ ...userData, claimedGift: giftName, status: 'claimed' });
+      
+      try {
+         const res = await fetch("/api/submissions", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: userData.id, claimedGift: giftName })
+         });
+         const data = await res.json();
+         if (data.success) {
+            setSelectedGift(giftName);
+            setUserData({ ...userData, claimedGift: giftName, status: 'claimed' });
+         } else {
+            alert("Error: " + (data.error || "Failed to select gift"));
+         }
+      } catch (err) {
+         alert("Network error.");
+      }
    };
 
    return (
@@ -119,52 +130,13 @@ export default function RedeemPage() {
                      <p className="text-zinc-500 font-medium text-lg md:text-xl leading-relaxed max-w-lg italic">
                         Turn your sales achievement into high-octane luxury rewards. Built for speed and precision.
                      </p>
-
-                     <div className="flex flex-wrap gap-4 mt-8">
-                        <div className="bg-white p-5 rounded-2xl border border-zinc-100 shadow-lg flex flex-col min-w-[140px]">
-                           <span className="text-2xl font-headline font-black text-zinc-900 uppercase italic leading-none">INSTANT</span>
-                           <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest mt-2">UPI VALIDATION</span>
-                        </div>
-                        <div className="bg-white p-5 rounded-2xl border border-zinc-100 shadow-lg flex flex-col min-w-[140px]">
-                           <span className="text-2xl font-headline font-black text-zinc-900 uppercase italic leading-none">24/7</span>
-                           <span className="text-[8px] font-bold text-zinc-400 uppercase tracking-widest mt-2">SUPPORT PORTAL</span>
-                        </div>
-                     </div>
                   </div>
 
                   <div className="relative group lg:block hidden">
-                     {/* The streamlined overlapping visual ensemble */}
                      <div className="relative w-full aspect-[4/3] max-w-[650px] ml-auto">
-
-                        {/* Main Backdrop / Bike */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-[4.5rem] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] border-[8px] border-white z-20">
                            <img src="/reward-bike.png" className="w-full h-full object-cover" alt="Elite Rewards" />
-                           <div className="absolute top-10 left-10 opacity-30">
-                              <span className="font-headline font-black text-2xl text-white tracking-tighter leading-none block">DIGITAL<br />ATELIER</span>
-                           </div>
                         </div>
-
-                        {/* Top Right Float: Tech Card */}
-                        <div className="absolute top-[-2%] right-[-2%] w-[38%] bg-white p-4 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.12)] z-30 transform rotate-6">
-                           <div className="aspect-[4/3] rounded-[1.8rem] overflow-hidden mb-3 border border-zinc-50 bg-zinc-100">
-                              <img src="https://images.unsplash.com/photo-1541807084-5c52b6b3adef?q=80&w=800&auto=format&fit=crop" className="w-full h-full object-cover" alt="Elite Tech Bundle" />
-                           </div>
-                           <div className="text-center pb-1">
-                              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-zinc-900">TECH BUNDLE</span>
-                           </div>
-                        </div>
-
-                        {/* Bottom Left Float: Gold Card */}
-                        <div className="absolute bottom-[2%] left-[-5%] w-[35%] bg-white p-4 rounded-[2.5rem] shadow-[0_25px_50px_-12px_rgba(0,0,0,0.12)] z-30 transform -rotate-6">
-                           <div className="aspect-square rounded-[1.8rem] overflow-hidden mb-3 border border-zinc-50">
-                              <img src="/reward-gold.png" className="w-full h-full object-cover" alt="Achievement Gold" />
-                           </div>
-                           <div className="text-center pb-1">
-                              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-[#CBA35C]">ACHIEV. GOLD</span>
-                           </div>
-                        </div>
-
-                        {/* Soft Glow Shapes */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[85%] bg-[#CBA35C]/5 rounded-full blur-[100px] -z-10"></div>
                      </div>
                   </div>
@@ -172,15 +144,15 @@ export default function RedeemPage() {
             </div>
          </section>
 
-         {/* DASHBOARD SECTION */}
+         {/* REDEEM PORTAL SECTION */}
          <section className="py-20 bg-white relative z-10">
             <div className="container mx-auto px-6 max-w-[1440px]">
                <div className="w-full">
                   {!searched ? (
                      <div className="bg-zinc-50 p-12 md:p-24 rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
                         <h3 className="font-headline font-black text-4xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-12 text-center">
-                           USER <br />
-                           <span className="text-[#CBA35C]">DASHBOARD.</span>
+                           REDEEM <br />
+                           <span className="text-[#CBA35C]">OFFER.</span>
                         </h3>
                         <div className="relative max-w-md mx-auto space-y-6">
                            <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full p-8 rounded-[2rem] bg-white border border-zinc-100 outline-none text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
@@ -189,12 +161,11 @@ export default function RedeemPage() {
                      </div>
                   ) : userData ? (
                      <div className="space-y-16 animate-in slide-in-from-bottom-8 duration-700">
-                        {/* ULTRA-RESPONSIVE DASHBOARD COMMAND ROW */}
+                        {/* REDEEM COMMAND ROW */}
                         <div className="bg-white rounded-[2rem] lg:rounded-full border border-zinc-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] p-6 lg:p-3 lg:px-12 relative overflow-hidden group w-full border-b-2">
                            <div className="absolute top-0 right-0 w-64 h-64 bg-[#CBA35C]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
                            
                            <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-8 lg:gap-6 relative z-10 py-2">
-                              
                               {/* Slab Section */}
                               <div className="lg:col-span-1 border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 lg:pr-6 w-full lg:w-auto text-center lg:text-left">
                                  <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.3em] block mb-1 origin-left">SLAB</span>
@@ -294,13 +265,14 @@ export default function RedeemPage() {
                         )}
 
                         <div className="text-center pt-8">
-                           <button onClick={() => { setSearched(false); setUserData(null); setSelectedGift(null); }} className="text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-zinc-900 transition-colors underline">Return to Main Dashboard</button>
+                           <Link href="/dashboard" className="text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-zinc-900 transition-colors underline mr-8">View Records Portfolio</Link>
+                           <button onClick={() => { setSearched(false); setUserData(null); setSelectedGift(null); }} className="text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-zinc-900 transition-colors underline">Use Different Number</button>
                         </div>
                      </div>
                   ) : (
                      <div className="text-center p-24 bg-zinc-50 rounded-[4rem] border-2 border-dashed border-zinc-200">
-                        <p className="text-zinc-400 font-headline font-black text-3xl uppercase italic mb-8 tracking-tighter">No Active Registration Record Found.</p>
-                        <button onClick={() => setSearched(false)} className="text-[#CBA35C] font-black text-[10px] uppercase tracking-[0.5em] underline">Try Different Number</button>
+                        <p className="text-zinc-400 font-headline font-black text-2xl uppercase italic mb-8 tracking-tighter">No Active Registration Found.</p>
+                        <Link href="/dashboard" className="inline-block text-[#CBA35C] font-black text-[10px] uppercase tracking-[0.5em] underline">Check Records Archive</Link>
                      </div>
                   )}
                </div>

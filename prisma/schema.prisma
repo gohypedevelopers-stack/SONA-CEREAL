@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          String       @id @default(uuid())
+  phone       String       @unique
+  name        String?
+  shopName    String?
+  city        String?
+  aadharFront String?
+  aadharBack  String?
+  createdAt   DateTime     @default(now())
+  submissions Submission[]
+}
+
+model Submission {
+  id           String   @id @default(uuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String
+  invoiceNo    String
+  invoiceDate  String
+  capacity     String
+  aadharFront  String // Path to image
+  aadharBack   String // Path to image
+  status       String   @default("pending") // pending, accepted, rejected, claimed
+  claimedGift  String?
+  timestamp    DateTime @default(now())
+}

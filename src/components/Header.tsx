@@ -9,6 +9,10 @@ export default function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
 
+  if (pathname?.startsWith("/admin")) return null;
+
+  if (pathname?.startsWith("/admin")) return null;
+
   const toggleMobileMenu = () => {
     setIsOpen(!isOpen);
     if (!isOpen) {
@@ -46,10 +50,14 @@ export default function Header() {
     <>
       <header
         id="mainNav"
-        className={`fixed top-0 left-0 right-0 z-[100] px-4 md:px-8 transition-all duration-500 ${isScrolled ? "py-2" : "py-6"
-          }`}
+        className={`fixed top-0 left-0 right-0 z-[101] px-4 md:px-8 transition-all duration-700 ${isScrolled ? "py-2" : "py-6"}`}
       >
-        <div className="max-w-[1440px] mx-auto bg-white/90 backdrop-blur-2xl border border-zinc-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)] rounded-[2.5rem] px-6 md:px-10 py-3 flex items-center justify-between relative transition-all duration-500">
+        <div className={`max-w-[1440px] mx-auto rounded-[2.5rem] px-6 md:px-10 py-3 flex items-center justify-between relative transition-all duration-700 
+          ${isScrolled 
+            ? "bg-white/90 backdrop-blur-2xl border border-zinc-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]" 
+            : "bg-white/10 backdrop-blur-sm border border-white/20 shadow-none"
+          }`}
+        >
           {/* Logo Section */}
           <Link href="/" className="flex items-center gap-2 md:gap-3 group min-w-0 flex-1 md:flex-none">
             <img src="/logo-blank.png" alt="Sona Cereal" className="h-8 md:h-10 w-auto group-hover:scale-105 transition-transform" />
@@ -98,8 +106,8 @@ export default function Header() {
             <Link
               href="/dashboard"
               className={`hidden md:flex items-center justify-center w-12 h-12 rounded-full transition-all duration-500 shadow-xl group/dashboard border border-zinc-100/50 ${pathname === "/dashboard"
-                  ? "bg-[#CBA35C] text-black"
-                  : "bg-zinc-900 text-white hover:bg-[#CBA35C] hover:text-black hover:scale-110 active:scale-95"
+                ? "bg-[#CBA35C] text-black"
+                : "bg-zinc-900 text-white hover:bg-[#CBA35C] hover:text-black hover:scale-110 active:scale-95"
                 }`}
             >
               <span className="material-symbols-outlined text-2xl">account_circle</span>
