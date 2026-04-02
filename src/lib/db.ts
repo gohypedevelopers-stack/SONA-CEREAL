@@ -15,6 +15,7 @@ export const saveUser = async (user: any) => {
       city: user.city,
       aadharFront: user.aadharFront,
       aadharBack: user.aadharBack,
+      registeredAt: user.registeredAt,
     },
     create: {
       phone: user.phone,
@@ -23,6 +24,7 @@ export const saveUser = async (user: any) => {
       city: user.city,
       aadharFront: user.aadharFront,
       aadharBack: user.aadharBack,
+      registeredAt: user.registeredAt,
     },
   });
 };

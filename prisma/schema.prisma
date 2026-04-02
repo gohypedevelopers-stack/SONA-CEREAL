@@ -19,6 +19,7 @@ model User {
   aadharFront String?
   aadharBack  String?
   createdAt   DateTime     @default(now())
+  registeredAt String?      @default("")
   submissions Submission[]
 }
 
