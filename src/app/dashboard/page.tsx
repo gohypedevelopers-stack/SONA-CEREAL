@@ -9,18 +9,21 @@ export default function DashboardPage() {
    const [submissions, setSubmissions] = useState<any[]>([]);
    const [error, setError] = useState("");
    const [searched, setSearched] = useState(false);
-   const [slabs, setSlabs] = useState<any[]>([]);
+   const [loading, setLoading] = useState(false);
+   const STATIC_SLABS = [
+      { id: "s1", target: 200, giftA: "MICROWAVE", giftAImg: "https://images.unsplash.com/photo-1589003077984-894e133dabab?q=80&w=500&auto=format&fit=crop", giftB: "JBL SPEAKER" },
+      { id: "s2", target: 300, giftA: "IPHONE", giftAImg: "/reward-iphone.png", giftB: "TVS APACHE" },
+      { id: "s3", target: 500, giftA: "SMART PHONE NOTHING", giftAImg: "/reward-phone.png", giftB: "SMART TV SONY" },
+      { id: "s4", target: 1000, giftA: "IPHONE 16 PRO", giftAImg: "/reward-iphone.png", giftB: "REFRIGERATOR" }
+   ];
 
    const checkStatus = async () => {
       if (!phone) return;
       setSearched(true);
+      setLoading(true);
       try {
          const res = await fetch(`/api/submissions?phone=${encodeURIComponent(phone)}`);
          const data = await res.json();
-
-         const slabsRes = await fetch('/api/slabs');
-         const slabsData = await slabsRes.json();
-         setSlabs(slabsData);
 
          if (data.submissions && data.submissions.length > 0) {
             setUserProfile(data.user);
@@ -32,12 +35,12 @@ export default function DashboardPage() {
          }
       } catch (err) {
          setError("Connection error.");
+      } finally {
+         setLoading(false);
       }
    };
 
    useEffect(() => {
-      fetch('/api/slabs').then(res => res.json()).then(setSlabs).catch(console.error);
-
       const storedPhone = localStorage.getItem("current_user_phone");
       if (storedPhone) {
          setPhone(storedPhone);
@@ -61,6 +64,17 @@ export default function DashboardPage() {
                         <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-8 rounded-[2rem] font-headline font-black uppercase text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
                      </div>
                   </div>
+                ) : loading ? (
+                   <div className="py-24 text-center space-y-8 animate-in fade-in duration-700">
+                      <div className="relative w-24 h-24 mx-auto">
+                         <div className="absolute inset-0 border-4 border-zinc-100 rounded-full"></div>
+                         <div className="absolute inset-0 border-4 border-t-[#CBA35C] rounded-full animate-spin"></div>
+                      </div>
+                      <div className="space-y-2">
+                         <h3 className="font-headline font-black text-2xl uppercase italic tracking-tighter text-zinc-900">Synchronizing Data</h3>
+                         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Verifying secure database node</p>
+                      </div>
+                   </div>
                ) : (
                   <div className="space-y-12 animate-in slide-in-from-bottom-8 duration-700">
                      {/* PROFILE HEADER */}
@@ -178,14 +192,10 @@ export default function DashboardPage() {
                   <p className="hidden md:block text-zinc-400 text-right font-medium italic text-lg max-w-xs">A comprehensive portfolio of the assets available at each performance level.</p>
                </div>
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto text-center">
-                  {Array.isArray(slabs) && slabs.map((slab) => (
+                  {STATIC_SLABS.map((slab) => (
                      <div key={slab.id} className="group p-8 bg-zinc-50 rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center">
                         <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-white shadow-xl flex items-center justify-center p-4 text-center">
-                           {slab.giftAImg ? (
-                              <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target} />
-                           ) : (
-                              <span className="material-symbols-outlined text-zinc-200 text-6xl">card_giftcard</span>
-                           )}
+                           <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
                         </div>
                         <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-4">{slab.target} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
                         <span className="text-[9px] font-black text-zinc-950 uppercase tracking-widest border-t border-zinc-100 pt-4 w-full">{slab.giftA} / {slab.giftB}</span>

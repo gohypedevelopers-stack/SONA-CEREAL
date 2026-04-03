@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getSubmissions, updateSubmission, getUsers, saveSubmission } from '@/lib/data';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(req: Request) {
   try {
@@ -7,22 +8,50 @@ export async function GET(req: Request) {
     const phone = searchParams.get('phone');
     if (!phone) return NextResponse.json({ error: 'Phone number is required' }, { status: 400 });
 
-    const submissions = await getSubmissions();
-    const users = await getUsers();
     const sanitizedInput = phone.replace(/\D/g, '');
+    const last10 = sanitizedInput.length >= 10 ? sanitizedInput.slice(-10) : sanitizedInput;
 
-    const user = users.find((u: any) => {
-      const dbDigits = (u.phone || "").replace(/\D/g, '');
-      return dbDigits.includes(sanitizedInput) || sanitizedInput.includes(dbDigits);
-    });
-    const userSubmissions = submissions.filter((s: any) => {
-      const subDigits = (s.phone || "").replace(/\D/g, '');
-      return subDigits.includes(sanitizedInput) || sanitizedInput.includes(subDigits);
-    });
+    // Broaden the search: try several formats to find the record
+    const [user, userSubmissions] = await Promise.all([
+      prisma.user.findFirst({
+        where: {
+          OR: [
+            { phone: { contains: last10, mode: 'insensitive' } },
+            { phone: { contains: sanitizedInput, mode: 'insensitive' } },
+            { phone: phone }
+          ]
+        }
+      }),
+      (prisma.submission as any).findMany({
+        where: {
+          OR: [
+            { phone: { contains: last10, mode: 'insensitive' } },
+            { phone: { contains: sanitizedInput, mode: 'insensitive' } },
+            { phone: phone }
+          ]
+        },
+        orderBy: { timestamp: 'desc' }
+      })
+    ]);
+
+    // If still not found and input is long, try one more time with just the digits
+    let finalUser = user;
+    let finalSubs = userSubmissions;
+
+    if (!finalSubs?.length && sanitizedInput.length > 5) {
+      const [retryUser, retrySubs] = await Promise.all([
+        prisma.user.findFirst({ where: { phone: { contains: sanitizedInput.slice(-8), mode: 'insensitive' } } }),
+        (prisma.submission as any).findMany({ where: { phone: { contains: sanitizedInput.slice(-8), mode: 'insensitive' } }, orderBy: { timestamp: 'desc' } })
+      ]);
+      if (retrySubs?.length) {
+        finalUser = retryUser;
+        finalSubs = retrySubs;
+      }
+    }
 
     return NextResponse.json({
-      user: user || { name: 'Retailer' },
-      submissions: userSubmissions
+      user: finalUser || { name: 'Retailer' },
+      submissions: finalSubs || []
     });
   } catch (error) {
     console.error("Retailer API error:", error);

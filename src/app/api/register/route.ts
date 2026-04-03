@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { saveUser, getUsers } from '@/lib/data';
+import { uploadToCloudinary } from '@/lib/cloudinary';
 import fs from 'fs';
 import path from 'path';
 
@@ -33,29 +34,28 @@ export async function POST(req: Request) {
       return NextResponse.json({ success: false, error: "Phone and Name are required" }, { status: 400 });
     }
 
-    const timestamp = Date.now();
     let aadharFrontPath = '';
     let aadharBackPath = '';
-
-    // Create uploads directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads');
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true });
-    }
 
     // Process files
     const aadharFront = formData.get('aadharFront') as File | null;
     if (aadharFront && aadharFront.size > 0) {
-      const bytes = await aadharFront.arrayBuffer();
-      aadharFrontPath = `/uploads/${timestamp}_front_${aadharFront.name.replace(/\s+/g, '_')}`;
-      fs.writeFileSync(path.join(process.cwd(), 'public', aadharFrontPath), Buffer.from(bytes));
+      const buffer = Buffer.from(await aadharFront.arrayBuffer());
+      const base64 = `data:${aadharFront.type};base64,${buffer.toString('base64')}`;
+      const res = await uploadToCloudinary(base64, 'registration');
+      if (res.success) {
+        aadharFrontPath = res.url || "";
+      }
     }
 
     const aadharBack = formData.get('aadharBack') as File | null;
     if (aadharBack && aadharBack.size > 0) {
-      const bytes = await aadharBack.arrayBuffer();
-      aadharBackPath = `/uploads/${timestamp}_back_${aadharBack.name.replace(/\s+/g, '_')}`;
-      fs.writeFileSync(path.join(process.cwd(), 'public', aadharBackPath), Buffer.from(bytes));
+      const buffer = Buffer.from(await aadharBack.arrayBuffer());
+      const base64 = `data:${aadharBack.type};base64,${buffer.toString('base64')}`;
+      const res = await uploadToCloudinary(base64, 'registration');
+      if (res.success) {
+        aadharBackPath = res.url || "";
+      }
     }
 
     // Check if user already exists

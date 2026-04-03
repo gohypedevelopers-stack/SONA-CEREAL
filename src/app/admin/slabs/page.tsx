@@ -35,26 +35,35 @@ export default function AdminSlabsPage() {
     fetchSlabs();
   }, []);
 
-  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>, field: 'giftAImg' | 'giftBImg') => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'giftAImg' | 'giftBImg') => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const MAX_WIDTH = 400;
-          const scale = MAX_WIDTH / img.width;
-          canvas.width = MAX_WIDTH;
-          canvas.height = img.height * scale;
+      reader.onloadend = async () => {
+        const base64 = reader.result as string;
+        
+        try {
+          // Show a "Loading" state or just use the local preview for now
+          setForm(prev => ({ ...prev, [field]: base64 })); // Keep local preview
+
+          const res = await fetch("/api/upload", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ image: base64, folder: 'slabs' })
+          });
           
-          const ctx = canvas.getContext('2d');
-          ctx?.drawImage(img, 0, 0, canvas.width, canvas.height);
-          
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
-          setForm(prev => ({ ...prev, [field]: compressedBase64 }));
-        };
-        img.src = reader.result as string;
+          const result = await res.json();
+          if (result.success) {
+            setForm(prev => ({ ...prev, [field]: result.url }));
+          } else {
+            alert("Upload failed: " + result.error);
+            setForm(prev => ({ ...prev, [field]: "" }));
+          }
+        } catch (error) {
+          console.error("Upload error:", error);
+          alert("Something went wrong during upload.");
+          setForm(prev => ({ ...prev, [field]: "" }));
+        }
       };
       reader.readAsDataURL(file);
     }

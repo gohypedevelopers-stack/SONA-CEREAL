@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -23,36 +20,36 @@ model User {
 }
 
 model Submission {
-  id           String   @id @default(uuid())
-  userId       String?
-  phone        String
-  name         String?
-  shopName     String?
-  city         String?
-  capacity     String
-  invoiceNo    String?
+  id              String   @id @default(uuid())
+  userId          String?
+  phone           String
+  name            String?
+  shopName        String?
+  city            String?
+  capacity        String
+  invoiceNo       String?
   invoiceNo_input String?
-  invoiceDate  String?
-  aadharFront  String?
-  aadharBack   String?
-  status       String   @default("pending") // pending, accepted, rejected, claimed
-  claimedGift  String?
-  timestamp    DateTime @default(now())
+  invoiceDate     String?
+  aadharFront     String?
+  aadharBack      String?
+  status          String   @default("pending")
+  claimedGift     String?
+  timestamp       DateTime @default(now())
 }
 
 model Settings {
-  id                  String   @id @default("global")
-  rewardsDistributed  Boolean  @default(false)
-  updatedAt           DateTime @updatedAt
+  id                 String   @id @default("global")
+  rewardsDistributed Boolean  @default(false)
+  updatedAt          DateTime @updatedAt
 }
 
 model Slab {
-  id          String   @id @default(uuid())
-  level       String   // e.g. "01"
-  target      Int      // e.g. 200
-  giftA       String
-  giftAImg    String?
-  giftB       String
-  giftBImg    String?
-  updatedAt   DateTime @updatedAt
+  id        String   @id @default(uuid())
+  level     String
+  target    Int
+  giftA     String
+  giftAImg  String?
+  giftB     String
+  giftBImg  String?
+  updatedAt DateTime @updatedAt
 }

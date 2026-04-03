@@ -11,41 +11,43 @@ export default function RedeemPage() {
    const [selectedGift, setSelectedGift] = useState<string | null>(null);
    const [settings, setSettings] = useState<any>(null);
    const [totalAcceptedQty, setTotalAcceptedQty] = useState(0);
-   const [slabs, setSlabs] = useState<any[]>([]);
+   const [loading, setLoading] = useState(false);
+   const STATIC_SLABS = [
+      { id: "s1", level: "1", target: 200, giftA: "MICROWAVE", giftAImg: "https://images.unsplash.com/photo-1589003077984-894e133dabab?q=80&w=500&auto=format&fit=crop", giftB: "JBL SPEAKER", giftBImg: "https://images.unsplash.com/photo-1558089628-f45017cfe2b2?q=80&w=500&auto=format&fit=crop" },
+      { id: "s2", level: "2", target: 300, giftA: "IPHONE", giftAImg: "/reward-iphone.png", giftB: "TVS APACHE", giftBImg: "/reward-bike.png" },
+      { id: "s3", level: "3", target: 500, giftA: "SMART PHONE NOTHING", giftAImg: "/reward-phone.png", giftB: "SMART TV SONY", giftBImg: "/reward-tv.png" },
+      { id: "s4", level: "4", target: 1000, giftA: "IPHONE 16 PRO", giftAImg: "/reward-iphone.png", giftB: "REFRIGERATOR", giftBImg: "/reward-fridge.png" }
+   ];
 
    const checkStatus = async () => {
       if (!phone) return;
       const cleanPhone = phone.replace(/\D/g, '');
       setSearched(true);
+      setLoading(true);
       try {
-         // Fetch submissions
-         const subRes = await fetch(`/api/submissions?phone=${encodeURIComponent(cleanPhone)}`);
-         const subData = await subRes.json();
-         
-         // Fetch settings
-         const settingsRes = await fetch('/api/settings');
-         const settingsData = await settingsRes.json();
+         const [subRes, settingsRes] = await Promise.all([
+            fetch(`/api/submissions?phone=${encodeURIComponent(cleanPhone)}`),
+            fetch('/api/settings')
+         ]);
+
+         const [subData, settingsData] = await Promise.all([
+            subRes.json(),
+            settingsRes.json()
+         ]);
+
          setSettings(settingsData);
 
-         // Fetch slabs
-         const slabsRes = await fetch('/api/slabs');
-         const slabsData = await slabsRes.json();
-         setSlabs(slabsData);
-
-         if (subData.submissions) {
+         if (subData.submissions && subData.submissions.length > 0) {
             const acceptedSubs = subData.submissions.filter((s: any) => s.status === 'accepted' || s.status === 'claimed');
             const total = acceptedSubs.reduce((acc: number, s: any) => acc + (parseFloat(s.capacity) || 0), 0);
             setTotalAcceptedQty(total);
 
-            // Find if any is already claimed
             const claimedSub = acceptedSubs.find((s: any) => s.status === 'claimed');
             if (claimedSub) {
                setSelectedGift(claimedSub.claimedGift);
                setUserData({ ...claimedSub, totalQty: total });
-            } else if (acceptedSubs.length > 0) {
-               setUserData({ ...acceptedSubs[0], totalQty: total });
             } else {
-               setUserData({ totalQty: 0, status: 'none' });
+               setUserData({ ...subData.submissions[0], totalQty: total });
             }
             setError("");
          } else {
@@ -54,12 +56,13 @@ export default function RedeemPage() {
          }
       } catch (err) {
          setError("Connection error.");
+      } finally {
+         setLoading(false);
       }
    };
 
    useEffect(() => {
       fetch('/api/settings').then(res => res.json()).then(setSettings).catch(console.error);
-      fetch('/api/slabs').then(res => res.json()).then(setSlabs).catch(console.error);
 
       const storedPhone = localStorage.getItem("current_user_phone");
       if (storedPhone) {
@@ -69,19 +72,14 @@ export default function RedeemPage() {
    }, []);
 
    const getSlabData = (totalQty: number) => {
-      if (!slabs || !Array.isArray(slabs) || slabs.length === 0) return { level: "--", target: totalQty, giftA: "PENDING", giftAImg: "", giftB: "VALIDATION", giftBImg: "" };
-      
-      // Slabs come sorted by target ASC
-      const achievedSlabs = slabs.filter(s => totalQty >= s.target);
-      if (achievedSlabs.length === 0) return { level: "--", target: totalQty, giftA: "PENDING", giftAImg: "", giftB: "VALIDATION", giftBImg: "" };
-      
-      // Return the highest achieved slab
+      const achievedSlabs = STATIC_SLABS.filter(s => totalQty >= s.target);
+      if (achievedSlabs.length === 0) return null;
       return achievedSlabs[achievedSlabs.length - 1];
    };
 
    const getGiftOptions = (totalQty: number) => {
       const data = getSlabData(totalQty);
-      if (!data.giftA) return [];
+      if (!data) return [];
       return [
          { name: data.giftA, img: data.giftAImg },
          { name: data.giftB, img: data.giftBImg }
@@ -162,6 +160,17 @@ export default function RedeemPage() {
                            <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-8 rounded-[2rem] font-headline font-black uppercase text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
                         </div>
                      </div>
+                  ) : loading ? (
+                     <div className="py-24 text-center space-y-8 animate-in fade-in duration-700">
+                        <div className="relative w-24 h-24 mx-auto">
+                           <div className="absolute inset-0 border-4 border-zinc-100 rounded-full"></div>
+                           <div className="absolute inset-0 border-4 border-t-[#CBA35C] rounded-full animate-spin"></div>
+                        </div>
+                        <div className="space-y-2">
+                           <h3 className="font-headline font-black text-2xl uppercase italic tracking-tighter text-zinc-900">Synchronizing Data</h3>
+                           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Verifying secure database node</p>
+                        </div>
+                     </div>
                   ) : userData ? (
                      <div className="space-y-16 animate-in slide-in-from-bottom-8 duration-700">
                         
@@ -201,7 +210,9 @@ export default function RedeemPage() {
                                  </div>
                                  <h3 className="font-headline font-black text-4xl md:text-7xl italic uppercase text-zinc-900 tracking-tighter leading-none">
                                     SELECT YOUR <br/><span className="text-[#CBA35C]">ELITE GIFT.</span>
-                                    <div className="text-[12px] md:text-sm font-black text-[#CBA35C] tracking-[0.6em] mt-4 opacity-80">— SLAB {getSlabData(totalAcceptedQty).level} —</div>
+                                    <div className="text-[12px] md:text-sm font-black text-[#CBA35C] tracking-[0.6em] mt-4 opacity-80">
+                                       — {getSlabData(totalAcceptedQty)?.level ? `SLAB ${getSlabData(totalAcceptedQty)?.level}` : "NO MILESTONE REACHED"} —
+                                    </div>
                                  </h3>
 
                                  <p className="text-zinc-500 font-medium text-lg italic tracking-widest uppercase">
@@ -209,12 +220,22 @@ export default function RedeemPage() {
                                  </p>
                               </div>
 
-                              {selectedGift ? (
+                              {!getSlabData(totalAcceptedQty) ? (
+                                 <div className="max-w-xl mx-auto p-12 rounded-[4rem] border-2 border-dashed border-zinc-200 bg-zinc-50 text-center space-y-6">
+                                    <span className="material-symbols-outlined text-6xl text-zinc-200">workspace_premium</span>
+                                    <h4 className="text-2xl font-headline font-black uppercase italic tracking-tighter text-zinc-400">
+                                       Sorry, you are not rewarded any gift yet.
+                                    </h4>
+                                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-loose">
+                                       Keep submitting your invoices to reach the first milestone of {STATIC_SLABS[0]?.target || 200} QTL!
+                                    </p>
+                                 </div>
+                              ) : selectedGift ? (
                                  <div className="max-w-xl mx-auto p-12 rounded-[4rem] border-4 border-[#CBA35C] bg-zinc-50 text-center space-y-8 animate-in zoom-in-95 duration-500">
                                     <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#CBA35C]">YOUR SELECTION</span>
                                     <div className="aspect-square rounded-[3rem] bg-white flex items-center justify-center p-8 shadow-xl">
-                                       { (getSlabData(totalAcceptedQty).giftA === selectedGift ? getSlabData(totalAcceptedQty).giftAImg : getSlabData(totalAcceptedQty).giftBImg) ? (
-                                          <img src={getSlabData(totalAcceptedQty).giftA === selectedGift ? getSlabData(totalAcceptedQty).giftAImg : getSlabData(totalAcceptedQty).giftBImg} className="w-full h-full object-contain" />
+                                       { (getSlabData(totalAcceptedQty)?.giftA === selectedGift ? getSlabData(totalAcceptedQty)?.giftAImg : getSlabData(totalAcceptedQty)?.giftBImg) ? (
+                                          <img src={getSlabData(totalAcceptedQty)?.giftA === selectedGift ? getSlabData(totalAcceptedQty)?.giftAImg : getSlabData(totalAcceptedQty)?.giftBImg} className="w-full h-full object-contain" />
                                        ) : (
                                           <div className="text-zinc-200">
                                             <span className="material-symbols-outlined text-8xl">card_giftcard</span>
@@ -269,18 +290,13 @@ export default function RedeemPage() {
                   <p className="hidden md:block text-zinc-400 text-right font-medium italic text-lg max-w-xs">A comprehensive portfolio of the assets available at each performance level.</p>
                </div>
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto text-center">
-                  {[
-                     { wt: "200", sale: "11L", gift: "MICROWAVE / JBL", img: "https://images.unsplash.com/photo-1589003077984-894e133dabab?q=80&w=500&auto=format&fit=crop" },
-                     { wt: "500", sale: "27.5L", gift: "SMART TV / SOFA", img: "/reward-tv.png" },
-                     { wt: "1000", sale: "55L", gift: "IPHONE 16 PRO / FRIDGE", img: "/reward-iphone.png" },
-                     { wt: "2500", sale: "1.37C", gift: "BIKE / 25G GOLD", img: "/reward-bike.png" },
-                  ].map((slab) => (
-                     <div key={slab.wt} className="group p-8 bg-zinc-50 rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center">
+                  {STATIC_SLABS.map((slab) => (
+                     <div key={slab.id} className="group p-8 bg-zinc-50 rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center">
                         <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-white shadow-xl flex items-center justify-center p-4 text-center">
-                           <img src={slab.img} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.wt} />
+                           <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
                         </div>
-                        <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-4">{slab.wt} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
-                        <span className="text-[9px] font-black text-zinc-950 uppercase tracking-widest border-t border-zinc-100 pt-4 w-full">{slab.gift}</span>
+                        <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-4">{slab.target} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
+                        <span className="text-[9px] font-black text-zinc-950 uppercase tracking-widest border-t border-zinc-100 pt-4 w-full">{slab.giftA} / {slab.giftB}</span>
                      </div>
                   ))}
                </div>
