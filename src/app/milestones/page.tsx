@@ -1,22 +1,22 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
-const SLAB_DATA = [
-   { weight: 200, sale: "11,00,000", items: ["Microwave", "JBL SPEAKER"], color: "border-zinc-100" },
-   { weight: 300, sale: "16,50,000", items: ["TABLET", "AIR PURIFIER"], color: "border-zinc-100" },
-   { weight: 500, sale: "27,50,000", items: ["NOTHING PHONE", "SMART TV"], color: "border-zinc-100" },
-   { weight: 750, sale: "41,25,000", items: ["LAPTOP ACER", "CANON DSLR"], color: "border-zinc-900" },
-   { weight: 1000, sale: "55,00,000", items: ["IPHONE 16 PRO", "DOUBLE DOOR FRIDGE"], color: "border-primary" },
-   { weight: 1250, sale: "68,75,000", items: ["TVS APACHE BIKE"], color: "border-primary" },
-   { weight: 1500, sale: "82,50,000", items: ["10 GM GOLD COIN 22K"], color: "border-primary" },
-   { weight: 1750, sale: "96,25,000", items: ["12 GM GOLD 22K"], color: "border-primary" },
-   { weight: 2000, sale: "1,10,00,000", items: ["18 GM GOLD 22K"], color: "border-primary" },
-   { weight: 2500, sale: "1,37,50,000", items: ["25 GM GOLD 22K"], color: "border-primary" },
-];
-
 export default function MilestonesPage() {
+   const [slabs, setSlabs] = useState<any[]>([]);
+   const [loading, setLoading] = useState(true);
+
+   useEffect(() => {
+      fetch('/api/slabs')
+         .then(res => res.json())
+         .then(data => {
+            setSlabs(Array.isArray(data) ? data : []);
+         })
+         .catch(err => console.error(err))
+         .finally(() => setLoading(false));
+   }, []);
+
    return (
       <div className="min-h-screen bg-white font-body selection:bg-[#CBA35C] selection:text-black pb-32">
          {/* Subtle Background Pattern */}
@@ -49,71 +49,84 @@ export default function MilestonesPage() {
 
             {/* Milestone Grid */}
             <div className="space-y-6 max-w-6xl mx-auto pb-32 px-4">
-               {SLAB_DATA.map((slab, idx) => (
-                  <div
-                     key={idx}
-                     className="group bg-white rounded-3xl md:rounded-full border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-8 md:py-6 px-8 md:px-16 relative overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.01] hover:border-[#CBA35C]/30 duration-500"
-                  >
-                     {/* Restored High-Altitude Tag - Now a subtle notch */}
-                     {idx >= 4 && (
-                        <div className="absolute top-0 right-12 md:right-32 py-1.5 px-6 md:px-10 bg-zinc-900 text-[#CBA35C] font-black text-[9px] uppercase tracking-[0.4em] rounded-b-2xl italic flex items-center gap-2 z-20">
-                           <span className="w-1.5 h-1.5 bg-[#CBA35C] rounded-full animate-pulse"></span>
-                           Elite
-                        </div>
-                     )}
-
-                     <div className="grid grid-cols-1 md:grid-cols-12 items-center w-full relative z-10 gap-8 md:gap-4">
-                        {/* Tier Indicator */}
-                        <div className="col-span-1 md:col-span-2 md:border-r border-zinc-100 flex flex-col justify-center items-center md:items-start">
-                           <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5">SLAB</span>
-                           <h3 className="text-5xl md:text-6xl font-headline font-black text-zinc-100 italic leading-none group-hover:text-[#CBA35C]/10 transition-all duration-500">
-                              {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
-                           </h3>
-                        </div>
-
-                        {/* Milestone Target */}
-                        <div className="col-span-1 md:col-span-3 md:border-r border-zinc-100 md:px-8 flex flex-col items-center md:items-start text-center md:text-left">
-                           <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5 block opacity-60">TARGET</span>
-                           <div className="flex items-baseline gap-2 group-hover:translate-x-1 transition-transform duration-500">
-                              <span className="text-5xl md:text-5xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{slab.weight}</span>
-                              <span className="text-zinc-400 text-xs font-black uppercase">QTL</span>
+               {loading ? (
+                  <div className="text-center py-24">
+                     <div className="inline-block w-12 h-12 border-4 border-zinc-100 border-t-[#CBA35C] rounded-full animate-spin"></div>
+                     <p className="mt-4 text-xs font-black uppercase tracking-widest text-zinc-400">Loading Tiers...</p>
+                  </div>
+               ) : slabs.length === 0 ? (
+                  <div className="text-center py-24 bg-zinc-50 rounded-[3rem] border border-zinc-100">
+                     <p className="text-zinc-400 font-headline font-black text-2xl uppercase italic tracking-tighter">No Reward Slabs Configured Yet.</p>
+                  </div>
+               ) : (
+                  slabs.map((slab, idx) => (
+                     <div
+                        key={slab.id}
+                        className="group bg-white rounded-3xl md:rounded-full border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-8 md:py-6 px-8 md:px-16 relative overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.01] hover:border-[#CBA35C]/30 duration-500"
+                     >
+                        {/* Elite Tag for higher tiers */}
+                        {slab.target >= 750 && (
+                           <div className="absolute top-0 right-12 md:right-32 py-1.5 px-6 md:px-10 bg-zinc-900 text-[#CBA35C] font-black text-[9px] uppercase tracking-[0.4em] rounded-b-2xl italic flex items-center gap-2 z-20">
+                              <span className="w-1.5 h-1.5 bg-[#CBA35C] rounded-full animate-pulse"></span>
+                              Elite
                            </div>
-                        </div>
+                        )}
 
-                        {/* Portfolio Options */}
-                        <div className="col-span-1 md:col-span-7 flex flex-col md:flex-row items-center md:justify-end gap-6 md:gap-12 group-hover:translate-x-[-4px] transition-transform duration-500">
-                           <div className="flex flex-col items-center md:items-end w-full">
-                              <span className="text-zinc-300 text-[10px] font-black uppercase tracking-[0.4em] mb-3 block">PORTFOLIO</span>
-                              <div className="flex flex-wrap items-center gap-4 justify-center md:justify-end">
-                                 <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
-                                    {slab.items[0]}
-                                 </h4>
-                                 {slab.items[1] && (
-                                    <>
-                                       <span className="text-zinc-300 text-[11px] font-black italic tracking-[0.1em] uppercase bg-zinc-50 px-3 py-1 rounded-md border border-zinc-100">OR</span>
+                        <div className="grid grid-cols-1 md:grid-cols-12 items-center w-full relative z-10 gap-8 md:gap-4">
+                           {/* Tier Indicator */}
+                           <div className="col-span-1 md:col-span-2 md:border-r border-zinc-100 flex flex-col justify-center items-center md:items-start text-center md:text-left">
+                              <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5">SLAB</span>
+                              <h3 className="text-5xl md:text-6xl font-headline font-black text-zinc-100 italic leading-none group-hover:text-[#CBA35C]/10 transition-all duration-500">
+                                 {slab.level}
+                              </h3>
+                           </div>
+
+                           {/* Milestone Target */}
+                           <div className="col-span-1 md:col-span-3 md:border-r border-zinc-100 md:px-8 flex flex-col items-center md:items-start text-center md:text-left">
+                              <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5 block opacity-60">TARGET</span>
+                              <div className="flex items-baseline gap-2 group-hover:translate-x-1 transition-transform duration-500">
+                                 <span className="text-5xl md:text-5xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{slab.target}</span>
+                                 <span className="text-zinc-400 text-xs font-black uppercase">QTL</span>
+                              </div>
+                           </div>
+
+                           {/* Portfolio Options */}
+                           <div className="col-span-1 md:col-span-7 flex flex-col md:flex-row items-center md:justify-end gap-6 md:gap-12 group-hover:translate-x-[-4px] transition-transform duration-500">
+                              <div className="flex flex-col items-center md:items-end w-full">
+                                 <span className="text-zinc-300 text-[10px] font-black uppercase tracking-[0.4em] mb-3 block">PORTFOLIO</span>
+                                 <div className="flex flex-wrap items-center gap-4 justify-center md:justify-end">
+                                    <div className="flex items-center gap-4">
                                        <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
-                                          {slab.items[1]}
+                                          {slab.giftA}
                                        </h4>
-                                    </>
-                                 )}
+                                    </div>
+                                    
+                                    <span className="text-zinc-300 text-[11px] font-black italic tracking-[0.1em] uppercase bg-zinc-50 px-3 py-1 rounded-md border border-zinc-100">OR</span>
+                                    
+                                    <div className="flex items-center gap-4">
+                                       <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
+                                          {slab.giftB}
+                                       </h4>
+                                    </div>
+                                 </div>
                               </div>
                            </div>
                         </div>
-                     </div>
 
-                     {/* Background Number Accent */}
-                     <span className="absolute -bottom-10 right-10 text-[12rem] font-headline font-black text-zinc-50 leading-none select-none -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                        {idx + 1}
-                     </span>
-                  </div>
-               ))}
+                        {/* Background Number Accent */}
+                        <span className="absolute -bottom-10 right-10 text-[12rem] font-headline font-black text-zinc-50 leading-none select-none -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
+                           {idx + 1}
+                        </span>
+                     </div>
+                  ))
+               )}
             </div>
 
             {/* Global CTA - Expanded & Refined */}
-            <div className="mt-24 relative group font-body max-w-5xl mx-auto">
+            <div className="mt-24 relative group font-body max-w-5xl mx-auto text-center md:text-left">
                <div className="absolute inset-0 bg-[#CBA35C] rounded-[3rem] blur-3xl opacity-5"></div>
                <div className="relative bg-zinc-900 p-16 md:p-24 rounded-[3rem] text-center overflow-hidden border border-white/5 shadow-2xl">
-                  <div className="max-w-3xl mx-auto space-y-8 relative z-10">
+                  <div className="max-w-3xl mx-auto space-y-8 relative z-10 text-center">
                      <h2 className="text-3xl md:text-5xl font-headline font-black italic uppercase text-white tracking-widest leading-[0.8]">
                         SCALE <br />
                         THROUGH <span className="text-[#CBA35C]">LEGACY.</span>

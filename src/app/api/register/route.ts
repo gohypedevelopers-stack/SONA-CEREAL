@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { saveUser, getUsers } from '@/lib/db';
+import { saveUser, getUsers } from '@/lib/data';
 import fs from 'fs';
 import path from 'path';
 

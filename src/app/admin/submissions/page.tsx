@@ -7,6 +7,9 @@ export default function AdminSubmissions() {
    const [filter, setFilter] = useState("all");
    const [selectedSubmission, setSelectedSubmission] = useState<any | null>(null);
 
+   const [isLocked, setIsLocked] = useState(true);
+   const [loadingSettings, setLoadingSettings] = useState(true);
+
    useEffect(() => {
       fetch("/api/admin/submissions")
          .then(res => res.json())
@@ -14,6 +17,13 @@ export default function AdminSubmissions() {
             setSubmissions(Array.isArray(data) ? data : []);
          })
          .catch(err => console.error("Admin fetch error:", err));
+
+      fetch("/api/settings")
+         .then(res => res.json())
+         .then(data => {
+            setIsLocked(!data.rewardsDistributed);
+         })
+         .finally(() => setLoadingSettings(false));
    }, []);
 
    const handleStatusChange = async (id: string, newStatus: string) => {
@@ -47,7 +57,7 @@ export default function AdminSubmissions() {
    };
 
    return (
-      <main className="p-8 md:p-12 relative min-h-screen">
+      <main className="p-8 md:p-12 relative min-h-screen bg-zinc-50">
          {/* Detail Modal Overlay */}
          {selectedSubmission && (
             <div className="fixed inset-0 z-50 flex items-center justify-center p-4 md:p-10">
@@ -81,13 +91,10 @@ export default function AdminSubmissions() {
 
                            <div className="grid grid-cols-2 gap-8">
                               <div>
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Claimed Capacity</p>
-                                 <p className="text-2xl font-black text-zinc-900 italic tracking-tighter">{selectedSubmission.capacity} Qtl+</p>
+                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Quantity</p>
+                                 <p className="text-2xl font-black text-zinc-900 italic tracking-tighter">{selectedSubmission.capacity} Qtl</p>
                               </div>
-                              <div>
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Proposed Gift</p>
-                                 <p className="text-sm font-black text-[#CBA35C] uppercase italic tracking-widest">{selectedSubmission.claimedGift || "---"}</p>
-                              </div>
+
                               <div>
                                  <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-1">Invoiced Date</p>
                                  <p className="text-lg font-bold text-zinc-900 tracking-tight italic">{selectedSubmission.invoiceDate || new Date(selectedSubmission.timestamp).toLocaleDateString()}</p>
@@ -101,10 +108,16 @@ export default function AdminSubmissions() {
                            <div className="pt-8 border-t border-zinc-100">
                               <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400 mb-4">Verification Metadata</p>
                               <div className="space-y-4">
-                                 <div className="flex items-center justify-between text-xs">
-                                    <span className="text-zinc-500 font-medium italic">Retailer Contact</span>
-                                    <span className="text-zinc-900 font-black">{selectedSubmission.phone}</span>
-                                 </div>
+                                  <div className="flex items-center justify-between text-xs">
+                                     <span className="text-zinc-500 font-medium italic">Retailer Contact</span>
+                                     <span className="text-zinc-900 font-black">{selectedSubmission.phone}</span>
+                                  </div>
+                                  {selectedSubmission.claimedGift && (
+                                     <div className="flex items-center justify-between text-xs pt-4 border-t border-zinc-100 mt-4">
+                                        <span className="text-indigo-500 font-black italic uppercase tracking-widest">CLAIMED GIFT</span>
+                                        <span className="text-zinc-900 font-black text-sm italic">{selectedSubmission.claimedGift}</span>
+                                     </div>
+                                  )}
                               </div>
                            </div>
 
@@ -164,16 +177,43 @@ export default function AdminSubmissions() {
                <p className="text-zinc-500 font-medium">Manage and validate incoming retailer registrations.</p>
             </div>
 
-            <div className="flex gap-2">
-               {["all", "pending", "accepted", "rejected"].map(s => (
-                  <button
-                     key={s}
-                     onClick={() => setFilter(s)}
-                     className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${filter === s ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-400 border border-zinc-200 hover:border-zinc-900'}`}
-                  >
-                     {s}
-                  </button>
-               ))}
+             <div className="flex items-center gap-6">
+                {!loadingSettings && (
+                   <button 
+                      onClick={async () => {
+                         const confirmed = window.confirm(`Are you sure you want to ${isLocked ? 'unlock' : 'lock'} the redeem portal?`);
+                         if (confirmed) {
+                            try {
+                               await fetch('/api/settings', {
+                                  method: 'PATCH',
+                                  headers: { 'Content-Type': 'application/json' },
+                                  body: JSON.stringify({ rewardsDistributed: isLocked })
+                               });
+                               setIsLocked(!isLocked);
+                               alert(`Redeem portal ${isLocked ? 'unlocked' : 'locked'} successfully!`);
+                            } catch (err) {
+                               alert("Error updating settings.");
+                            }
+                         }
+                      }}
+                      className={`px-8 py-3 rounded-xl font-headline font-black uppercase text-xs transition-all shadow-lg flex items-center gap-2 ${isLocked ? 'bg-[#CBA35C] text-black hover:bg-[#B08644]' : 'bg-red-600 text-white hover:bg-red-700'}`}
+                   >
+                      <span className="material-symbols-outlined text-lg">{isLocked ? 'workspace_premium' : 'lock'}</span>
+                      {isLocked ? 'Distribute Rewards' : 'Lock Redeem Page'}
+                   </button>
+                )}
+
+               <div className="flex gap-2">
+                  {["all", "pending", "accepted", "rejected"].map(s => (
+                     <button
+                        key={s}
+                        onClick={() => setFilter(s)}
+                        className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all ${filter === s ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-400 border border-zinc-200 hover:border-zinc-900'}`}
+                     >
+                        {s}
+                     </button>
+                  ))}
+               </div>
             </div>
          </header>
 
@@ -199,17 +239,17 @@ export default function AdminSubmissions() {
                   <thead className="bg-zinc-900 text-white">
                      <tr>
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest">Retailer / Shop</th>
-                        <th className="p-6 text-[10px] font-black uppercase tracking-widest">Capacity</th>
-                        <th className="p-6 text-[10px) font-black uppercase tracking-widest">Contact / ID</th>
+                        <th className="p-6 text-[10px] font-black uppercase tracking-widest">Quantity</th>
+                        <th className="p-6 text-[10px] font-black uppercase tracking-widest">Contact / ID</th>
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest">Status</th>
-                        <th className="p-6 text-[10px] font-black uppercase tracking-widest">Gift</th>
+                        <th className="p-6 text-[10px] font-black uppercase tracking-widest">Claimed Gift</th>
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest text-right">Actions</th>
                      </tr>
                   </thead>
                   <tbody className="divide-y divide-zinc-100">
                      {filteredSubmissions.length === 0 ? (
                         <tr>
-                           <td colSpan={6} className="p-12 text-center text-zinc-400 font-medium italic">No submissions found in this category.</td>
+                           <td colSpan={5} className="p-12 text-center text-zinc-400 font-medium italic">No submissions found in this category.</td>
                         </tr>
                      ) : (
                         filteredSubmissions.map((sub) => (
@@ -235,18 +275,27 @@ export default function AdminSubmissions() {
                                  </div>
                               </td>
                                <td className="p-6">
-                                  <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${
-                                    sub.status === 'claimed' ? 'bg-indigo-50 border-indigo-100 text-indigo-600' :
-                                    sub.status === 'accepted' ? 'bg-green-50 border-green-100 text-green-600' :
-                                    sub.status === 'rejected' ? 'bg-red-50 border-red-100 text-red-600' :
-                                       'bg-orange-50 border-orange-100 text-orange-600'
-                                    }`}>
-                                    {sub.status}
-                                 </span>
-                              </td>
-                              <td className="p-6">
-                                 <span className="text-[10px] font-black uppercase text-[#CBA35C] tracking-widest">{sub.claimedGift || "---"}</span>
-                              </td>
+                                  <div className="flex flex-col gap-2">
+                                     <span className={`inline-flex px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border w-fit ${sub.status === 'claimed' ? 'bg-indigo-50 border-indigo-100 text-indigo-600' :
+                                        sub.status === 'accepted' ? 'bg-green-50 border-green-100 text-green-600' :
+                                           sub.status === 'rejected' ? 'bg-red-50 border-red-100 text-red-600' :
+                                              'bg-orange-50 border-orange-100 text-orange-600'
+                                        }`}>
+                                        {sub.status}
+                                     </span>
+                                  </div>
+                               </td>
+                               <td className="p-6">
+                                  {sub.claimedGift ? (
+                                     <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50/50 px-3 py-1.5 rounded-lg border border-indigo-100 italic flex items-center gap-2 w-fit">
+                                        <span className="material-symbols-outlined text-sm">redeem</span>
+                                        {sub.claimedGift}
+                                     </span>
+                                  ) : (
+                                     <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest italic">—</span>
+                                  )}
+                               </td>
+
                               <td className="p-6 text-right">
                                  <div className="flex justify-end items-center gap-4">
                                     <button

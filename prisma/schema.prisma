@@ -11,28 +11,48 @@ datasource db {
 }
 
 model User {
-  id          String       @id @default(uuid())
-  phone       String       @unique
-  name        String?
-  shopName    String?
-  city        String?
-  aadharFront String?
-  aadharBack  String?
-  createdAt   DateTime     @default(now())
-  registeredAt String?      @default("")
-  submissions Submission[]
+  id           String   @id @default(uuid())
+  phone        String   @unique
+  name         String
+  shopName     String
+  city         String
+  aadharFront  String?
+  aadharBack   String?
+  createdAt    DateTime @default(now())
+  registeredAt DateTime @default(now())
 }
 
 model Submission {
   id           String   @id @default(uuid())
-  user         User     @relation(fields: [userId], references: [id])
-  userId       String
-  invoiceNo    String
-  invoiceDate  String
+  userId       String?
+  phone        String
+  name         String?
+  shopName     String?
+  city         String?
   capacity     String
-  aadharFront  String // Path to image
-  aadharBack   String // Path to image
+  invoiceNo    String?
+  invoiceNo_input String?
+  invoiceDate  String?
+  aadharFront  String?
+  aadharBack   String?
   status       String   @default("pending") // pending, accepted, rejected, claimed
   claimedGift  String?
   timestamp    DateTime @default(now())
+}
+
+model Settings {
+  id                  String   @id @default("global")
+  rewardsDistributed  Boolean  @default(false)
+  updatedAt           DateTime @updatedAt
+}
+
+model Slab {
+  id          String   @id @default(uuid())
+  level       String   // e.g. "01"
+  target      Int      // e.g. 200
+  giftA       String
+  giftAImg    String?
+  giftB       String
+  giftBImg    String?
+  updatedAt   DateTime @updatedAt
 }

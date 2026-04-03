@@ -108,22 +108,19 @@ export default function InvoiceDetailsPage() {
 
                      <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
-                           <span className="material-symbols-outlined text-sm text-[#CBA35C]">reorder</span> Weight Category
+                           <span className="material-symbols-outlined text-sm text-[#CBA35C]">reorder</span> Quantity (Qtl)
                         </label>
-                        <select
+                        <input
                            name="capacity"
                            value={formData.capacity}
                            onChange={handleInputChange}
-                           className="w-full p-6 rounded-3xl bg-white border border-zinc-100 font-medium outline-none focus:border-[#CBA35C] appearance-none text-lg text-zinc-900 shadow-inner"
+                           className="w-full p-6 rounded-3xl bg-white border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 shadow-inner"
+                           placeholder="Enter quantity (e.g. 189.9)"
+                           type="text"
                            required
-                        >
-                           <option value="">Select Achievement Slab</option>
-                           <option value="200">200 Qtl (Slab 01)</option>
-                           <option value="500">500 Qtl (Slab 02)</option>
-                           <option value="1000">1000 Qtl (Slab 03)</option>
-                           <option value="2500">2500 Qtl (Slab 04)</option>
-                        </select>
+                        />
                      </div>
+
                   </div>
 
                   <div className="pt-8 space-y-6">

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { getSubmissions, updateSubmission, getUsers, saveSubmission } from '@/lib/db';
+import { getSubmissions, updateSubmission, getUsers, saveSubmission } from '@/lib/data';
 
 export async function GET(req: Request) {
   try {

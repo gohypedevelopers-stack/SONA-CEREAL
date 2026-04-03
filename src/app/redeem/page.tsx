@@ -9,85 +9,88 @@ export default function RedeemPage() {
    const [error, setError] = useState("");
    const [searched, setSearched] = useState(false);
    const [selectedGift, setSelectedGift] = useState<string | null>(null);
+   const [settings, setSettings] = useState<any>(null);
+   const [totalAcceptedQty, setTotalAcceptedQty] = useState(0);
+   const [slabs, setSlabs] = useState<any[]>([]);
 
-    const checkStatus = async () => {
-       if (!phone) return;
-       const cleanPhone = phone.replace(/\D/g, '');
-       setSearched(true);
-       try {
-          const res = await fetch(`/api/submissions?phone=${encodeURIComponent(cleanPhone)}`);
-          const data = await res.json();
-          if (data.submissions && data.submissions.length > 0) {
-             // Pick the latest submission for redemption (API returns desc order, so index 0 is newest)
-             const latest = data.submissions[0];
-             setUserData(latest);
-             setSelectedGift(latest.claimedGift || null);
-             setError("");
-          } else {
-             setError("No active registration found.");
-             setUserData(null);
-          }
-       } catch (err) {
-          setError("Connection error.");
-       }
-    };
+   const checkStatus = async () => {
+      if (!phone) return;
+      const cleanPhone = phone.replace(/\D/g, '');
+      setSearched(true);
+      try {
+         // Fetch submissions
+         const subRes = await fetch(`/api/submissions?phone=${encodeURIComponent(cleanPhone)}`);
+         const subData = await subRes.json();
+         
+         // Fetch settings
+         const settingsRes = await fetch('/api/settings');
+         const settingsData = await settingsRes.json();
+         setSettings(settingsData);
 
-   useEffect(() => {
-      const storedPhone = localStorage.getItem("current_user_phone");
-      if (storedPhone) {
-         const clean = storedPhone.replace(/\D/g, '');
-         setPhone(storedPhone);
-         fetch(`/api/submissions?phone=${encodeURIComponent(clean)}`)
-            .then(res => res.json())
-            .then(data => {
-               if (data.submissions && data.submissions.length > 0) {
-                  const latest = data.submissions[0];
-                  setUserData(latest);
-                  setSelectedGift(latest.claimedGift || null);
-                  setSearched(true);
-               }
-            });
-      }
-   }, []);
+         // Fetch slabs
+         const slabsRes = await fetch('/api/slabs');
+         const slabsData = await slabsRes.json();
+         setSlabs(slabsData);
 
-   const getSlabData = (capacity: string) => {
-      switch (capacity) {
-         case "200": return {
-            level: "01", target: "200",
-            giftA: "MICROWAVE", giftAImg: "https://images.unsplash.com/photo-1574269909861-12bf6019551c?q=80&w=500&auto=format&fit=crop",
-            giftB: "JBL SPEAKER", giftBImg: "https://images.unsplash.com/photo-1589003077984-894e133dabab?q=80&w=500&auto=format&fit=crop"
-         };
-         case "500": return {
-            level: "02", target: "500",
-            giftA: "SMART TV", giftAImg: "/reward-tv.png",
-            giftB: "EXECUTIVE SOFA", giftBImg: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?q=80&w=500&auto=format&fit=crop"
-         };
-         case "1000": return {
-            level: "03", target: "1000",
-            giftA: "IPHONE 16 PRO", giftAImg: "/reward-iphone.png",
-            giftB: "DOUBLE DOOR FRIDGE", giftBImg: "https://images.unsplash.com/photo-1571175439180-dd0b60b731dd?q=80&w=500&auto=format&fit=crop"
-         };
-         case "2500": return {
-            level: "04", target: "2500",
-            giftA: "TVS APACHE", giftAImg: "/reward-bike.png",
-            giftB: "25G GOLD", giftBImg: "/reward-gold.png"
-         };
-         default: return { level: "--", target: capacity || "0", giftA: "PENDING", giftAImg: "", giftB: "VALIDATION", giftBImg: "" };
+         if (subData.submissions) {
+            const acceptedSubs = subData.submissions.filter((s: any) => s.status === 'accepted' || s.status === 'claimed');
+            const total = acceptedSubs.reduce((acc: number, s: any) => acc + (parseFloat(s.capacity) || 0), 0);
+            setTotalAcceptedQty(total);
+
+            // Find if any is already claimed
+            const claimedSub = acceptedSubs.find((s: any) => s.status === 'claimed');
+            if (claimedSub) {
+               setSelectedGift(claimedSub.claimedGift);
+               setUserData({ ...claimedSub, totalQty: total });
+            } else if (acceptedSubs.length > 0) {
+               setUserData({ ...acceptedSubs[0], totalQty: total });
+            } else {
+               setUserData({ totalQty: 0, status: 'none' });
+            }
+            setError("");
+         } else {
+            setError("No active registration found.");
+            setUserData(null);
+         }
+      } catch (err) {
+         setError("Connection error.");
       }
    };
 
-   const getGiftOptions = (capacity: string) => {
-      const data = getSlabData(capacity);
-      if (!data.giftAImg) return [];
+   useEffect(() => {
+      fetch('/api/settings').then(res => res.json()).then(setSettings).catch(console.error);
+      fetch('/api/slabs').then(res => res.json()).then(setSlabs).catch(console.error);
+
+      const storedPhone = localStorage.getItem("current_user_phone");
+      if (storedPhone) {
+         setPhone(storedPhone);
+         checkStatus();
+      }
+   }, []);
+
+   const getSlabData = (totalQty: number) => {
+      if (!slabs || !Array.isArray(slabs) || slabs.length === 0) return { level: "--", target: totalQty, giftA: "PENDING", giftAImg: "", giftB: "VALIDATION", giftBImg: "" };
+      
+      // Slabs come sorted by target ASC
+      const achievedSlabs = slabs.filter(s => totalQty >= s.target);
+      if (achievedSlabs.length === 0) return { level: "--", target: totalQty, giftA: "PENDING", giftAImg: "", giftB: "VALIDATION", giftBImg: "" };
+      
+      // Return the highest achieved slab
+      return achievedSlabs[achievedSlabs.length - 1];
+   };
+
+   const getGiftOptions = (totalQty: number) => {
+      const data = getSlabData(totalQty);
+      if (!data.giftA) return [];
       return [
          { name: data.giftA, img: data.giftAImg },
          { name: data.giftB, img: data.giftBImg }
-      ];
+      ].filter(g => g.name);
    };
 
    const handleGiftSelect = async (giftName: string) => {
       if (!userData || selectedGift) return;
-      
+
       try {
          const res = await fetch("/api/submissions", {
             method: "PATCH",
@@ -161,106 +164,85 @@ export default function RedeemPage() {
                      </div>
                   ) : userData ? (
                      <div className="space-y-16 animate-in slide-in-from-bottom-8 duration-700">
-                        {/* REDEEM COMMAND ROW */}
-                        <div className="bg-white rounded-[2rem] lg:rounded-full border border-zinc-100 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.06)] p-6 lg:p-3 lg:px-12 relative overflow-hidden group w-full border-b-2">
-                           <div className="absolute top-0 right-0 w-64 h-64 bg-[#CBA35C]/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
-                           
-                           <div className="flex flex-col lg:grid lg:grid-cols-12 items-center gap-8 lg:gap-6 relative z-10 py-2">
-                              {/* Slab Section */}
-                              <div className="lg:col-span-1 border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 lg:pr-6 w-full lg:w-auto text-center lg:text-left">
-                                 <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.3em] block mb-1 origin-left">SLAB</span>
-                                 <h3 className="text-4xl lg:text-6xl font-headline font-black text-zinc-500 italic leading-none opacity-40">{getSlabData(userData.capacity).level}</h3>
-                              </div>
-
-                              {/* Milestone Target Section */}
-                              <div className="lg:col-span-3 text-center border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 lg:px-6 w-full lg:w-auto">
-                                 <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.3em] block mb-1">Milestone Target</span>
-                                 <div className="flex items-center justify-center gap-1">
-                                    <span className="text-5xl lg:text-7xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{getSlabData(userData.capacity).target}</span>
-                                    <span className="text-zinc-300 text-[10px] font-black uppercase mt-4 lg:mt-6 ml-1">QTL</span>
+                        
+                        {/* GIFT SELECTION GRID */}
+                        {(!settings?.rewardsDistributed) ? (
+                           <div className="space-y-12 py-10 animate-in fade-in duration-1000">
+                              <div className="bg-zinc-900 border border-[#CBA35C]/30 p-12 md:p-24 rounded-[4rem] text-center space-y-10 relative overflow-hidden">
+                                 <div className="absolute top-0 right-0 w-96 h-96 bg-[#CBA35C]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
+                                 <div className="space-y-6 relative z-10">
+                                    <h3 className="font-headline font-black text-4xl md:text-8xl italic uppercase text-white tracking-tighter leading-none">
+                                       CAMPAIGN <br /><span className="text-[#CBA35C]">IN PROGRESS.</span>
+                                    </h3>
+                                    <p className="text-[#CBA35C] font-black text-[10px] md:text-xs italic tracking-[0.3em] uppercase max-w-xl mx-auto opacity-60">
+                                       "After 5 months you will get rewarded as per the slabs"
+                                    </p>
+                                    <p className="text-zinc-400 font-medium text-lg italic tracking-widest uppercase max-w-xl mx-auto">
+                                       Your verified submissions are being tracked. The reward claim portal will unlock automatically once the campaign duration is complete.
+                                    </p>
                                  </div>
-                              </div>
-
-                              {/* Gift Preview Section */}
-                              <div className="lg:col-span-5 flex items-center justify-center gap-8 lg:gap-12 px-6 border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 w-full lg:w-auto">
-                                 {(!selectedGift || selectedGift === getSlabData(userData.capacity).giftA) && (
-                                    <div className="flex flex-col items-center gap-2">
-                                       <div className={`w-16 h-16 lg:w-14 lg:h-14 rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-500 flex items-center justify-center p-2 relative 
-                                          ${selectedGift === getSlabData(userData.capacity).giftA ? 'border-green-500 shadow-lg ring-4 ring-green-500/5' : 'border-zinc-100'}
-                                       `}>
-                                          <img src={getSlabData(userData.capacity).giftAImg} alt="Gift A" className="w-full h-full object-contain" />
-                                          {selectedGift === getSlabData(userData.capacity).giftA && (
-                                             <div className="absolute top-1 left-1 z-20">
-                                                <div className="bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
-                                                   <span className="material-symbols-outlined font-black text-[12px]">check</span>
-                                                </div>
-                                             </div>
-                                          )}
-                                       </div>
-                                       <span className={`text-[9px] lg:text-[8px] font-black uppercase tracking-widest ${selectedGift === getSlabData(userData.capacity).giftA ? 'text-green-600' : 'text-zinc-600'}`}>
-                                          {getSlabData(userData.capacity).giftA}
+                                 <div className="pt-8 relative z-10">
+                                    <button disabled className="group relative bg-zinc-800 text-zinc-500 px-16 py-8 rounded-[2.5rem] font-headline font-black uppercase text-2xl tracking-[0.2em] cursor-not-allowed border border-white/5 shadow-2xl">
+                                       <span className="flex items-center gap-4">
+                                          <span className="material-symbols-outlined text-3xl">lock</span>
+                                          CLAIM REWARD
                                        </span>
-                                    </div>
-                                 )}
-
-                                 {!selectedGift && (
-                                    <span className="text-zinc-200 text-[9px] font-black italic tracking-widest">— OR —</span>
-                                 )}
-
-                                 {(!selectedGift || selectedGift === getSlabData(userData.capacity).giftB) && (
-                                    <div className="flex flex-col items-center gap-2">
-                                       <div className={`w-16 h-16 lg:w-14 lg:h-14 rounded-2xl overflow-hidden bg-zinc-50 border transition-all duration-500 flex items-center justify-center p-2 relative 
-                                          ${selectedGift === getSlabData(userData.capacity).giftB ? 'border-green-500 shadow-lg ring-4 ring-green-500/5' : 'border-zinc-100'}
-                                       `}>
-                                          <img src={getSlabData(userData.capacity).giftBImg} alt="Gift B" className="w-full h-full object-contain" />
-                                          {selectedGift === getSlabData(userData.capacity).giftB && (
-                                             <div className="absolute top-1 left-1 z-20">
-                                                <div className="bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center shadow-lg">
-                                                   <span className="material-symbols-outlined font-black text-[12px]">check</span>
-                                                </div>
-                                             </div>
-                                          )}
-                                       </div>
-                                       <span className={`text-[9px] lg:text-[8px] font-black uppercase tracking-widest ${selectedGift === getSlabData(userData.capacity).giftB ? 'text-green-600' : 'text-zinc-600'}`}>
-                                          {getSlabData(userData.capacity).giftB}
-                                       </span>
-                                    </div>
-                                 )}
-                              </div>
-
-                              {/* Status Section */}
-                              <div className="lg:col-span-3 text-center px-6 w-full lg:w-auto">
-                                 <div className={`inline-flex w-full lg:w-auto justify-center px-12 py-4 rounded-full text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-md ${userData.status === 'claimed' ? 'bg-[#CBA35C] text-black shadow-[#CBA35C]/10' :
-                                    userData.status === 'accepted' ? 'bg-green-500 text-white shadow-green-100' :
-                                       userData.status === 'pending' ? 'bg-zinc-100 text-zinc-500' :
-                                          'bg-red-50 text-red-500'
-                                    }`}>
-                                    {userData.status === 'claimed' ? 'CLAIMED' : userData.status || 'PENDING'}
+                                       <div className="absolute -top-3 -right-3 bg-[#CBA35C] text-black text-[10px] px-4 py-1 rounded-full font-black tracking-widest animate-bounce shadow-xl">LOCKED</div>
+                                    </button>
                                  </div>
                               </div>
                            </div>
-                        </div>
-
-                        {/* GIFT SELECTION GRID */}
-                        {(userData.status === 'accepted') && !selectedGift && (
+                        ) : (
                            <div className="space-y-12 py-10 animate-in fade-in duration-1000">
                               <div className="text-center space-y-4">
-                                 <h3 className="font-headline font-black text-4xl md:text-7xl italic uppercase text-zinc-900 tracking-tighter">SELECT YOUR <span className="text-[#CBA35C]">GIFT.</span></h3>
-                                 <p className="text-zinc-500 font-medium text-lg italic tracking-widest uppercase">Verified Milestone. Choose your official reward portfolio choice.</p>
+                                 <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest mb-4">
+                                    <span className="w-1.5 h-1.5 bg-green-600 rounded-full animate-ping"></span>
+                                    Rewards Unlocked
+                                 </div>
+                                 <h3 className="font-headline font-black text-4xl md:text-7xl italic uppercase text-zinc-900 tracking-tighter leading-none">
+                                    SELECT YOUR <br/><span className="text-[#CBA35C]">ELITE GIFT.</span>
+                                    <div className="text-[12px] md:text-sm font-black text-[#CBA35C] tracking-[0.6em] mt-4 opacity-80">— SLAB {getSlabData(totalAcceptedQty).level} —</div>
+                                 </h3>
+
+                                 <p className="text-zinc-500 font-medium text-lg italic tracking-widest uppercase">
+                                    Based on your total verified quantity of <span className="text-zinc-900 font-black">{totalAcceptedQty} Qtl</span>, you qualify for the slab below.
+                                 </p>
                               </div>
-                              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
-                                 {getGiftOptions(userData.capacity).map((gift) => (
-                                    <button key={gift.name} onClick={() => handleGiftSelect(gift.name)} className="group relative p-6 rounded-[4rem] border-2 border-zinc-100 bg-zinc-50 hover:border-[#CBA35C]/50 hover:bg-white transition-all duration-500 shadow-xl overflow-hidden">
-                                       <div className="aspect-square rounded-[3.5rem] overflow-hidden mb-8 relative bg-white flex items-center justify-center p-8">
-                                          <img src={gift.img} alt={gift.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" />
-                                       </div>
-                                       <div className="pb-10 text-center space-y-3">
-                                          <h4 className="text-3xl font-headline font-black uppercase italic leading-none tracking-tight">{gift.name}</h4>
-                                          <span className="block text-[8px] font-black uppercase tracking-[0.5em] opacity-40">Milestone Selection</span>
-                                       </div>
-                                    </button>
-                                 ))}
-                              </div>
+
+                              {selectedGift ? (
+                                 <div className="max-w-xl mx-auto p-12 rounded-[4rem] border-4 border-[#CBA35C] bg-zinc-50 text-center space-y-8 animate-in zoom-in-95 duration-500">
+                                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-[#CBA35C]">YOUR SELECTION</span>
+                                    <div className="aspect-square rounded-[3rem] bg-white flex items-center justify-center p-8 shadow-xl">
+                                       { (getSlabData(totalAcceptedQty).giftA === selectedGift ? getSlabData(totalAcceptedQty).giftAImg : getSlabData(totalAcceptedQty).giftBImg) ? (
+                                          <img src={getSlabData(totalAcceptedQty).giftA === selectedGift ? getSlabData(totalAcceptedQty).giftAImg : getSlabData(totalAcceptedQty).giftBImg} className="w-full h-full object-contain" />
+                                       ) : (
+                                          <div className="text-zinc-200">
+                                            <span className="material-symbols-outlined text-8xl">card_giftcard</span>
+                                          </div>
+                                       )}
+                                    </div>
+                                    <h4 className="text-4xl font-headline font-black uppercase italic tracking-tighter">{selectedGift}</h4>
+                                    <div className="bg-green-500 text-white py-4 rounded-2xl font-headline font-black uppercase italic tracking-widest">GIFT CLAIMED</div>
+                                 </div>
+                              ) : (
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                                    {getGiftOptions(totalAcceptedQty).map((gift) => (
+                                       <button key={gift.name} onClick={() => handleGiftSelect(gift.name)} className="group relative p-6 rounded-[4rem] border-2 border-zinc-100 bg-zinc-50 hover:border-[#CBA35C]/50 hover:bg-white transition-all duration-500 shadow-xl overflow-hidden">
+                                          <div className="aspect-square bg-zinc-50 rounded-3xl mb-6 p-4 flex items-center justify-center overflow-hidden">
+                                             {gift.img ? (
+                                                <img src={gift.img} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" alt={gift.name} />
+                                             ) : (
+                                                <span className="material-symbols-outlined text-zinc-200 text-6xl">card_giftcard</span>
+                                             )}
+                                          </div>
+                                          <div className="pb-10 text-center space-y-3">
+                                             <h4 className="text-3xl font-headline font-black uppercase italic leading-none tracking-tight">{gift.name}</h4>
+                                             <span className="block text-[8px] font-black uppercase tracking-[0.5em] opacity-40">Milestone Selection</span>
+                                          </div>
+                                       </button>
+                                    ))}
+                                 </div>
+                              )}
                            </div>
                         )}
 
