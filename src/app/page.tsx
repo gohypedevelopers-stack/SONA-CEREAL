@@ -175,7 +175,7 @@ export default function HomePage() {
    return (
       <div className="bg-white">
          {/* Optimized Responsive Hero Carousel */}
-         <section className="relative h-[250px] md:min-h-[90vh] md:h-auto overflow-hidden bg-white select-none">
+         <section className="relative h-[220px] md:min-h-[90vh] md:h-auto overflow-hidden bg-white select-none">
             <div className="absolute inset-0 z-0">
                {/* Slides Mapping */}
                {slides.map((slide, idx) => (
@@ -191,7 +191,7 @@ export default function HomePage() {
                      />
                      <img
                         src={slide.mobile}
-                        className="w-full h-full object-cover object-bottom md:hidden block bg-white"
+                        className="w-full h-full object-cover object-center md:hidden block"
                         alt={`Banner Mobile ${idx + 1}`}
                      />
                   </div>
@@ -199,16 +199,16 @@ export default function HomePage() {
             </div>
 
             {/* Subdued Navigation Layer */}
-            <div className="absolute inset-0 z-20 flex items-center justify-between px-2 md:px-4 group">
+            <div className="absolute inset-0 z-20 flex items-center justify-between px-2 md:px-4 group pointer-events-none">
                <button
                   onClick={prevSlide}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-black/5 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black/10"
+                  className="hidden md:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-black/5 backdrop-blur-sm md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black/10 pointer-events-auto"
                >
                   <span className="material-symbols-outlined text-zinc-900 text-xl md:text-2xl">arrow_back_ios_new</span>
                </button>
                <button
                   onClick={nextSlide}
-                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-black/5 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black/10"
+                  className="hidden md:flex w-10 h-10 md:w-12 md:h-12 items-center justify-center rounded-full bg-black/5 backdrop-blur-sm md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black/10 pointer-events-auto"
                >
                   <span className="material-symbols-outlined text-zinc-900 text-xl md:text-2xl">arrow_forward_ios</span>
                </button>
