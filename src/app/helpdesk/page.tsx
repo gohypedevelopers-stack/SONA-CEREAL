@@ -33,10 +33,10 @@ export default function HelpdeskPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Helpdesk Hero Header */}
-      <section className="relative min-h-[480px] flex items-center bg-zinc-50 overflow-hidden pt-16 -skew-y-3 origin-left translate-y-[-5%]">
+      <section className="relative md:min-h-[480px] flex items-center bg-zinc-50 overflow-hidden pt-14 md:pt-16 -skew-y-3 origin-left">
 
         <div className="max-w-7xl mx-auto px-6 relative z-10 text-center skew-y-3">
-          <h1 className="font-headline font-black text-zinc-900 text-6xl md:text-8xl italic uppercase leading-[0.8] tracking-tighter mb-6">
+          <h1 className="font-headline font-black text-zinc-900 text-3xl md:text-8xl italic uppercase leading-[0.8] tracking-tighter mb-6 font-headline">
             Support <br />
             <span className="text-primary">Center</span>
           </h1>
@@ -48,7 +48,7 @@ export default function HelpdeskPage() {
       </section>
 
       {/* Search Section (Overlapping Hero) */}
-      <section className="max-w-4xl mx-auto px-6 -mt-24 relative z-20">
+      <section className="max-w-4xl mx-auto px-6 -mt-12 md:-mt-24 relative z-20">
         <div className="bg-white p-4 rounded-full shadow-2xl flex items-center gap-4 transition-all focus-within:ring-4 focus-within:ring-primary/20 border border-zinc-100">
           <span className="material-symbols-outlined text-primary text-3xl ml-4">
             search
@@ -58,14 +58,14 @@ export default function HelpdeskPage() {
             placeholder="Find answers instantly..."
             type="text"
           />
-          <button className="bg-primary text-black font-headline font-black uppercase px-8 py-3 rounded-full hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all tracking-wider">
+          <button className="hidden md:block bg-primary text-black font-headline font-black uppercase px-8 py-3 rounded-full hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all tracking-wider">
             Search
           </button>
         </div>
       </section>
 
       {/* FAQ Categories: Bento Grid Style */}
-      <section className="max-w-7xl mx-auto px-6 py-20">
+      <section className="max-w-7xl mx-auto px-6 py-10 md:py-20">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {/* Registration */}
           <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
@@ -127,7 +127,7 @@ export default function HelpdeskPage() {
       </section>
 
       {/* Popular FAQs: Accordion Section */}
-      <section className="bg-zinc-50 py-20">
+      <section className="bg-zinc-50 py-10 md:py-20">
         <div className="max-w-4xl mx-auto px-6">
           <h2 className="font-headline font-black text-4xl uppercase tracking-tighter mb-12 flex items-center gap-4 text-zinc-900">
             <span className="w-12 h-1 bg-primary"></span>
@@ -166,10 +166,10 @@ export default function HelpdeskPage() {
       </section>
 
       {/* Contact Us Section: High Contrast CTA */}
-      <section className="max-w-7xl mx-auto px-6 py-24">
+      <section className="max-w-7xl mx-auto px-6 py-10 md:py-24">
         <div className="bg-white rounded-3xl overflow-hidden relative flex flex-col md:flex-row border border-zinc-100 shadow-xl">
           {/* Left Side: Visual/Headline */}
-          <div className="md:w-1/2 p-12 bg-primary flex flex-col justify-center relative min-h-[400px]">
+          <div className="md:w-1/2 px-6 py-12 md:p-12 bg-primary flex flex-col justify-center relative">
             <div className="absolute inset-0 opacity-10 pointer-events-none">
               <img
                 className="w-full h-full object-cover"
@@ -177,10 +177,10 @@ export default function HelpdeskPage() {
                 src="https://lh3.googleusercontent.com/aida-public/AB6AXuAGUmQSQ2L3zu-Dy0BY8h3orpwSecYq55k-R2vyy-aX5iOlRAML_rO_f-LL_lNSXcrcrl-TKu0GoKrfiZs4a-Q3CIFBUWf1mjx12fgc5sT-7S221fV64OS_QGuk1git7A73rJNo7L51i4doO2Kg7-0y_3tdtWX-yzVEsnoa5Rd8SEo0Llpq81VyVmSp83v_iNC-ROvumSjqIQK5AzXK-9jXfj5R7SaJmtFOSscYwimigYaFhiqWRv0PVeYiBn-I-3nY7JG-el0fBGc"
               />
             </div>
-            <h2 className="font-headline font-black text-5xl text-black uppercase tracking-tighter leading-none mb-6 relative z-10">
+            <h2 className="font-headline font-black text-3xl md:text-5xl text-black uppercase tracking-tighter leading-none mb-6 relative z-10">
               STILL STUCK IN THE PITS?
             </h2>
-            <p className="text-zinc-600 text-lg md:text-xl max-w-lg mb-10 font-medium">
+            <p className="text-zinc-600 text-base md:text-xl max-w-lg mb-10 font-medium relative z-10">
               Our dedicated support team is available 24/7 to assist you with
               any queries or concerns.
             </p>
@@ -203,8 +203,8 @@ export default function HelpdeskPage() {
             </div>
           </div>
           {/* Right Side: Contact Form */}
-          <div className="md:w-1/2 p-12 bg-zinc-900 text-white">
-            <h3 className="font-headline font-black text-2xl uppercase tracking-widest mb-8 text-primary">
+          <div className="md:w-1/2 px-6 py-10 md:p-12 bg-zinc-900 text-white">
+            <h3 className="font-headline font-black text-xl md:text-2xl uppercase tracking-widest mb-8 text-primary">
               SEND A MESSAGE
             </h3>
             <form className="space-y-6">

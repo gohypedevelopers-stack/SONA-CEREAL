@@ -110,25 +110,25 @@ export default function RedeemPage() {
    return (
       <div className="bg-white pb-24 font-body">
          {/* SPACED HIGH-OCTANE HERO SECTION */}
-         <section className="relative min-h-[500px] flex items-center overflow-hidden pt-44 pb-12" style={{ background: "linear-gradient(135deg, #ffffff 0%, #f9f9f9 50%, #f4f1ea 100%)" }}>
+         <section className="relative md:min-h-[500px] flex items-center overflow-hidden pt-4 md:pt-24 pb-12" style={{ background: "linear-gradient(135deg, #ffffff 0%, #f9f9f9 50%, #f4f1ea 100%)" }}>
             <div className="container mx-auto px-6 relative z-10">
-               <div className="grid lg:grid-cols-2 gap-12 items-center">
-                  <div className="space-y-8">
+               <div className="grid lg:grid-cols-2 gap-8 md:gap-12 items-center">
+                  <div className="space-y-6 md:space-y-8">
                      <div className="inline-flex items-center gap-2 bg-white px-4 py-1.5 rounded-full border border-zinc-200 shadow-sm">
                         <span className="w-1.5 h-1.5 bg-[#CBA35C] rounded-full"></span>
-                        <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">Step-by-Step Success</span>
+                        <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] text-zinc-400">Step-by-Step Success</span>
                      </div>
 
                      <div className="space-y-1">
-                        <h1 className="font-headline font-black text-6xl md:text-[90px] italic uppercase leading-[0.75] tracking-tighter text-zinc-950">
+                        <h1 className="font-headline font-black text-3xl md:text-[90px] italic uppercase leading-[0.8] md:leading-[0.75] tracking-tighter text-zinc-950">
                            HOW TO
                         </h1>
-                        <h1 className="font-headline font-black text-6xl md:text-[90px] italic uppercase leading-[0.75] tracking-tighter text-[#CBA35C]">
+                        <h1 className="font-headline font-black text-3xl md:text-[90px] italic uppercase leading-[0.8] md:leading-[0.75] tracking-tighter text-[#CBA35C]">
                            REDEEM
                         </h1>
                      </div>
 
-                     <p className="text-zinc-500 font-medium text-lg md:text-xl leading-relaxed max-w-lg italic">
+                     <p className="text-zinc-500 font-medium text-base md:text-xl leading-relaxed max-w-lg italic">
                         Turn your sales achievement into high-octane luxury rewards. Built for speed and precision.
                      </p>
                   </div>
@@ -150,14 +150,14 @@ export default function RedeemPage() {
             <div className="container mx-auto px-6 max-w-[1440px]">
                <div className="w-full">
                   {!searched ? (
-                     <div className="bg-zinc-50 p-12 md:p-24 rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
-                        <h3 className="font-headline font-black text-4xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-12 text-center">
+                     <div className="bg-zinc-50 p-8 md:p-24 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
+                        <h3 className="font-headline font-black text-2xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-8 md:mb-12 text-center">
                            REDEEM <br />
                            <span className="text-[#CBA35C]">OFFER.</span>
                         </h3>
-                        <div className="relative max-w-md mx-auto space-y-6">
-                           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full p-8 rounded-[2rem] bg-white border border-zinc-100 outline-none text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
-                           <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-8 rounded-[2rem] font-headline font-black uppercase text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
+                        <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
+                           <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
+                           <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
                         </div>
                      </div>
                   ) : loading ? (
@@ -176,27 +176,27 @@ export default function RedeemPage() {
                         
                         {/* GIFT SELECTION GRID */}
                         {(!settings?.rewardsDistributed) ? (
-                           <div className="space-y-12 py-10 animate-in fade-in duration-1000">
-                              <div className="bg-zinc-900 border border-[#CBA35C]/30 p-12 md:p-24 rounded-[4rem] text-center space-y-10 relative overflow-hidden">
+                           <div className="space-y-12 py-6 md:py-10 animate-in fade-in duration-1000">
+                              <div className="bg-zinc-900 border border-[#CBA35C]/30 px-6 py-12 md:p-24 rounded-[3rem] md:rounded-[4rem] text-center space-y-6 md:space-y-10 relative overflow-hidden">
                                  <div className="absolute top-0 right-0 w-96 h-96 bg-[#CBA35C]/10 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2"></div>
-                                 <div className="space-y-6 relative z-10">
-                                    <h3 className="font-headline font-black text-4xl md:text-8xl italic uppercase text-white tracking-tighter leading-none">
+                                 <div className="space-y-4 md:space-y-6 relative z-10">
+                                    <h3 className="font-headline font-black text-2xl md:text-8xl italic uppercase text-white tracking-tighter leading-none">
                                        CAMPAIGN <br /><span className="text-[#CBA35C]">IN PROGRESS.</span>
                                     </h3>
-                                    <p className="text-[#CBA35C] font-black text-[10px] md:text-xs italic tracking-[0.3em] uppercase max-w-xl mx-auto opacity-60">
+                                    <p className="text-[#CBA35C] font-black text-[10px] md:text-xs italic tracking-widest max-w-xl mx-auto opacity-60">
                                        "After 5 months you will get rewarded as per the slabs"
                                     </p>
-                                    <p className="text-zinc-400 font-medium text-lg italic tracking-widest uppercase max-w-xl mx-auto">
+                                    <p className="text-zinc-400 font-medium text-sm md:text-lg italic max-w-xl mx-auto">
                                        Your verified submissions are being tracked. The reward claim portal will unlock automatically once the campaign duration is complete.
                                     </p>
                                  </div>
-                                 <div className="pt-8 relative z-10">
-                                    <button disabled className="group relative bg-zinc-800 text-zinc-500 px-16 py-8 rounded-[2.5rem] font-headline font-black uppercase text-2xl tracking-[0.2em] cursor-not-allowed border border-white/5 shadow-2xl">
-                                       <span className="flex items-center gap-4">
-                                          <span className="material-symbols-outlined text-3xl">lock</span>
+                                 <div className="pt-6 md:pt-8 relative z-10">
+                                    <button disabled className="group relative bg-zinc-800 text-zinc-500 px-8 md:px-16 py-4 md:py-8 rounded-xl md:rounded-[2.5rem] font-headline font-black uppercase text-sm md:text-2xl tracking-widest cursor-not-allowed border border-white/5 shadow-2xl">
+                                       <span className="flex items-center gap-3">
+                                          <span className="material-symbols-outlined text-xl md:text-3xl">lock</span>
                                           CLAIM REWARD
                                        </span>
-                                       <div className="absolute -top-3 -right-3 bg-[#CBA35C] text-black text-[10px] px-4 py-1 rounded-full font-black tracking-widest animate-bounce shadow-xl">LOCKED</div>
+                                       <div className="absolute -top-2 -right-2 bg-[#CBA35C] text-black text-[8px] md:text-[10px] px-2 md:px-4 py-0.5 md:py-1 rounded-full font-black tracking-widest animate-bounce shadow-xl">LOCKED</div>
                                     </button>
                                  </div>
                               </div>
@@ -208,7 +208,7 @@ export default function RedeemPage() {
                                     <span className="w-1.5 h-1.5 bg-green-600 rounded-full animate-ping"></span>
                                     Rewards Unlocked
                                  </div>
-                                 <h3 className="font-headline font-black text-4xl md:text-7xl italic uppercase text-zinc-900 tracking-tighter leading-none">
+                                 <h3 className="font-headline font-black text-3xl md:text-7xl italic uppercase text-zinc-900 tracking-tighter leading-none">
                                     SELECT YOUR <br/><span className="text-[#CBA35C]">ELITE GIFT.</span>
                                     <div className="text-[12px] md:text-sm font-black text-[#CBA35C] tracking-[0.6em] mt-4 opacity-80">
                                        — {getSlabData(totalAcceptedQty)?.level ? `SLAB ${getSlabData(totalAcceptedQty)?.level}` : "NO MILESTONE REACHED"} —
@@ -246,19 +246,19 @@ export default function RedeemPage() {
                                     <div className="bg-green-500 text-white py-4 rounded-2xl font-headline font-black uppercase italic tracking-widest">GIFT CLAIMED</div>
                                  </div>
                               ) : (
-                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-12 max-w-4xl mx-auto">
+                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 max-w-4xl mx-auto">
                                     {getGiftOptions(totalAcceptedQty).map((gift) => (
-                                       <button key={gift.name} onClick={() => handleGiftSelect(gift.name)} className="group relative p-6 rounded-[4rem] border-2 border-zinc-100 bg-zinc-50 hover:border-[#CBA35C]/50 hover:bg-white transition-all duration-500 shadow-xl overflow-hidden">
-                                          <div className="aspect-square bg-zinc-50 rounded-3xl mb-6 p-4 flex items-center justify-center overflow-hidden">
+                                       <button key={gift.name} onClick={() => handleGiftSelect(gift.name)} className="group relative p-6 md:p-8 rounded-[2.5rem] md:rounded-[4rem] border-2 border-zinc-100 bg-zinc-50 hover:border-[#CBA35C]/50 hover:bg-white transition-all duration-500 shadow-xl overflow-hidden">
+                                          <div className="aspect-square bg-zinc-50 rounded-2xl md:rounded-3xl mb-4 md:mb-6 p-6 md:p-4 flex items-center justify-center overflow-hidden shadow-inner">
                                              {gift.img ? (
                                                 <img src={gift.img} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-700" alt={gift.name} />
                                              ) : (
-                                                <span className="material-symbols-outlined text-zinc-200 text-6xl">card_giftcard</span>
+                                                <span className="material-symbols-outlined text-zinc-200 text-4xl md:text-6xl">card_giftcard</span>
                                              )}
                                           </div>
-                                          <div className="pb-10 text-center space-y-3">
-                                             <h4 className="text-3xl font-headline font-black uppercase italic leading-none tracking-tight">{gift.name}</h4>
-                                             <span className="block text-[8px] font-black uppercase tracking-[0.5em] opacity-40">Milestone Selection</span>
+                                          <div className="pb-6 md:pb-10 text-center space-y-2 md:space-y-3">
+                                             <h4 className="text-2xl md:text-3xl font-headline font-black uppercase italic leading-none tracking-tight">{gift.name}</h4>
+                                             <span className="block text-[7px] md:text-[8px] font-black uppercase tracking-widest md:tracking-[0.5em] opacity-40">Milestone Selection</span>
                                           </div>
                                        </button>
                                     ))}
@@ -286,17 +286,17 @@ export default function RedeemPage() {
          <section className="py-24 bg-white border-t border-zinc-100">
             <div className="container mx-auto px-6">
                <div className="max-w-6xl mx-auto flex justify-between items-end mb-16">
-                  <h2 className="font-headline font-black text-4xl md:text-7xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter text-left">REWARD <br /><span className="text-[#CBA35C]">SLABS.</span></h2>
+                  <h2 className="font-headline font-black text-5xl md:text-7xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter text-left">REWARD <br /><span className="text-[#CBA35C]">SLABS.</span></h2>
                   <p className="hidden md:block text-zinc-400 text-right font-medium italic text-lg max-w-xs">A comprehensive portfolio of the assets available at each performance level.</p>
                </div>
-               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto text-center">
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto text-center px-4 md:px-0">
                   {STATIC_SLABS.map((slab) => (
-                     <div key={slab.id} className="group p-8 bg-zinc-50 rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center">
-                        <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-white shadow-xl flex items-center justify-center p-4 text-center">
+                     <div key={slab.id} className="group p-6 md:p-8 bg-zinc-50 rounded-[2.5rem] md:rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center shadow-sm hover:shadow-xl">
+                        <div className="w-full aspect-square rounded-2xl md:rounded-[2rem] overflow-hidden mb-4 md:mb-6 bg-white shadow-inner flex items-center justify-center p-6 md:p-4 text-center">
                            <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
                         </div>
-                        <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-4">{slab.target} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
-                        <span className="text-[9px] font-black text-zinc-950 uppercase tracking-widest border-t border-zinc-100 pt-4 w-full">{slab.giftA} / {slab.giftB}</span>
+                        <h4 className="text-2xl md:text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-3 md:mb-4">{slab.target} <span className="text-[9px] font-bold text-zinc-400">QTL</span></h4>
+                        <span className="text-[8px] md:text-[9px] font-black text-zinc-950 uppercase tracking-[0.1em] md:tracking-widest border-t border-zinc-100 pt-4 w-full opacity-60">{slab.giftA} / {slab.giftB}</span>
                      </div>
                   ))}
                </div>

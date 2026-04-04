@@ -50,13 +50,9 @@ export default function Header() {
     <>
       <header
         id="mainNav"
-        className={`fixed top-0 left-0 right-0 z-[101] px-4 md:px-8 transition-all duration-700 ${isScrolled ? "py-2" : "py-6"}`}
+        className={`sticky top-0 left-0 right-0 z-[101] transition-all duration-700 ${isScrolled ? "py-0" : "py-0"}`}
       >
-        <div className={`max-w-[1440px] mx-auto rounded-[2.5rem] px-6 md:px-10 py-3 flex items-center justify-between relative transition-all duration-700 
-          ${isScrolled 
-            ? "bg-white/90 backdrop-blur-2xl border border-zinc-100 shadow-[0_20px_50px_-20px_rgba(0,0,0,0.1)]" 
-            : "bg-white/10 backdrop-blur-sm border border-white/20 shadow-none"
-          }`}
+        <div className={`w-full mx-auto px-6 md:px-10 py-4 flex items-center justify-between relative transition-all duration-700 bg-white border-b border-zinc-100 shadow-sm`}
         >
           {/* Logo Section */}
           <Link href="/" className="flex items-center gap-2 md:gap-3 group min-w-0 flex-1 md:flex-none">
@@ -138,15 +134,13 @@ export default function Header() {
           }`}
       >
         <div
-          className={`absolute top-0 right-0 w-[85%] h-full bg-white shadow-2xl border-l border-zinc-100 transition-transform duration-500 p-8 flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"
+          className={`absolute top-0 right-0 w-[75%] h-full bg-white shadow-2xl border-l border-zinc-100 transition-transform duration-500 p-6 flex flex-col ${isOpen ? "translate-x-0" : "translate-x-full"
             }`}
         >
-          <div className="flex justify-between items-center mb-16">
+          <div className="flex justify-between items-center mb-10">
             <div className="flex items-center gap-3">
               <img src="/logo-blank.png" alt="Sona Cereal" className="h-10 w-auto" />
-              <span className="text-xl font-headline font-black italic uppercase text-zinc-900">
-                SONA MENU
-              </span>
+
             </div>
             <button
               onClick={toggleMobileMenu}
@@ -163,13 +157,13 @@ export default function Header() {
                   key={link.name}
                   href={link.href}
                   onClick={toggleMobileMenu}
-                  className={`flex items-center justify-between p-4 rounded-2xl border transition-all ${isActive
+                  className={`flex items-center justify-between p-3.5 rounded-xl border transition-all ${isActive
                     ? "bg-primary/5 border-primary/20"
                     : "hover:bg-zinc-50 border-transparent group"
                     }`}
                 >
                   <span
-                    className={`text-4xl font-headline font-black uppercase italic ${isActive ? "text-primary" : "text-zinc-300 group-hover:text-zinc-900"
+                    className={`text-xl font-headline font-black uppercase italic ${isActive ? "text-primary" : "text-zinc-400 group-hover:text-zinc-900"
                       }`}
                   >
                     {link.name}
@@ -190,9 +184,9 @@ export default function Header() {
             <Link
               href="/dashboard"
               onClick={toggleMobileMenu}
-              className="w-full bg-zinc-900 text-white py-5 rounded-2xl font-headline font-black uppercase text-lg flex items-center justify-center gap-3 shadow-2xl hover:bg-[#CBA35C] hover:text-black transition-colors"
+              className="w-full bg-zinc-900 text-white py-4 rounded-xl font-headline font-black uppercase text-sm flex items-center justify-center gap-3 shadow-2xl hover:bg-[#CBA35C] hover:text-black transition-colors"
             >
-              <span className="material-symbols-outlined text-2xl">account_circle</span>
+              <span className="material-symbols-outlined text-xl">account_circle</span>
               PARTNER DASHBOARD
             </Link>
             <p className="text-center text-[10px] text-zinc-600 font-bold uppercase tracking-[.25em] pt-4">

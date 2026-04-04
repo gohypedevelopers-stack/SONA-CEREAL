@@ -51,17 +51,17 @@ export default function DashboardPage() {
    return (
       <div className="bg-white pb-24 font-body">
          {/* HEADER SECTION */}
-         <section className="relative pt-32 pb-12 bg-white">
+         <section className="relative pt-12 md:pt-24 pb-12 bg-white">
             <div className="container mx-auto px-6 max-w-[1440px]">
                {!searched ? (
-                  <div className="bg-zinc-50 p-12 md:p-24 rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
-                     <h3 className="font-headline font-black text-4xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-12 text-center">
+                  <div className="bg-zinc-50 p-8 md:p-24 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
+                     <h3 className="font-headline font-black text-2xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-8 md:mb-12 text-center">
                         USER <br />
                         <span className="text-[#CBA35C]">DASHBOARD.</span>
                      </h3>
-                     <div className="relative max-w-md mx-auto space-y-6">
-                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full p-8 rounded-[2rem] bg-white border border-zinc-100 outline-none text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
-                        <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-8 rounded-[2rem] font-headline font-black uppercase text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
+                     <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
+                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
+                        <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
                      </div>
                   </div>
                 ) : loading ? (
@@ -80,35 +80,35 @@ export default function DashboardPage() {
                      {/* PROFILE HEADER */}
                      {submissions.length > 0 ? (
                         <>
-                        <div className="flex flex-col md:flex-row justify-between items-center bg-zinc-900 text-white p-8 md:p-12 rounded-[3rem] shadow-2xl relative overflow-hidden">
+                        <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-zinc-900 text-white p-8 md:p-12 rounded-[2.5rem] md:rounded-[3rem] shadow-2xl relative overflow-hidden">
                            <div className="absolute top-0 right-0 w-96 h-96 bg-[#CBA35C]/10 rounded-full blur-[100px]"></div>
-                           <div className="space-y-4 relative z-10">
+                           <div className="space-y-4 relative z-10 w-full md:w-auto">
                               <div className="inline-flex items-center gap-2 bg-white/10 px-4 py-1.5 rounded-full border border-white/10">
                                  <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>
                                  <span className="text-[10px] font-black uppercase tracking-widest text-zinc-300">Verified Retailer Dashboard</span>
                               </div>
-                              <h2 className="font-headline font-black text-4xl md:text-6xl italic uppercase tracking-tighter">
+                              <h2 className="font-headline font-black text-2xl md:text-6xl italic uppercase tracking-tighter">
                                  {userProfile?.name || 'Retailer Name'}
                               </h2>
-                              <p className="text-[#CBA35C] font-black text-sm md:text-lg uppercase italic tracking-widest leading-none">
+                              <p className="text-[#CBA35C] font-black text-xs md:text-lg uppercase italic tracking-widest leading-none">
                                  {userProfile?.shopName || 'Business Entity'} • {userProfile?.city}
                               </p>
                            </div>
-                           <div className="mt-8 md:mt-0 text-center md:text-right relative z-10 border-l-0 md:border-l border-white/10 pl-0 md:pl-12 flex gap-12">
-                              <div>
-                                 <span className="block text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2 text-center md:text-right">Total Achievement</span>
-                                 <div className="flex items-center justify-center md:justify-end gap-2">
-                                    <span className="text-4xl md:text-6xl font-headline font-black text-[#CBA35C] italic leading-none">
+                           <div className="mt-8 md:mt-0 text-left md:text-right relative z-10 border-t md:border-t-0 md:border-l border-white/10 pt-8 md:pt-0 md:pl-12 flex gap-8 md:gap-12 w-full md:w-auto">
+                              <div className="flex-1 md:flex-none">
+                                 <span className="block text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2">Total Achievement</span>
+                                 <div className="flex items-center gap-1">
+                                    <span className="text-2xl md:text-6xl font-headline font-black text-[#CBA35C] italic leading-none">
                                        {submissions.filter(s => s.status !== 'rejected').reduce((sum, sub) => sum + (parseInt(sub.capacity) || 0), 0)}
                                     </span>
-                                    <span className="text-zinc-400 text-[10px] font-black uppercase mt-4">Total QTL</span>
+                                    <span className="text-zinc-400 text-[8px] font-black uppercase mt-2 md:mt-4">Total QTL</span>
                                  </div>
                               </div>
-                              <div>
-                                 <span className="block text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-2 text-center md:text-right">Application Portfolio</span>
-                                 <div className="flex items-center justify-center md:justify-end gap-2">
-                                    <span className="text-4xl md:text-6xl font-headline font-black text-[#CBA35C] italic leading-none">{submissions.length}</span>
-                                    <span className="text-zinc-400 text-[10px] font-black uppercase mt-4">Active Records</span>
+                              <div className="flex-1 md:flex-none">
+                                 <span className="block text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-[0.2em] mb-2">Application Portfolio</span>
+                                 <div className="flex items-center gap-1">
+                                    <span className="text-2xl md:text-6xl font-headline font-black text-[#CBA35C] italic leading-none">{submissions.length}</span>
+                                    <span className="text-zinc-400 text-[8px] font-black uppercase mt-2 md:mt-4">Active Records</span>
                                  </div>
                               </div>
                            </div>
@@ -136,12 +136,12 @@ export default function DashboardPage() {
 
                                     {/* Quantity Section */}
                                     <div className="lg:col-span-3 text-center border-b lg:border-b-0 lg:border-r border-zinc-50 pb-4 lg:pb-0 lg:px-6 w-full lg:w-auto">
-                                       <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.3em] block mb-1">Bill Quantity</span>
+                                       <span className="text-[#CBA35C] text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] block mb-1">Bill Quantity</span>
                                        <div className="flex items-center justify-center gap-1">
-                                          <span className="text-5xl lg:text-7xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{sub.capacity}</span>
-                                          <span className="text-zinc-300 text-[10px] font-black uppercase mt-4 lg:mt-6 ml-1">QTL</span>
+                                          <span className="text-3xl md:text-7xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{sub.capacity}</span>
+                                          <span className="text-zinc-300 text-[8px] md:text-[10px] font-black uppercase mt-3 md:mt-6 ml-1">QTL</span>
                                        </div>
-                                       <div className="text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-1">Invoice: {sub.invoiceNo}</div>
+                                       <div className="text-[8px] md:text-[10px] font-black text-zinc-400 uppercase tracking-widest mt-1">Invoice: {sub.invoiceNo}</div>
                                     </div>
 
 
@@ -156,9 +156,9 @@ export default function DashboardPage() {
 
                                     {/* Status Section */}
                                     <div className="lg:col-span-3 text-center px-6 w-full lg:w-auto">
-                                       <div className={`inline-flex w-full lg:w-auto flex-col items-center justify-center px-12 py-4 rounded-3xl text-[11px] font-black uppercase tracking-[0.3em] transition-all shadow-md ${sub.status === 'claimed' ? 'bg-[#CBA35C] text-black shadow-[#CBA35C]/10' :
+                                       <div className={`inline-flex w-full lg:w-auto items-center justify-center px-8 md:px-12 py-3 md:py-4 rounded-xl md:rounded-3xl text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] md:tracking-[0.3em] transition-all shadow-md ${sub.status === 'claimed' ? 'bg-[#CBA35C] text-black shadow-[#CBA35C]/10' :
                                           sub.status === 'accepted' ? 'bg-green-500 text-white shadow-green-100' :
-                                             sub.status === 'pending' ? 'bg-zinc-100 text-zinc-500' :
+                                             sub.status === 'pending' ? 'bg-zinc-100 text-zinc-400' :
                                                 'bg-red-50 text-red-500'
                                           }`}>
                                           <span>{sub.status === 'claimed' ? 'VERIFIED' : sub.status || 'PENDING'}</span>
@@ -188,20 +188,20 @@ export default function DashboardPage() {
          <section className="py-24 bg-white border-t border-zinc-100">
             <div className="container mx-auto px-6">
                <div className="max-w-6xl mx-auto flex justify-between items-end mb-16">
-                  <h2 className="font-headline font-black text-4xl md:text-7xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter text-left">REWARD <br /><span className="text-[#CBA35C]">SLABS.</span></h2>
+                  <h2 className="font-headline font-black text-3xl md:text-7xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter text-left">REWARD <br /><span className="text-[#CBA35C]">SLABS.</span></h2>
                   <p className="hidden md:block text-zinc-400 text-right font-medium italic text-lg max-w-xs">A comprehensive portfolio of the assets available at each performance level.</p>
                </div>
-               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto text-center">
-                  {STATIC_SLABS.map((slab) => (
-                     <div key={slab.id} className="group p-8 bg-zinc-50 rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center">
-                        <div className="w-full aspect-square rounded-2xl overflow-hidden mb-6 bg-white shadow-xl flex items-center justify-center p-4 text-center">
-                           <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
-                        </div>
-                        <h4 className="text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-4">{slab.target} <span className="text-[10px] font-bold text-zinc-400">QTL</span></h4>
-                        <span className="text-[9px] font-black text-zinc-950 uppercase tracking-widest border-t border-zinc-100 pt-4 w-full">{slab.giftA} / {slab.giftB}</span>
-                     </div>
-                  ))}
-               </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto text-center px-4 md:px-0">
+                   {STATIC_SLABS.map((slab) => (
+                      <div key={slab.id} className="group p-6 md:p-8 bg-zinc-50 rounded-[2.5rem] md:rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center shadow-sm hover:shadow-xl">
+                         <div className="w-full aspect-square rounded-2xl md:rounded-[2rem] overflow-hidden mb-4 md:mb-6 bg-white shadow-inner flex items-center justify-center p-6 md:p-4 text-center">
+                            <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
+                         </div>
+                         <h4 className="text-2xl md:text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-3 md:mb-4">{slab.target} <span className="text-[9px] font-bold text-zinc-400">QTL</span></h4>
+                         <span className="text-[8px] md:text-[9px] font-black text-zinc-950 uppercase tracking-[0.1em] md:tracking-widest border-t border-zinc-100 pt-4 w-full opacity-60">{slab.giftA} / {slab.giftB}</span>
+                      </div>
+                   ))}
+                </div>
             </div>
          </section>
       </div>

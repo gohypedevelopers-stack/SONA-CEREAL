@@ -175,27 +175,23 @@ export default function HomePage() {
    return (
       <div className="bg-white">
          {/* Optimized Responsive Hero Carousel */}
-         <section className="relative md:min-h-[90vh] h-auto overflow-hidden bg-white select-none">
-            <div className="md:absolute md:inset-0 relative z-0">
-               {/* Slides Mapping - Height Fix for Mobile */}
+         <section className="relative h-[250px] md:min-h-[90vh] md:h-auto overflow-hidden bg-white select-none">
+            <div className="absolute inset-0 z-0">
+               {/* Slides Mapping */}
                {slides.map((slide, idx) => (
                   <div
                      key={idx}
-                     className={`transition-opacity duration-1000 ease-in-out 
-                         ${idx === activeSlide 
-                           ? 'relative opacity-100' 
-                           : 'absolute inset-0 opacity-0 pointer-events-none'}`}
+                     className={`absolute inset-0 transition-opacity duration-1000 ease-in-out 
+                         ${idx === activeSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
                   >
-                     {/* Desktop Image - Stays Exactly as It Is */}
                      <img
                         src={slide.desktop}
                         className="w-full h-full object-cover hidden md:block" 
                         alt={`Sona Cereal Banner ${idx + 1}`}
                      />
-                     {/* Mobile Image - Natural Un-zoomed Fit */}
                      <img
                         src={slide.mobile}
-                        className="w-full h-auto md:hidden block bg-white"
+                        className="w-full h-full object-cover object-bottom md:hidden block bg-white"
                         alt={`Banner Mobile ${idx + 1}`}
                      />
                   </div>
@@ -203,53 +199,53 @@ export default function HomePage() {
             </div>
 
             {/* Subdued Navigation Layer */}
-            <div className="absolute inset-0 z-10 flex items-center justify-between px-4 group">
+            <div className="absolute inset-0 z-20 flex items-center justify-between px-2 md:px-4 group">
                <button
                   onClick={prevSlide}
-                  className="w-12 h-12 flex items-center justify-center rounded-full bg-black/5 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-black/10"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-black/5 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black/10"
                >
-                  <span className="material-symbols-outlined text-zinc-900">arrow_back_ios_new</span>
+                  <span className="material-symbols-outlined text-zinc-900 text-xl md:text-2xl">arrow_back_ios_new</span>
                </button>
                <button
                   onClick={nextSlide}
-                  className="w-12 h-12 flex items-center justify-center rounded-full bg-black/5 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all hover:bg-black/10"
+                  className="w-10 h-10 md:w-12 md:h-12 flex items-center justify-center rounded-full bg-black/5 backdrop-blur-sm opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-all hover:bg-black/10"
                >
-                  <span className="material-symbols-outlined text-zinc-900">arrow_forward_ios</span>
+                  <span className="material-symbols-outlined text-zinc-900 text-xl md:text-2xl">arrow_forward_ios</span>
                </button>
             </div>
 
             {/* Minimal Indicators */}
-            <div className="absolute bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            <div className="absolute bottom-4 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex gap-2">
                {slides.map((_, i) => (
                   <button
                      key={i}
                      onClick={() => setActiveSlide(i)}
-                     className={`w-2 h-2 rounded-full transition-all ${i === activeSlide ? 'bg-zinc-900 scale-125' : 'bg-zinc-400'}`}
+                     className={`w-1.5 h-1.5 md:w-2 md:h-2 rounded-full transition-all ${i === activeSlide ? 'bg-zinc-900 scale-125' : 'bg-zinc-400'}`}
                   />
                ))}
             </div>
          </section>
 
          {/* Essential Milestone Snapshot */}
-         <section className="py-12 bg-white flex justify-center border-t border-zinc-100">
-            <div className="flex gap-16 md:gap-32 items-center overflow-x-auto px-6 no-scrollbar py-4">
+         <section className="py-2 md:py-12 bg-white flex justify-center border-t border-zinc-100 relative z-20">
+            <div className="flex gap-12 md:gap-32 items-center overflow-x-auto px-6 no-scrollbar py-2 w-full justify-start md:justify-center">
                {[
                   { label: "Active Retailers", val: "10K+" },
                   { label: "Rewards Tier", val: "Elite" },
                   { label: "Validation", val: "Instant" }
                ].map(stat => (
-                  <div key={stat.label} className="text-center shrink-0">
-                     <span className="block text-4xl font-headline font-black text-zinc-900 italic tracking-tighter">{stat.val}</span>
-                     <span className="text-[10px] font-black text-[#CBA35C] uppercase tracking-[0.3em]">{stat.label}</span>
+                  <div key={stat.label} className="text-center shrink-0 min-w-[120px]">
+                     <span className="block text-3xl md:text-4xl font-headline font-black text-zinc-900 italic tracking-tighter leading-none mb-1">{stat.val}</span>
+                     <span className="text-[9px] font-black text-[#CBA35C] uppercase tracking-[0.2em]">{stat.label}</span>
                   </div>
                ))}
             </div>
          </section>
 
          {/* Entry Section */}
-         <section id="registration-section" className="py-24 bg-zinc-50 border-y border-zinc-100 scroll-mt-24">
+         <section id="registration-section" className="py-6 md:py-24 bg-zinc-50 border-y border-zinc-100 scroll-mt-24">
             <div className="container mx-auto px-0 md:px-6">
-               <div className="grid lg:grid-cols-12 gap-0 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.15)] md:rounded-[4rem] overflow-hidden bg-white border border-zinc-200 min-h-[700px]">
+               <div className="grid lg:grid-cols-12 shadow-[0_60px_120px_-20px_rgba(0,0,0,0.15)] md:rounded-[4rem] overflow-hidden bg-white border border-zinc-200">
 
                   {/* Sidebar - Desktop Only Branding */}
                   <div className="hidden lg:flex lg:col-span-4 bg-zinc-900 p-12 flex-col justify-between text-white relative overflow-hidden">
@@ -300,30 +296,34 @@ export default function HomePage() {
                      </div>
                   </div>
 
-                  <div className="lg:col-span-8 p-8 md:p-24 bg-white relative flex flex-col justify-center min-h-[600px]">
+                  <div className="lg:col-span-8 p-6 md:p-24 bg-white relative flex flex-col justify-center min-h-[500px] md:min-h-[600px]">
 
                      {mode === 'selection' ? (
                         <div className="space-y-12 text-center animate-in fade-in duration-700 slide-in-from-bottom-8">
                            <div className="space-y-4">
-                              <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
-                                 CHOOSE YOUR <span className="text-[#CBA35C]">ENTRY.</span>
+                              <h3 className="text-2xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
+                                 CHOOSE YOUR <br className="md:hidden" /> <span className="text-[#CBA35C]">ENTRY.</span>
                               </h3>
-                              <p className="text-zinc-500 text-lg font-medium italic">Welcome to the Sona Cereal Official Infrastructure.</p>
+                              <p className="text-zinc-500 text-sm md:text-lg font-medium italic px-4">Welcome to the Sona Cereal Official Infrastructure.</p>
                            </div>
 
-                           <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto pt-8">
-                              <button onClick={() => { setMode('login'); setLoginStep('phone'); setLoginError(""); }} className="group p-10 bg-zinc-900 rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center">
+                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-2xl mx-auto pt-4 md:pt-8">
+                              <button onClick={() => { setMode('login'); setLoginStep('phone'); setLoginError(""); }} className="group p-6 md:p-10 bg-zinc-900 rounded-[2rem] md:rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center flex items-center justify-center md:flex-col gap-6 md:gap-0">
                                  <div className="absolute top-0 right-0 w-32 h-22 bg-[#CBA35C]/20 rounded-full blur-3xl group-hover:bg-[#CBA35C]/40 transition-all"></div>
-                                 <span className="material-symbols-outlined text-5xl text-[#CBA35C] mb-6 block group-hover:rotate-12 transition-transform">login</span>
-                                 <h4 className="text-2xl font-headline font-black uppercase italic leading-none mb-2 text-white">LOGIN</h4>
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Retailer Portal</p>
+                                 <span className="material-symbols-outlined text-3xl md:text-5xl text-[#CBA35C] group-hover:rotate-12 transition-transform">login</span>
+                                 <div className="text-left md:text-center relative z-10">
+                                    <h4 className="text-xl md:text-2xl font-headline font-black uppercase italic leading-none mb-1 md:mb-2 text-white">LOGIN</h4>
+                                    <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-500">Retailer Portal</p>
+                                 </div>
                               </button>
 
-                              <button onClick={() => { setMode('register'); setStep(1); }} className="group p-10 bg-zinc-50 rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center">
+                              <button onClick={() => { setMode('register'); setStep(1); }} className="group p-6 md:p-10 bg-zinc-50 rounded-[2rem] md:rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center flex items-center justify-center md:flex-col gap-6 md:gap-0">
                                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#CBA35C]/5 rounded-full blur-3xl group-hover:bg-[#CBA35C]/10 transition-all"></div>
-                                 <span className="material-symbols-outlined text-5xl text-zinc-400 mb-6 block group-hover:rotate-12 transition-transform">how_to_reg</span>
-                                 <h4 className="text-2xl font-headline font-black uppercase italic leading-none mb-2 text-zinc-900">REGISTER</h4>
-                                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">New Partner Portal</p>
+                                 <span className="material-symbols-outlined text-3xl md:text-5xl text-zinc-400 group-hover:rotate-12 transition-transform">how_to_reg</span>
+                                 <div className="text-left md:text-center relative z-10">
+                                    <h4 className="text-xl md:text-2xl font-headline font-black uppercase italic leading-none mb-1 md:mb-2 text-zinc-900">REGISTER</h4>
+                                    <p className="text-[8px] md:text-[10px] font-black uppercase tracking-widest text-zinc-400">New Partner Portal</p>
+                                 </div>
                               </button>
                            </div>
                         </div>
@@ -333,10 +333,10 @@ export default function HomePage() {
                               <button onClick={() => setMode('selection')} className="flex items-center gap-2 text-zinc-400 hover:text-zinc-900 transition-colors text-[10px] font-black uppercase tracking-[0.3em] mb-4">
                                  <span className="material-symbols-outlined">west</span> Back to Choices
                               </button>
-                              <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
+                              <h3 className="text-2xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
                                  SECURE <span className="text-[#CBA35C]">LOGIN.</span>
                               </h3>
-                              <p className="text-zinc-400 text-lg font-medium italic">
+                              <p className="text-zinc-400 text-sm md:text-lg font-medium italic">
                                  {loginStep === 'phone' ? 'Enter your registered phone number to receive a secure code.' : 'Enter the 4-digit code sent to your device.'}
                               </p>
                            </div>
@@ -409,18 +409,18 @@ export default function HomePage() {
                                  <span className="material-symbols-outlined">west</span> Back to Choices
                               </button>
                               <div>
-                                 <span className="text-[#CBA35C] font-black uppercase tracking-widest text-xs">Phase {step} of 3</span>
-                                 <h3 className="text-4xl md:text-5xl font-headline font-black uppercase text-zinc-900 mt-2 leading-none italic">
+                                 <span className="text-[#CBA35C] font-black uppercase tracking-widest text-[10px] md:text-xs text-left block">Phase {step} of 3</span>
+                                 <h3 className="text-2xl md:text-5xl font-headline font-black uppercase text-zinc-900 mt-2 leading-none italic text-left">
                                     {step === 1 ? "PROFILE" : step === 2 ? "IDENTITY" : "VALIDATE"}
                                  </h3>
-                                 <div className="w-24 h-2 bg-[#CBA35C] mt-6"></div>
+                                 <div className="w-16 md:w-24 h-1.5 md:h-2 bg-[#CBA35C] mt-4 md:mt-6"></div>
                               </div>
                            </div>
 
                            <form className="space-y-8 md:space-y-10" onSubmit={step === 3 ? handleFinalSubmit : (e) => e.preventDefault()}>
                               {step === 1 && (
-                                 <div className="space-y-8 md:space-y-10">
-                                    <div className="grid md:grid-cols-2 gap-8 md:gap-10 text-left">
+                                 <div className="space-y-6 md:space-y-10">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 text-left">
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
                                              <span className="material-symbols-outlined text-sm text-[#CBA35C]">person</span> Propriertor Name
@@ -429,7 +429,7 @@ export default function HomePage() {
                                              name="name"
                                              value={formData.name}
                                              onChange={handleInputChange}
-                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
                                              placeholder="Full name"
                                              type="text"
                                              required
@@ -443,7 +443,7 @@ export default function HomePage() {
                                              name="shopName"
                                              value={formData.shopName}
                                              onChange={handleInputChange}
-                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
                                              placeholder="Firm name"
                                              type="text"
                                              required
@@ -457,7 +457,7 @@ export default function HomePage() {
                                              name="phone"
                                              value={formData.phone}
                                              onChange={handleInputChange}
-                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
                                              placeholder="+91 00000 00000"
                                              type="tel"
                                              required
@@ -471,7 +471,7 @@ export default function HomePage() {
                                              name="city"
                                              value={formData.city}
                                              onChange={handleInputChange}
-                                             className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
                                              placeholder="City, State"
                                              type="text"
                                              required
@@ -511,31 +511,31 @@ export default function HomePage() {
                               )}
 
                               {step === 2 && (
-                                 <div className="space-y-8 md:space-y-10">
-                                    <div className="grid md:grid-cols-2 gap-8 md:gap-10">
-                                       <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
-                                          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
-                                             <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">badge</span>
+                                 <div className="space-y-6 md:space-y-10">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10">
+                                       <div className="border-2 border-dashed border-zinc-200 rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 text-center flex flex-col items-center gap-4 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
+                                          <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                                             <span className="material-symbols-outlined text-3xl md:text-5xl text-[#CBA35C] font-black">badge</span>
                                           </div>
-                                          <div className="space-y-2">
-                                             <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">ID FRONT</h4>
-                                             <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Aadhar Front Side</p>
+                                          <div className="space-y-1 md:space-y-2">
+                                             <h4 className="text-lg md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">ID FRONT</h4>
+                                             <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Aadhar Front Side</p>
                                           </div>
-                                          <label className={`px-10 py-4 ${aadharFront ? 'bg-green-500' : 'bg-zinc-900'} text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all`}>
+                                          <label className={`px-8 md:px-10 py-3 md:py-4 ${aadharFront ? 'bg-green-500' : 'bg-zinc-900'} text-white rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all`}>
                                              {aadharFront ? 'FILE SELECTED' : 'CLICK TO SELECT'}
                                              <input type="file" className="hidden" onChange={(e) => setAadharFront(e.target.files?.[0] || null)} />
                                           </label>
                                        </div>
 
-                                       <div className="border-2 border-dashed border-zinc-200 rounded-[3rem] p-8 md:p-12 text-center flex flex-col items-center gap-6 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
-                                          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
-                                             <span className="material-symbols-outlined text-4xl md:text-5xl text-[#CBA35C] font-black">receipt_long</span>
+                                       <div className="border-2 border-dashed border-zinc-200 rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 text-center flex flex-col items-center gap-4 md:gap-8 bg-zinc-50 hover:bg-zinc-100/50 transition-all group/upload">
+                                          <div className="w-16 h-16 md:w-24 md:h-24 rounded-full bg-white shadow-xl flex items-center justify-center group-hover/upload:scale-110 transition-transform">
+                                             <span className="material-symbols-outlined text-3xl md:text-5xl text-[#CBA35C] font-black">receipt_long</span>
                                           </div>
-                                          <div className="space-y-2">
-                                             <h4 className="text-xl md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">ID BACK</h4>
-                                             <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">Aadhar Back Side</p>
+                                          <div className="space-y-1 md:space-y-2">
+                                             <h4 className="text-lg md:text-2xl font-headline font-black uppercase tracking-tight text-zinc-900 italic">ID BACK</h4>
+                                             <p className="text-zinc-500 text-[8px] md:text-[10px] font-black uppercase tracking-widest">Aadhar Back Side</p>
                                           </div>
-                                          <label className={`px-10 py-4 ${aadharBack ? 'bg-green-500' : 'bg-zinc-900'} text-white rounded-full font-black text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all`}>
+                                          <label className={`px-8 md:px-10 py-3 md:py-4 ${aadharBack ? 'bg-green-500' : 'bg-zinc-900'} text-white rounded-full font-black text-[9px] md:text-[10px] uppercase tracking-widest cursor-pointer hover:bg-[#CBA35C] hover:text-black transition-all`}>
                                              {aadharBack ? 'FILE SELECTED' : 'CLICK TO SELECT'}
                                              <input type="file" className="hidden" onChange={(e) => setAadharBack(e.target.files?.[0] || null)} />
                                           </label>

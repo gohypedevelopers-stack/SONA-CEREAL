@@ -10,14 +10,14 @@ export default function TermsPage() {
   return (
     <>
       {/* Hero Banner Section */}
-      <section className="relative min-h-[480px] flex items-center bg-zinc-50 overflow-hidden editorial-skew pt-16">
+      <section className="relative md:min-h-[480px] flex items-center bg-zinc-50 overflow-hidden editorial-skew pt-1 md:pt-16">
 
-        <div className="container mx-auto px-6 relative z-10 py-24">
+        <div className="container mx-auto px-6 relative z-10 py-4 md:py-24">
           <div className="max-w-4xl">
             <span className="inline-block bg-secondary-container text-on-secondary-fixed-variant px-4 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-6">
               Official Rules
             </span>
-            <h1 className="font-headline font-black text-zinc-900 text-6xl md:text-8xl italic uppercase leading-[0.85] tracking-tighter editorial-text-shadow">
+            <h1 className="font-headline font-black text-zinc-900 text-3xl md:text-8xl italic uppercase leading-[0.85] tracking-tighter editorial-text-shadow">
               Terms &amp; <br />
               <span className="text-primary">Conditions</span>
             </h1>
@@ -32,7 +32,7 @@ export default function TermsPage() {
       </section>
 
       {/* Terms Content */}
-      <section className="max-w-5xl mx-auto px-6 pb-20 -mt-10 relative z-20">
+      <section className="max-w-5xl mx-auto px-6 pb-20 mt-0 md:-mt-10 relative z-20">
         <div className="bg-white rounded-[2rem] shadow-2xl shadow-zinc-200/50 overflow-hidden border border-zinc-100">
           <div className="p-8 md:p-12 space-y-16">
             {/* Introduction */}
@@ -42,7 +42,7 @@ export default function TermsPage() {
                   01
                 </span>
                 <div>
-                  <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
+                  <h2 className="text-xl md:text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
                     Introduction
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600 mb-4">
