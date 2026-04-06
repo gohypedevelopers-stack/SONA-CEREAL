@@ -198,26 +198,6 @@ export default function DashboardPage() {
             </div>
          </section>
 
-         {/* SYNCED BOTTOM GRID */}
-         <section className="py-24 bg-white border-t border-zinc-100">
-            <div className="container mx-auto px-6">
-               <div className="max-w-6xl mx-auto flex justify-between items-end mb-16">
-                  <h2 className="font-headline font-black text-3xl md:text-7xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter text-left">REWARD <br /><span className="text-[#CBA35C]">SLABS.</span></h2>
-                  <p className="hidden md:block text-zinc-400 text-right font-medium italic text-lg max-w-xs">A comprehensive portfolio of the assets available at each performance level.</p>
-               </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto text-center px-4 md:px-0">
-                   {STATIC_SLABS.map((slab) => (
-                      <div key={slab.id} className="group p-6 md:p-8 bg-zinc-50 rounded-[2.5rem] md:rounded-[3rem] border border-zinc-100 hover:bg-white transition-all text-center flex flex-col items-center shadow-sm hover:shadow-xl">
-                         <div className="w-full aspect-square rounded-2xl md:rounded-[2rem] overflow-hidden mb-4 md:mb-6 bg-white shadow-inner flex items-center justify-center p-6 md:p-4 text-center">
-                            <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
-                         </div>
-                         <h4 className="text-2xl md:text-3xl font-headline font-black text-zinc-900 italic uppercase leading-none mb-3 md:mb-4">{slab.target} <span className="text-[9px] font-bold text-zinc-400">QTL</span></h4>
-                         <span className="text-[8px] md:text-[9px] font-black text-zinc-950 uppercase tracking-[0.1em] md:tracking-widest border-t border-zinc-100 pt-4 w-full opacity-60">{slab.giftA} / {slab.giftB}</span>
-                      </div>
-                   ))}
-                </div>
-            </div>
-         </section>
       </div>
    );
 }

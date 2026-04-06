@@ -338,7 +338,7 @@ export default function RedeemPage() {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 max-w-7xl mx-auto text-center px-4 md:px-0">
                    {slabs.map((slab) => (
                       <div key={slab.id} className="group p-8 bg-zinc-50/50 rounded-[3rem] border border-zinc-100 hover:bg-white hover:border-[#CBA35C]/20 transition-all duration-500 flex flex-col items-center shadow-sm hover:shadow-xl relative overflow-hidden">
-                         <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-8 bg-white shadow-inner flex items-center justify-center p-8 relative border border-zinc-50">
+                         <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-8 bg-white shadow-inner flex items-center justify-center p-2 relative border border-zinc-50">
                             {slab.giftAImg ? (
                                <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
                             ) : (
@@ -351,7 +351,7 @@ export default function RedeemPage() {
                             </h4>
                             <div className="h-[1px] w-full bg-zinc-100"></div>
                             <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest leading-loose italic px-6">
-                               {[slab.giftA, slab.giftB, slab.giftC, slab.giftD].filter(Boolean).join(' / ')}
+                               {slab.giftA}
                             </p>
                          </div>
                       </div>
