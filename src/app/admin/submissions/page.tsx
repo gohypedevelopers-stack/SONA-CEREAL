@@ -11,14 +11,14 @@ export default function AdminSubmissions() {
    const [loadingSettings, setLoadingSettings] = useState(true);
 
    useEffect(() => {
-      fetch("/api/admin/submissions")
+      fetch("/api/admin/submissions", { cache: 'no-store' })
          .then(res => res.json())
          .then(data => {
             setSubmissions(Array.isArray(data) ? data : []);
          })
          .catch(err => console.error("Admin fetch error:", err));
 
-      fetch("/api/settings")
+      fetch("/api/settings", { cache: 'no-store' })
          .then(res => res.json())
          .then(data => {
             setIsLocked(!data.rewardsDistributed);
@@ -168,9 +168,7 @@ export default function AdminSubmissions() {
                   </div>
                </div>
             </div>
-         )}
-
-         {/* Header */}
+         )}         {/* Header */}
          <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
             <div>
                <h2 className="text-4xl font-headline font-black text-zinc-900 uppercase italic">Retailer <span className="text-[#CBA35C]">Requests</span></h2>
@@ -178,31 +176,6 @@ export default function AdminSubmissions() {
             </div>
 
              <div className="flex items-center gap-6">
-                {!loadingSettings && (
-                   <button 
-                      onClick={async () => {
-                         const confirmed = window.confirm(`Are you sure you want to ${isLocked ? 'unlock' : 'lock'} the redeem portal?`);
-                         if (confirmed) {
-                            try {
-                               await fetch('/api/settings', {
-                                  method: 'PATCH',
-                                  headers: { 'Content-Type': 'application/json' },
-                                  body: JSON.stringify({ rewardsDistributed: isLocked })
-                               });
-                               setIsLocked(!isLocked);
-                               alert(`Redeem portal ${isLocked ? 'unlocked' : 'locked'} successfully!`);
-                            } catch (err) {
-                               alert("Error updating settings.");
-                            }
-                         }
-                      }}
-                      className={`px-8 py-3 rounded-xl font-headline font-black uppercase text-xs transition-all shadow-lg flex items-center gap-2 ${isLocked ? 'bg-[#CBA35C] text-black hover:bg-[#B08644]' : 'bg-red-600 text-white hover:bg-red-700'}`}
-                   >
-                      <span className="material-symbols-outlined text-lg">{isLocked ? 'workspace_premium' : 'lock'}</span>
-                      {isLocked ? 'Distribute Rewards' : 'Lock Redeem Page'}
-                   </button>
-                )}
-
                <div className="flex gap-2">
                   {["all", "pending", "accepted", "rejected"].map(s => (
                      <button
@@ -242,7 +215,6 @@ export default function AdminSubmissions() {
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest">Quantity</th>
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest">Contact / ID</th>
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest">Status</th>
-                        <th className="p-6 text-[10px] font-black uppercase tracking-widest">Claimed Gift</th>
                         <th className="p-6 text-[10px] font-black uppercase tracking-widest text-right">Actions</th>
                      </tr>
                   </thead>
@@ -270,7 +242,7 @@ export default function AdminSubmissions() {
                                        <a href={sub.aadharFront} target="_blank" className="text-[8px] font-black uppercase text-[#CBA35C] hover:underline">Front ID</a>
                                     )}
                                     {sub.aadharBack && (
-                                       <a href={sub.aadharBack} target="_black" className="text-[8px] font-black uppercase text-[#CBA35C] hover:underline">Back ID</a>
+                                       <a href={sub.aadharBack} target="_blank" className="text-[8px] font-black uppercase text-[#CBA35C] hover:underline">Back ID</a>
                                     )}
                                  </div>
                               </td>
@@ -284,16 +256,6 @@ export default function AdminSubmissions() {
                                         {sub.status}
                                      </span>
                                   </div>
-                               </td>
-                               <td className="p-6">
-                                  {sub.claimedGift ? (
-                                     <span className="text-[10px] font-black text-indigo-600 uppercase tracking-widest bg-indigo-50/50 px-3 py-1.5 rounded-lg border border-indigo-100 italic flex items-center gap-2 w-fit">
-                                        <span className="material-symbols-outlined text-sm">redeem</span>
-                                        {sub.claimedGift}
-                                     </span>
-                                  ) : (
-                                     <span className="text-[10px] font-bold text-zinc-300 uppercase tracking-widest italic">—</span>
-                                  )}
                                </td>
 
                               <td className="p-6 text-right">

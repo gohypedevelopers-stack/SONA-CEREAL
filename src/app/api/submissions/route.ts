@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { getSubmissions, updateSubmission, getUsers, saveSubmission } from '@/lib/data';
 import { prisma } from '@/lib/prisma';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

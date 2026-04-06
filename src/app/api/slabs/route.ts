@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getSlabs, saveSlab, deleteSlab } from '@/lib/data';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const slabs = await getSlabs();

@@ -13,11 +13,18 @@ export default function AdminSlabsPage() {
     giftA: "",
     giftAImg: "",
     giftB: "",
-    giftBImg: ""
+    giftBImg: "",
+    giftC: "",
+    giftCImg: "",
+    giftD: "",
+    giftDImg: ""
   });
 
   const fileInputARef = useRef<HTMLInputElement>(null);
   const fileInputBRef = useRef<HTMLInputElement>(null);
+  const fileInputCRef = useRef<HTMLInputElement>(null);
+  const fileInputDRef = useRef<HTMLInputElement>(null);
+
 
   const fetchSlabs = async () => {
     try {
@@ -35,7 +42,8 @@ export default function AdminSlabsPage() {
     fetchSlabs();
   }, []);
 
-  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'giftAImg' | 'giftBImg') => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>, field: 'giftAImg' | 'giftBImg' | 'giftCImg' | 'giftDImg') => {
+
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
@@ -94,11 +102,14 @@ export default function AdminSlabsPage() {
   };
 
   const resetForm = () => {
-    setForm({ level: "", target: "", giftA: "", giftAImg: "", giftB: "", giftBImg: "" });
+    setForm({ level: "", target: "", giftA: "", giftAImg: "", giftB: "", giftBImg: "", giftC: "", giftCImg: "", giftD: "", giftDImg: "" });
     setEditId(null);
     if (fileInputARef.current) fileInputARef.current.value = "";
     if (fileInputBRef.current) fileInputBRef.current.value = "";
+    if (fileInputCRef.current) fileInputCRef.current.value = "";
+    if (fileInputDRef.current) fileInputDRef.current.value = "";
   };
+
 
   const handleEdit = (slab: any) => {
     setEditId(slab.id);
@@ -107,9 +118,14 @@ export default function AdminSlabsPage() {
       target: slab.target.toString(),
       giftA: slab.giftA,
       giftAImg: slab.giftAImg || "",
-      giftB: slab.giftB,
-      giftBImg: slab.giftBImg || ""
+      giftB: slab.giftB || "",
+      giftBImg: slab.giftBImg || "",
+      giftC: slab.giftC || "",
+      giftCImg: slab.giftCImg || "",
+      giftD: slab.giftD || "",
+      giftDImg: slab.giftDImg || ""
     });
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -201,10 +217,10 @@ export default function AdminSlabsPage() {
 
                     <div className="space-y-4 pt-6 border-t border-zinc-100">
                        <div className="flex justify-between items-center">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-950 block italic">Reward Option B</label>
+                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-950 block italic">Reward Option B (Optional)</label>
                           {form.giftBImg && <span className="text-[9px] font-black text-green-600 uppercase">Image Uploaded</span>}
                        </div>
-                       <input required value={form.giftB} onChange={e => setForm({...form, giftB: e.target.value})} className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-bold" placeholder="Gift Name (e.g. JBL Speaker)" />
+                       <input value={form.giftB} onChange={e => setForm({...form, giftB: e.target.value})} className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-bold" placeholder="Gift Name (e.g. JBL Speaker)" />
                        
                        <div className="relative group">
                           <input 
@@ -237,6 +253,55 @@ export default function AdminSlabsPage() {
                           )}
                        </div>
                     </div>
+
+                    <div className="space-y-4 pt-6 border-t border-zinc-100">
+                       <div className="flex justify-between items-center">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-950 block italic">Reward Option C (Optional)</label>
+                          {form.giftCImg && <span className="text-[9px] font-black text-green-600 uppercase">Image Uploaded</span>}
+                       </div>
+                       <input value={form.giftC} onChange={e => setForm({...form, giftC: e.target.value})} className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-bold" placeholder="Gift Name" />
+                       <div className="relative group">
+                          <input type="file" ref={fileInputCRef} onChange={e => handleImageUpload(e, 'giftCImg')} className="hidden" accept="image/*" />
+                          {form.giftCImg ? (
+                             <div className="relative w-full aspect-video rounded-2xl overflow-hidden border-2 border-[#CBA35C] group/preview">
+                                <img src={form.giftCImg} className="w-full h-full object-contain bg-zinc-50" alt="Preview" />
+                                <div onClick={() => fileInputCRef.current?.click()} className="absolute inset-0 bg-black/60 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                   <span className="text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2"><span className="material-symbols-outlined italic text-sm">cached</span> Replace Image</span>
+                                </div>
+                             </div>
+                          ) : (
+                             <div onClick={() => fileInputCRef.current?.click()} className="w-full p-4 rounded-xl border-2 border-dashed border-zinc-200 hover:border-[#CBA35C]/50 transition-all cursor-pointer flex items-center justify-center gap-3 bg-zinc-50/50">
+                                <span className="material-symbols-outlined text-zinc-400">add_photo_alternate</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Upload Gift Image</span>
+                             </div>
+                          )}
+                       </div>
+                    </div>
+
+                    <div className="space-y-4 pt-6 border-t border-zinc-100">
+                       <div className="flex justify-between items-center">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-950 block italic">Reward Option D (Optional)</label>
+                          {form.giftDImg && <span className="text-[9px] font-black text-green-600 uppercase">Image Uploaded</span>}
+                       </div>
+                       <input value={form.giftD} onChange={e => setForm({...form, giftD: e.target.value})} className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-bold" placeholder="Gift Name" />
+                       <div className="relative group">
+                          <input type="file" ref={fileInputDRef} onChange={e => handleImageUpload(e, 'giftDImg')} className="hidden" accept="image/*" />
+                          {form.giftDImg ? (
+                             <div className="relative w-full aspect-video rounded-2xl overflow-hidden border-2 border-[#CBA35C] group/preview">
+                                <img src={form.giftDImg} className="w-full h-full object-contain bg-zinc-50" alt="Preview" />
+                                <div onClick={() => fileInputDRef.current?.click()} className="absolute inset-0 bg-black/60 opacity-0 group-hover/preview:opacity-100 transition-opacity flex items-center justify-center cursor-pointer">
+                                   <span className="text-white font-black text-[10px] uppercase tracking-widest flex items-center gap-2"><span className="material-symbols-outlined italic text-sm">cached</span> Replace Image</span>
+                                </div>
+                             </div>
+                          ) : (
+                             <div onClick={() => fileInputDRef.current?.click()} className="w-full p-4 rounded-xl border-2 border-dashed border-zinc-200 hover:border-[#CBA35C]/50 transition-all cursor-pointer flex items-center justify-center gap-3 bg-zinc-50/50">
+                                <span className="material-symbols-outlined text-zinc-400">add_photo_alternate</span>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Upload Gift Image</span>
+                             </div>
+                          )}
+                       </div>
+                    </div>
+
                   </div>
                </div>
 
@@ -283,7 +348,7 @@ export default function AdminSlabsPage() {
                       </div>
                       <div className="flex items-center gap-3">
                          <span className="w-2 h-2 bg-[#CBA35C] rounded-full"></span>
-                         <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest">{slab.giftA} <span className="opacity-30 italic px-2">/</span> {slab.giftB}</p>
+                         <p className="text-sm text-zinc-500 font-bold uppercase tracking-widest">{[slab.giftA, slab.giftB, slab.giftC, slab.giftD].filter(Boolean).join(' / ')}</p>
                       </div>
                     </div>
                   </div>

@@ -25,7 +25,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="bg-white text-zinc-900 font-body selection:bg-primary selection:text-black antialiased">
+      <body suppressHydrationWarning className="bg-white text-zinc-900 font-body selection:bg-primary selection:text-black antialiased">
         <Header />
         <main>{children}</main>
         <Footer />

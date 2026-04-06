@@ -8,15 +8,16 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(uuid())
-  phone        String   @unique
-  name         String
-  shopName     String
-  city         String
-  aadharFront  String?
-  aadharBack   String?
-  createdAt    DateTime @default(now())
-  registeredAt DateTime @default(now())
+  id             String   @id @default(uuid())
+  phone          String   @unique
+  name           String
+  shopName       String
+  city           String
+  aadharFront    String?
+  aadharBack     String?
+  overrideSlabId String?
+  createdAt      DateTime @default(now())
+  registeredAt   DateTime @default(now())
 }
 
 model Submission {
@@ -49,7 +50,12 @@ model Slab {
   target    Int
   giftA     String
   giftAImg  String?
-  giftB     String
+  giftB     String?
   giftBImg  String?
+  giftC     String?
+  giftCImg  String?
+  giftD     String?
+  giftDImg  String?
   updatedAt DateTime @updatedAt
 }
+

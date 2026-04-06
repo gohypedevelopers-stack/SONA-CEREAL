@@ -24,12 +24,12 @@ export default function MilestonesPage() {
             <div className="absolute inset-0" style={{ backgroundImage: "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')" }}></div>
          </div>
 
-         <div className="container mx-auto px-4 md:px-6 pt-24 md:pt-32 relative z-10">
+         <div className="max-w-full mx-auto px-2 md:px-6 pt-24 md:pt-32 relative z-10">
             {/* Header Section */}
             <div className="max-w-4xl mb-24 md:mb-32 border-l-8 border-[#CBA35C] pl-8 md:pl-12 bg-zinc-50/50 p-8 md:p-16 rounded-r-3xl md:rounded-r-[4rem] shadow-sm">
                <div className="inline-flex items-center gap-3 bg-zinc-900 text-white px-5 py-2.5 rounded-full mb-8 md:mb-10 border border-white/10 shadow-2xl">
                   <span className="w-2 h-2 bg-[#CBA35C] rounded-full animate-pulse"></span>
-                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-[#CBA35C]">Sona Elite Tiers 2025</span>
+                  <span className="text-[10px] md:text-[11px] font-black uppercase tracking-[0.4em] text-[#CBA35C]">Sona Elite Slabs 2025</span>
                </div>
                <h1 className="font-headline font-black text-4xl md:text-[5rem] italic uppercase text-zinc-900 leading-[0.9] md:leading-[0.8] tracking-tighter mb-8 md:mb-10">
                   REWARD <br />
@@ -40,84 +40,23 @@ export default function MilestonesPage() {
                </p>
             </div>
 
-            {/* Legend / Table Header (Desktop) - Clean & Wide */}
-            <div className="hidden lg:grid grid-cols-12 gap-12 px-16 py-10 bg-zinc-900 rounded-[3rem] text-white items-center shadow-2xl mb-12">
-               <div className="col-span-2 text-[11px] font-black uppercase tracking-[0.4em] text-[#CBA35C] italic">Tier Level</div>
-               <div className="col-span-4 text-[11px] font-black uppercase tracking-[0.4em] text-white/50 italic">Target Milestone (QUINTAL)</div>
-               <div className="col-span-6 text-[11px] font-black uppercase tracking-[0.4em] text-[#CBA35C] italic text-right pr-6">PREMIUM GIFTS</div>
+            {/* Legend / Table Header - Absolute Width Pill */}
+            <div className="hidden lg:grid grid-cols-12 gap-8 px-24 py-8 bg-zinc-900 rounded-full text-white items-center shadow-2xl mb-12 border border-white/5 w-full">
+               <div className="col-span-2 text-[11px] font-black uppercase tracking-[0.8em] text-[#CBA35C] italic">SLABS</div>
+               <div className="col-span-3 text-[11px] font-black uppercase tracking-[0.8em] text-white/40 italic">MILESTONE</div>
+               <div className="col-span-7 text-[11px] font-black uppercase tracking-[0.8em] text-[#CBA35C] italic text-right pr-12">REWARDS PORTFOLIO</div>
             </div>
 
-            {/* Milestone Grid */}
-            <div className="space-y-6 max-w-6xl mx-auto pb-32 px-4">
+            {/* Milestone Grid - Edge-to-Edge */}
+            <div className="space-y-10 w-full mx-auto pb-48 px-2 md:px-0">
                {loading ? (
-                  <div className="text-center py-24">
-                     <div className="inline-block w-12 h-12 border-4 border-zinc-100 border-t-[#CBA35C] rounded-full animate-spin"></div>
-                     <p className="mt-4 text-xs font-black uppercase tracking-widest text-zinc-400">Loading Tiers...</p>
-                  </div>
-               ) : slabs.length === 0 ? (
-                  <div className="text-center py-24 bg-zinc-50 rounded-[3rem] border border-zinc-100">
-                     <p className="text-zinc-400 font-headline font-black text-2xl uppercase italic tracking-tighter">No Reward Slabs Configured Yet.</p>
+                  <div className="text-center py-32 bg-zinc-50/50 rounded-[4rem]">
+                     <div className="inline-block w-16 h-16 border-[6px] border-zinc-100 border-t-[#CBA35C] rounded-full animate-spin"></div>
+                     <p className="mt-6 text-[10px] font-black uppercase tracking-[0.5em] text-zinc-400">Loading Elite Slabs...</p>
                   </div>
                ) : (
-                  slabs.map((slab, idx) => (
-                     <div
-                        key={slab.id}
-                        className="group bg-white rounded-3xl md:rounded-full border border-zinc-100 shadow-[0_8px_30px_rgb(0,0,0,0.04)] py-8 md:py-6 px-8 md:px-16 relative overflow-hidden transition-all hover:shadow-2xl hover:scale-[1.01] hover:border-[#CBA35C]/30 duration-500"
-                     >
-                        {/* Elite Tag for higher tiers */}
-                        {slab.target >= 750 && (
-                           <div className="absolute top-0 right-12 md:right-32 py-1.5 px-6 md:px-10 bg-zinc-900 text-[#CBA35C] font-black text-[9px] uppercase tracking-[0.4em] rounded-b-2xl italic flex items-center gap-2 z-20">
-                              <span className="w-1.5 h-1.5 bg-[#CBA35C] rounded-full animate-pulse"></span>
-                              Elite
-                           </div>
-                        )}
-
-                        <div className="grid grid-cols-1 md:grid-cols-12 items-center w-full relative z-10 gap-8 md:gap-4">
-                           {/* Tier Indicator */}
-                           <div className="col-span-1 md:col-span-2 md:border-r border-zinc-100 flex flex-col justify-center items-center md:items-start text-center md:text-left">
-                              <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5">SLAB</span>
-                              <h3 className="text-5xl md:text-6xl font-headline font-black text-zinc-100 italic leading-none group-hover:text-[#CBA35C]/10 transition-all duration-500">
-                                 {slab.level}
-                              </h3>
-                           </div>
-
-                           {/* Milestone Target */}
-                           <div className="col-span-1 md:col-span-3 md:border-r border-zinc-100 md:px-8 flex flex-col items-center md:items-start text-center md:text-left">
-                              <span className="text-[#CBA35C] text-[10px] font-black uppercase tracking-[0.4em] mb-1.5 block opacity-60">TARGET</span>
-                              <div className="flex items-baseline gap-2 group-hover:translate-x-1 transition-transform duration-500">
-                                 <span className="text-5xl md:text-5xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter">{slab.target}</span>
-                                 <span className="text-zinc-400 text-xs font-black uppercase">QTL</span>
-                              </div>
-                           </div>
-
-                           {/* Portfolio Options */}
-                           <div className="col-span-1 md:col-span-7 flex flex-col md:flex-row items-center md:justify-end gap-6 md:gap-12 group-hover:translate-x-[-4px] transition-transform duration-500">
-                              <div className="flex flex-col items-center md:items-end w-full">
-                                 <span className="text-zinc-300 text-[10px] font-black uppercase tracking-[0.4em] mb-3 block">PORTFOLIO</span>
-                                 <div className="flex flex-wrap items-center gap-4 justify-center md:justify-end">
-                                    <div className="flex items-center gap-4">
-                                       <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
-                                          {slab.giftA}
-                                       </h4>
-                                    </div>
-                                    
-                                    <span className="text-zinc-300 text-[11px] font-black italic tracking-[0.1em] uppercase bg-zinc-50 px-3 py-1 rounded-md border border-zinc-100">OR</span>
-                                    
-                                    <div className="flex items-center gap-4">
-                                       <h4 className="text-xl md:text-2xl font-headline font-black italic uppercase leading-none tracking-tight text-zinc-900 group-hover:text-[#CBA35C] transition-all duration-500 whitespace-nowrap">
-                                          {slab.giftB}
-                                       </h4>
-                                    </div>
-                                 </div>
-                              </div>
-                           </div>
-                        </div>
-
-                        {/* Background Number Accent */}
-                        <span className="absolute -bottom-10 right-10 text-[12rem] font-headline font-black text-zinc-50 leading-none select-none -z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none">
-                           {idx + 1}
-                        </span>
-                     </div>
+                  slabs.map((slab) => (
+                     <SlabCard key={slab.id} slab={slab} />
                   ))
                )}
             </div>
@@ -144,6 +83,108 @@ export default function MilestonesPage() {
                </div>
             </div>
          </div>
+      </div>
+   );
+}
+
+function SlabCard({ slab }: { slab: any }) {
+   const [open, setOpen] = useState(false);
+   const rewards = [slab.giftA, slab.giftB, slab.giftC, slab.giftD].filter(Boolean);
+
+   return (
+      <div className="flex flex-col gap-4">
+         <div
+            className={`group bg-white rounded-[3.5rem] lg:rounded-full border border-zinc-100 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.02)] py-8 lg:py-4 px-8 md:px-16 lg:px-24 relative overflow-hidden transition-all hover:shadow-[0_45px_90px_-25px_rgba(203,163,92,0.1)] hover:border-[#CBA35C]/20 duration-500 w-full z-20 ${open ? 'border-[#CBA35C]/40' : ''}`}
+         >
+            {/* High-Performance Top Lighting */}
+            <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-[#CBA35C]/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-1000"></div>
+
+            {/* Status Beacon - Compact Edition */}
+            {slab.target >= 15000 && (
+               <div className="absolute top-0 right-24 md:right-48 py-2 px-6 bg-zinc-900 text-[#CBA35C] font-black text-[9px] uppercase tracking-[0.4em] rounded-b-[1.25rem] italic flex items-center gap-3 z-20 shadow-2xl border-x border-b border-white/10">
+                  <div className="relative flex h-1.5 w-1.5">
+                     <div className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#CBA35C] opacity-75"></div>
+                     <div className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#CBA35C]"></div>
+                  </div>
+                  SLAB ELITE
+               </div>
+            )}
+
+            <div className="flex flex-col lg:grid lg:grid-cols-12 items-center w-full relative z-10 gap-10 lg:gap-8">
+               {/* Tier Specification */}
+               <div className="lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left relative lg:pr-12 lg:scale-90 lg:origin-left">
+                  <span className="text-[#CBA35C] text-[9px] font-black uppercase tracking-[0.8em] mb-1 opacity-40 italic">SLAB</span>
+                  <div className="relative inline-block scale-90 lg:scale-100">
+                     <h3 className="text-6xl lg:text-7xl font-headline font-black text-zinc-900/[0.04] italic leading-none select-none">
+                        0{slab.level}
+                     </h3>
+                     <span className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-4xl lg:text-5xl font-headline font-black text-zinc-900 italic tracking-tighter">
+                        {slab.level}
+                     </span>
+                  </div>
+               </div>
+
+               {/* Milestone Configuration */}
+               <div className="lg:col-span-3 flex flex-col items-center lg:items-start text-center lg:text-left px-0 lg:px-8 lg:scale-90 lg:origin-left">
+                  <span className="text-[#CBA35C] text-[9px] font-black uppercase tracking-[0.8em] mb-1 opacity-40 italic">STAKE</span>
+                  <div className="flex items-baseline gap-1 group-hover:translate-x-4 transition-transform duration-1000 scale-90 lg:scale-100">
+                     <span className="text-5xl lg:text-6xl font-headline font-black text-zinc-900 italic leading-none tracking-tighter drop-shadow-lg">
+                        {slab.target}
+                     </span>
+                     <span className="text-[#CBA35C] text-[9px] font-black uppercase tracking-widest italic ml-1">QTL</span>
+                  </div>
+               </div>
+
+               {/* Reward Dropdown Action */}
+               <div className="lg:col-span-6 flex flex-col items-center lg:items-end pt-0 lg:pl-16 relative w-full lg:w-auto">
+                  <button
+                     onClick={() => setOpen(!open)}
+                     className={`flex items-center justify-between lg:justify-center gap-6 px-10 py-3.5 rounded-full font-headline font-black italic uppercase tracking-[0.2em] transition-all duration-500 border group w-full lg:w-auto ${open ? 'bg-zinc-900 text-[#CBA35C] border-[#CBA35C]' : 'bg-transparent text-zinc-400 border-zinc-100 hover:border-[#CBA35C] hover:text-[#CBA35C] hover:bg-zinc-50'}`}
+                  >
+                     <span className="text-[10px] sm:text-xs">VIEW GIFTS</span>
+                     <div className="flex items-center gap-2 border-l border-current pl-4 ml-2 opacity-50">
+                        <span className="text-[10px]">{rewards.length}</span>
+                        <svg 
+                           className={`w-4 h-4 transition-transform duration-500 ${open ? 'rotate-180' : ''}`} 
+                           fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        >
+                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M19 9l-7 7-7-7" />
+                        </svg>
+                     </div>
+                  </button>
+               </div>
+            </div>
+
+            {/* Background Vector Motif */}
+            <div className="absolute -bottom-12 -right-12 w-64 h-64 bg-[#CBA35C]/[0.02] rounded-full blur-[80px] pointer-events-none group-hover:bg-[#CBA35C]/[0.05] transition-all duration-1000"></div>
+         </div>
+
+         {/* Simple Portfolio Menu - Mobile Optimized */}
+         {open && (
+            <div 
+               className="animate-in fade-in slide-in-from-top-2 duration-300 bg-zinc-900 rounded-[2.5rem] p-6 md:p-8 lg:p-10 border border-white/5 shadow-2xl relative overflow-hidden -mt-8 pt-16 z-0"
+            >
+               <div className="relative z-10 w-full">
+                  <div className="flex flex-col gap-3 lg:gap-4">
+                     {rewards.map((reward, rIdx) => (
+                        <React.Fragment key={rIdx}>
+                           <div className="flex items-center gap-3 cursor-default">
+                              <span className="w-1.5 h-1.5 rounded-full bg-[#CBA35C] shrink-0"></span>
+                              <h4 className="text-base lg:text-xl font-headline font-black italic uppercase tracking-tighter text-[#CBA35C] leading-snug">
+                                 {reward}
+                              </h4>
+                           </div>
+                           {rIdx < rewards.length - 1 && (
+                              <div className="flex items-center pl-4 py-0.5">
+                                 <span className="text-zinc-600 text-[8px] lg:text-[9px] font-black italic uppercase tracking-[0.4em]">OR</span>
+                              </div>
+                           )}
+                        </React.Fragment>
+                     ))}
+                  </div>
+               </div>
+            </div>
+         )}
       </div>
    );
 }
