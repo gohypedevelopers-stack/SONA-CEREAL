@@ -24,7 +24,7 @@ export default function TermsPage() {
             <div className="mt-10 flex items-center gap-4">
               <div className="h-1 w-20 bg-primary"></div>
               <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 font-headline">
-                Last Updated: October 2024
+                Last Updated: April 2026
               </p>
             </div>
           </div>
@@ -46,10 +46,10 @@ export default function TermsPage() {
                     Retailer Partnership
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600 mb-4">
-                    Welcome to the Sona Cereal Elite Retailer Rewards Program. 
-                    This initiative is designed to recognize and reward our authorized partners 
-                    who achieve significant sales milestones within their territory. 
-                    By registering your business on this portal, you agree to comply with 
+                    Welcome to the Sona Cereal Elite Retailer Rewards Program.
+                    This initiative is designed to recognize and reward our authorized partners
+                    who achieve significant sales milestones within their territory.
+                    By registering your business on this portal, you agree to comply with
                     all logistical and verification standards set forth by Sona Cereal.
                   </p>
                 </div>
@@ -79,6 +79,10 @@ export default function TermsPage() {
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
                       <span>Retailers must maintain active status throughout the promotion duration.</span>
                     </li>
+                    <li className="flex items-center gap-4 text-zinc-600">
+                      <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
+                      <span>Scheme Valid in - Maharashtra, Gujarat, Madhya Pradesh & Delhi.</span>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -95,9 +99,9 @@ export default function TermsPage() {
                     Slab Campaign Duration
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600">
-                    The current rewards campaign is active for a period of 5 months. 
-                    All verified sales quantities (QTL) submitted through the portal 
-                    within this window will contribute to your final Slab calculation. 
+                    The current rewards campaign is active for a period of 5 months from 1st April to 31st August 2026.
+                    All verified sales quantities (QTL) submitted through the portal
+                    within this window will contribute to your final Slab calculation.
                     Rewards distribution will initiate strictly after the 5-month consolidation period.
                   </p>
                 </div>
@@ -120,8 +124,8 @@ export default function TermsPage() {
                         Phase A: Digital Recording
                       </h4>
                       <p className="text-sm text-zinc-600">
-                        Retailers must upload clear, legible copies of their authentic 
-                        purchase invoices. The system automatically extracts the 
+                        Retailers must upload clear, legible copies of their authentic
+                        purchase invoices. The system automatically extracts the
                         Quantity (QTL) and Invoice Number for validation.
                       </p>
                     </div>
@@ -130,8 +134,8 @@ export default function TermsPage() {
                         Phase B: Manual Audit
                       </h4>
                       <p className="text-sm text-zinc-600">
-                        Our internal verification team audits each submission. 
-                        Once accepted, the quantity is added to your total 
+                        Our internal verification team audits each submission.
+                        Once accepted, the quantity is added to your total
                         Portfolio Achievement, moving you closer to the next Slab.
                       </p>
                     </div>
@@ -151,22 +155,22 @@ export default function TermsPage() {
                     Slab Awards & Redemption
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600 mb-6">
-                    Rewards are distributed based on your total achieved QTL. 
-                    Retailers can select one high-octane gift per milestone reached. 
+                    Rewards are distributed based on your total achieved QTL.
+                    Retailers can select one high-octane gift per milestone reached.
                     Current rewards include:
                   </p>
                   <div className="space-y-4">
                     <div className="flex justify-between items-center p-4 bg-zinc-50 border-l-4 border-primary">
                       <span className="font-bold">Elite Luxury Assets (Apache, iPhone 16 Pro)</span>
-                      <span className="text-xs font-bold uppercase text-primary">Slab 4</span>
+
                     </div>
                     <div className="flex justify-between items-center p-4 bg-zinc-50 border-l-4 border-zinc-200">
                       <span className="font-bold">Premium Appliances (Sony Smart TV, Refrigerator)</span>
-                      <span className="text-xs font-bold uppercase text-zinc-400">Slab 3</span>
+
                     </div>
                     <div className="flex justify-between items-center p-4 bg-zinc-50 border-l-4 border-zinc-200 text-zinc-400">
                       <span className="font-bold">Essential Tech (Microwave, JBL Speakers)</span>
-                      <span className="text-xs font-bold uppercase">Slab 1 & 2</span>
+
                     </div>
                   </div>
                 </div>

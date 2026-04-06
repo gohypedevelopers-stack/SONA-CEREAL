@@ -45,7 +45,7 @@ export default function RedeemPage() {
 
             const claimedSub = acceptedSubs.find((s: any) => s.status === 'claimed');
             const baseUser = subData.user || {};
-            
+
             if (claimedSub) {
                setSelectedGift(claimedSub.claimedGift);
                setUserData({ ...baseUser, ...claimedSub, totalQty: total });
@@ -82,7 +82,7 @@ export default function RedeemPage() {
       if (userData?.overrideSlabId) {
          return slabs.find(s => s.id === userData.overrideSlabId);
       }
-      
+
       // Priority 2: Auto Calculation
       const achievedSlabs = slabs.filter(s => totalQty >= s.target);
       if (achievedSlabs.length === 0) return null;
@@ -184,16 +184,16 @@ export default function RedeemPage() {
                            <span className="text-[#CBA35C]">OFFER.</span>
                         </h3>
                         <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
-                           <input 
-                              type="tel" 
-                              value={phone} 
+                           <input
+                              type="tel"
+                              value={phone}
                               onChange={(e) => {
                                  if (e.target.value.startsWith('+91 ')) {
                                     setPhone(e.target.value);
                                  }
-                              }} 
-                              placeholder="+91 00000 00000" 
-                              className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" 
+                              }}
+                              placeholder="+91 00000 00000"
+                              className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner"
                            />
                            {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
                            <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
@@ -223,10 +223,12 @@ export default function RedeemPage() {
                                        CAMPAIGN <br /><span className="text-[#CBA35C]">IN PROGRESS.</span>
                                     </h3>
                                     <p className="text-[#CBA35C] font-black text-[10px] md:text-xs italic tracking-widest max-w-xl mx-auto opacity-60">
-                                       "After 5 months you will get rewarded as per the slabs"
+                                       &quot;After 5 months (from 1st April to 31st August 2026) you will get rewarded as per the slabs&quot;
                                     </p>
                                     <p className="text-zinc-400 font-medium text-sm md:text-lg italic max-w-xl mx-auto">
                                        Your verified submissions are being tracked. The reward claim portal will unlock automatically once the campaign duration is complete.
+                                       <br />
+                                       <span className="text-[10px] text-primary/60 uppercase font-black tracking-widest mt-2 block">Scheme Valid in - Maharashtra, Gujarat, Madhya Pradesh & Delhi</span>
                                     </p>
                                  </div>
                                  <div className="pt-6 md:pt-8 relative z-10">
@@ -288,9 +290,9 @@ export default function RedeemPage() {
                               ) : (
                                  <div className={`grid gap-6 md:gap-8 max-w-7xl mx-auto ${getGiftOptions(totalAcceptedQty).length === 1 ? 'grid-cols-1 max-w-xl' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}>
                                     {getGiftOptions(totalAcceptedQty).map((gift) => (
-                                       <button 
-                                          key={gift.name} 
-                                          onClick={() => handleGiftSelect(gift.name)} 
+                                       <button
+                                          key={gift.name}
+                                          onClick={() => handleGiftSelect(gift.name)}
                                           className={`group relative p-8 md:p-10 rounded-[3rem] md:rounded-[4rem] border border-zinc-100 bg-white hover:border-[#CBA35C]/40 transition-all duration-500 shadow-[0_30px_60px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_50px_100px_-20px_rgba(203,163,92,0.15)] overflow-hidden ${getGiftOptions(totalAcceptedQty).length === 1 ? 'ring-2 ring-[#CBA35C]/20' : ''}`}
                                        >
                                           <div className="aspect-square bg-zinc-50/50 rounded-[2.5rem] mb-8 p-10 flex items-center justify-center overflow-hidden border border-zinc-50 relative group-hover:bg-white transition-colors duration-500">
@@ -303,7 +305,7 @@ export default function RedeemPage() {
                                              )}
                                              <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                           </div>
-                                          
+
                                           <div className="text-center space-y-3">
                                              <h4 className="text-lg md:text-xl font-headline font-black italic uppercase leading-[1] tracking-tighter text-zinc-900 break-words px-4">
                                                 {gift.name}
@@ -348,28 +350,28 @@ export default function RedeemPage() {
                   <h2 className="font-headline font-black text-5xl md:text-7xl italic uppercase text-zinc-900 leading-[0.85] tracking-tighter text-left">REWARD <br /><span className="text-[#CBA35C]">SLABS.</span></h2>
                   <p className="hidden md:block text-zinc-400 text-right font-medium italic text-lg max-w-xs">A comprehensive portfolio of the assets available at each performance level.</p>
                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 max-w-7xl mx-auto text-center px-4 md:px-0">
-                   {slabs.map((slab) => (
-                      <div key={slab.id} className="group p-8 bg-zinc-50/50 rounded-[3rem] border border-zinc-100 hover:bg-white hover:border-[#CBA35C]/20 transition-all duration-500 flex flex-col items-center shadow-sm hover:shadow-xl relative overflow-hidden">
-                         <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-8 bg-white shadow-inner flex items-center justify-center p-2 relative border border-zinc-50">
-                            {slab.giftAImg ? (
-                               <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
-                            ) : (
-                               <span className="material-symbols-outlined text-zinc-200 text-6xl">card_giftcard</span>
-                            )}
-                         </div>
-                         <div className="space-y-3 w-full text-center">
-                            <h4 className="text-lg md:text-xl font-headline font-black text-zinc-900 italic uppercase leading-none tracking-tighter">
-                               {slab.target} <span className="text-[#CBA35C] text-[8px] ml-1">QTL</span>
-                            </h4>
-                            <div className="h-[1px] w-full bg-zinc-100"></div>
-                            <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest leading-loose italic px-6">
-                               {slab.giftA}
-                            </p>
-                         </div>
-                      </div>
-                   ))}
-                </div>
+               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 max-w-7xl mx-auto text-center px-4 md:px-0">
+                  {slabs.map((slab) => (
+                     <div key={slab.id} className="group p-8 bg-zinc-50/50 rounded-[3rem] border border-zinc-100 hover:bg-white hover:border-[#CBA35C]/20 transition-all duration-500 flex flex-col items-center shadow-sm hover:shadow-xl relative overflow-hidden">
+                        <div className="w-full aspect-square rounded-[2rem] overflow-hidden mb-8 bg-white shadow-inner flex items-center justify-center p-2 relative border border-zinc-50">
+                           {slab.giftAImg ? (
+                              <img src={slab.giftAImg} className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-1000" alt={slab.target.toString()} />
+                           ) : (
+                              <span className="material-symbols-outlined text-zinc-200 text-6xl">card_giftcard</span>
+                           )}
+                        </div>
+                        <div className="space-y-3 w-full text-center">
+                           <h4 className="text-lg md:text-xl font-headline font-black text-zinc-900 italic uppercase leading-none tracking-tighter">
+                              {slab.target} <span className="text-[#CBA35C] text-[8px] ml-1">QTL</span>
+                           </h4>
+                           <div className="h-[1px] w-full bg-zinc-100"></div>
+                           <p className="text-[8px] font-black text-zinc-400 uppercase tracking-widest leading-loose italic px-6">
+                              {slab.giftA}
+                           </p>
+                        </div>
+                     </div>
+                  ))}
+               </div>
             </div>
          </section>
       </div>

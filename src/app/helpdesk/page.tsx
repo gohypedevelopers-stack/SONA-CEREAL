@@ -56,13 +56,13 @@ export default function HelpdeskPage() {
       id: 1,
       question: "Why was my invoice rejected?",
       answer:
-        "Invoices are typically rejected if the image is blurry, the bill date falls outside the promotion window, or if it lacks a clear Sona Cereal itemized entry. We recommend re-uploading a high-resolution scan.",
+        "Invoices are typically rejected if the image is blurry, the bill date falls outside the promotion window (1st April to 31st August'26), or if it lacks a clear Sona Cereal itemized entry. We recommend re-uploading a high-resolution scan.",
     },
     {
       id: 2,
       question: "Can I redeem gifts multiple times?",
       answer:
-        "Gifts can be selected once per Slab milestone. As you progress from 200 QTL to higher tiers (up to 1000 QTL), you unlock new gift selections. Final redemption happens at the end of the campaign period.",
+        "Gifts can be selected once per Slab milestone. As you progress from 200 QTL to higher tiers (up to 1000 QTL), you unlock new gift selections. Final redemption happens at the end of the campaign period (31st August'26). The scheme is valid for retailers in Maharashtra, Gujarat, Madhya Pradesh & Delhi.",
     },
   ];
 
