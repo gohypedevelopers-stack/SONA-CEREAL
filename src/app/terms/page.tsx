@@ -99,7 +99,7 @@ export default function TermsPage() {
                     Slab Campaign Duration
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600">
-                    The current rewards campaign is active for a period of 5 months from 1st April to 31st August 2026.
+                    The current rewards campaign is active from 1st April to 31st August 2026.
                     All verified sales quantities (QTL) submitted through the portal
                     within this window will contribute to your final Slab calculation.
                     Rewards distribution will initiate strictly after the 5-month consolidation period.

@@ -223,7 +223,7 @@ export default function RedeemPage() {
                                        CAMPAIGN <br /><span className="text-[#CBA35C]">IN PROGRESS.</span>
                                     </h3>
                                     <p className="text-[#CBA35C] font-black text-[10px] md:text-xs italic tracking-widest max-w-xl mx-auto opacity-60">
-                                       &quot;After 5 months (from 1st April to 31st August 2026) you will get rewarded as per the slabs&quot;
+                                       &quot;from 1st April to 31st August 2026 you will get rewarded as per the slabs&quot;
                                     </p>
                                     <p className="text-zinc-400 font-medium text-sm md:text-lg italic max-w-xl mx-auto">
                                        Your verified submissions are being tracked. The reward claim portal will unlock automatically once the campaign duration is complete.
