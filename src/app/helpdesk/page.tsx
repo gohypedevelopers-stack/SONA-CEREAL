@@ -5,45 +5,45 @@ import React, { useState } from "react";
 export default function HelpdeskPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(1);
   const [formData, setFormData] = useState({
-     category: "",
-     phone: "+91 ",
-     message: ""
+    category: "",
+    phone: "+91 ",
+    message: ""
   });
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-   const scrollToTop = () => {
-     window.scrollTo({ top: 0, behavior: "smooth" });
-   };
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-   const handleSubmit = async (e: React.FormEvent) => {
-      e.preventDefault();
-      if (!formData.category || formData.phone.length < 14 || !formData.message) {
-         setSubmitError("Please fill all fields accurately.");
-         return;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!formData.category || formData.phone.length < 14 || !formData.message) {
+      setSubmitError("Please fill all fields accurately.");
+      return;
+    }
+    setLoading(true);
+    setSubmitError("");
+    try {
+      const res = await fetch("/api/support", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSuccess(true);
+        setFormData({ category: "", phone: "+91 ", message: "" });
+      } else {
+        setSubmitError(data.error || "Submission failed.");
       }
-      setLoading(true);
-      setSubmitError("");
-      try {
-         const res = await fetch("/api/support", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(formData),
-         });
-         const data = await res.json();
-         if (data.success) {
-            setSuccess(true);
-            setFormData({ category: "", phone: "+91 ", message: "" });
-         } else {
-            setSubmitError(data.error || "Submission failed.");
-         }
-      } catch (err) {
-         setSubmitError("Connection error.");
-      } finally {
-         setLoading(false);
-      }
-   };
+    } catch (err) {
+      setSubmitError("Connection error.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const faqs = [
     {
@@ -214,27 +214,62 @@ export default function HelpdeskPage() {
               />
             </div>
             <h2 className="font-headline font-black text-3xl md:text-5xl text-black uppercase tracking-tighter leading-none mb-6 relative z-10">
-              STILL STUCK IN THE PITS?
+              NEED HELP ?
             </h2>
             <p className="text-zinc-600 text-base md:text-xl max-w-lg mb-10 font-medium relative z-10">
               Our dedicated support team is available 24/7 to assist you with
               any queries or concerns.
             </p>
-            <div className="flex flex-wrap gap-4 relative z-10">
+            <div className="space-y-8 mb-10 relative z-10">
+              {/* WhatsApp Entry */}
+              <div className="flex items-center gap-5 group">
+                <div className="bg-black text-primary w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-6 transition-all duration-300">
+                  <span className="material-symbols-outlined text-3xl">chat</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-black/40 italic">WhatsApp Support</span>
+                  <a
+                    href="https://wa.me/919012182182"
+                    target="_blank"
+                    className="text-2xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-none"
+                  >
+                    +91 90121 82182
+                  </a>
+                </div>
+              </div>
+
+              {/* Email Entry */}
+              <div className="flex items-center gap-5 group">
+                <div className="bg-white/20 backdrop-blur-md border border-white/40 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl group-hover:-rotate-6 transition-all duration-300">
+                  <span className="material-symbols-outlined text-3xl">mail</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-black/40 italic">Official Email</span>
+                  <a
+                    href="mailto:garv@sonacereal.com"
+                    className="text-2xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-none"
+                  >
+                    garv@sonacereal.com
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap gap-4 relative z-10 pt-4 border-t border-black/5">
               <a
-                className="bg-black text-primary flex items-center gap-2 px-6 py-3 rounded-full font-bold hover:scale-105 transition-transform"
+                className="bg-black text-primary flex items-center gap-3 px-8 py-4 rounded-full font-headline font-black uppercase italic tracking-widest text-sm hover:scale-105 transition-all shadow-xl"
                 href="https://wa.me/919012182182"
                 target="_blank"
               >
                 <span className="material-symbols-outlined">chat</span>
-                WhatsApp
+                Chat on WhatsApp
               </a>
               <a
-                className="bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center gap-2 px-6 py-3 rounded-full font-bold hover:bg-white/20 transition-all text-sm md:text-base"
+                className="bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center justify-center w-14 h-14 rounded-full font-bold hover:bg-white/20 transition-all shadow-lg"
                 href="mailto:garv@sonacereal.com"
+                title="Send Email"
               >
                 <span className="material-symbols-outlined">mail</span>
-
               </a>
             </div>
           </div>
@@ -243,69 +278,69 @@ export default function HelpdeskPage() {
               SEND A MESSAGE
             </h3>
             {success ? (
-               <div className="bg-primary/10 border border-primary/20 p-8 rounded-2xl text-center space-y-4">
-                  <span className="material-symbols-outlined text-primary text-5xl">check_circle</span>
-                  <h4 className="font-headline font-black text-xl uppercase italic">Message Sent</h4>
-                  <p className="text-zinc-400 text-sm">Our elite support team will reach out to you shortly.</p>
-                  <button onClick={() => setSuccess(false)} className="text-primary font-black text-[10px] uppercase tracking-widest underline pt-4">Send another message</button>
-               </div>
-            ) : (
-            <form className="space-y-6" onSubmit={handleSubmit}>
-              <div>
-                <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
-                  Issue Category
-                </label>
-                <select 
-                  value={formData.category}
-                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
-                  className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm text-white appearance-none"
-                >
-                  <option value="">Select an option</option>
-                  <option value="Registration Issue">Registration Issue</option>
-                  <option value="Redemption Problem">Redemption Problem</option>
-                  <option value="QTL Discrepancy">QTL Discrepancy</option>
-                  <option value="Other Query">Other Query</option>
-                </select>
+              <div className="bg-primary/10 border border-primary/20 p-8 rounded-2xl text-center space-y-4">
+                <span className="material-symbols-outlined text-primary text-5xl">check_circle</span>
+                <h4 className="font-headline font-black text-xl uppercase italic">Message Sent</h4>
+                <p className="text-zinc-400 text-sm">Our elite support team will reach out to you shortly.</p>
+                <button onClick={() => setSuccess(false)} className="text-primary font-black text-[10px] uppercase tracking-widest underline pt-4">Send another message</button>
               </div>
-              <div className="grid grid-cols-1 gap-4">
+            ) : (
+              <form className="space-y-6" onSubmit={handleSubmit}>
                 <div>
                   <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
-                    Phone Number
+                    Issue Category
                   </label>
-                  <input
-                    className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
-                    placeholder="+91 00000 00000"
-                    type="text"
-                    value={formData.phone}
-                    onChange={(e) => {
-                       if (e.target.value.startsWith('+91 ')) {
-                          setFormData(prev => ({ ...prev, phone: e.target.value }));
-                       }
-                    }}
-                  />
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                    className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm text-white appearance-none"
+                  >
+                    <option value="">Select an option</option>
+                    <option value="Registration Issue">Registration Issue</option>
+                    <option value="Redemption Problem">Redemption Problem</option>
+                    <option value="QTL Discrepancy">QTL Discrepancy</option>
+                    <option value="Other Query">Other Query</option>
+                  </select>
                 </div>
-              </div>
-              <div>
-                <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
-                  Message
-                </label>
-                <textarea
-                  className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
-                  placeholder="Tell us how we can help..."
-                  rows={4}
-                  value={formData.message}
-                  onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
-                ></textarea>
-              </div>
-              {submitError && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest">{submitError}</p>}
-              <button
-                className="w-full bg-primary text-black py-4 rounded-xl font-headline font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all shadow-lg disabled:opacity-50"
-                type="submit"
-                disabled={loading}
-              >
-                {loading ? 'Processing...' : 'Send Message'}
-              </button>
-            </form>
+                <div className="grid grid-cols-1 gap-4">
+                  <div>
+                    <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
+                      Phone Number
+                    </label>
+                    <input
+                      className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
+                      placeholder="+91 00000 00000"
+                      type="text"
+                      value={formData.phone}
+                      onChange={(e) => {
+                        if (e.target.value.startsWith('+91 ')) {
+                          setFormData(prev => ({ ...prev, phone: e.target.value }));
+                        }
+                      }}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
+                    Message
+                  </label>
+                  <textarea
+                    className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
+                    placeholder="Tell us how we can help..."
+                    rows={4}
+                    value={formData.message}
+                    onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
+                  ></textarea>
+                </div>
+                {submitError && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest">{submitError}</p>}
+                <button
+                  className="w-full bg-primary text-black py-4 rounded-xl font-headline font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all shadow-lg disabled:opacity-50"
+                  type="submit"
+                  disabled={loading}
+                >
+                  {loading ? 'Processing...' : 'Send Message'}
+                </button>
+              </form>
             )}
           </div>
         </div>
