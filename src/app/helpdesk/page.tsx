@@ -205,7 +205,7 @@ export default function HelpdeskPage() {
       <section className="max-w-7xl mx-auto px-6 py-10 md:py-24">
         <div className="bg-white rounded-3xl overflow-hidden relative flex flex-col md:flex-row border border-zinc-100 shadow-xl">
           {/* Left Side: Visual/Headline */}
-          <div className="md:w-1/2 px-6 py-12 md:p-12 bg-primary flex flex-col justify-center relative">
+          <div className="md:w-1/2 px-4 py-12 md:p-12 bg-primary flex flex-col justify-center relative">
             <div className="absolute inset-0 opacity-10 pointer-events-none">
               <img
                 className="w-full h-full object-cover"
@@ -223,15 +223,15 @@ export default function HelpdeskPage() {
             <div className="space-y-8 mb-10 relative z-10">
               {/* WhatsApp Entry */}
               <div className="flex items-center gap-5 group">
-                <div className="bg-black text-primary w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-6 transition-all duration-300">
-                  <span className="material-symbols-outlined text-3xl">chat</span>
+                <div className="bg-black text-primary w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-6 transition-all duration-300 flex-shrink-0">
+                  <span className="material-symbols-outlined text-2xl sm:text-3xl">chat</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40 italic">WhatsApp Support</span>
                   <a
                     href="https://wa.me/919012182182"
                     target="_blank"
-                    className="text-2xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-none"
+                    className="text-lg sm:text-xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-tight"
                   >
                     +91 90121 82182
                   </a>
@@ -240,14 +240,14 @@ export default function HelpdeskPage() {
 
               {/* Email Entry */}
               <div className="flex items-center gap-5 group">
-                <div className="bg-white/20 backdrop-blur-md border border-white/40 text-white w-14 h-14 rounded-2xl flex items-center justify-center shadow-2xl group-hover:-rotate-6 transition-all duration-300">
-                  <span className="material-symbols-outlined text-3xl">mail</span>
+                <div className="bg-white/20 backdrop-blur-md border border-white/40 text-white w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl group-hover:-rotate-6 transition-all duration-300 flex-shrink-0">
+                  <span className="material-symbols-outlined text-2xl sm:text-3xl">mail</span>
                 </div>
                 <div className="flex flex-col">
                   <span className="text-[10px] font-black uppercase tracking-widest text-black/40 italic">Official Email</span>
                   <a
                     href="mailto:garv@sonacereal.com"
-                    className="text-2xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-none"
+                    className="text-lg sm:text-xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-tight break-words"
                   >
                     garv@sonacereal.com
                   </a>
