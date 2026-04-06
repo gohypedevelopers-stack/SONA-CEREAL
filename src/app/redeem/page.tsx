@@ -149,11 +149,24 @@ export default function RedeemPage() {
                   </div>
 
                   <div className="relative group lg:block hidden">
-                     <div className="relative w-full aspect-[4/3] max-w-[650px] ml-auto">
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] h-[80%] rounded-[4.5rem] overflow-hidden shadow-[0_40px_80px_-20px_rgba(0,0,0,0.15)] border-[8px] border-white z-20">
-                           <img src="/reward-bike.png" className="w-full h-full object-cover" alt="Elite Rewards" />
+                     <div className="relative w-full h-[500px] ml-auto">
+                        {/* MAIN ASSET IMAGE (BIKE) */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] rounded-[3rem] md:rounded-[4.5rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border-[8px] border-white z-20 group-hover:rotate-1 group-hover:scale-[1.02] transition-all duration-1000">
+                           <img src="/assets/Harley-Davidson X440.avif" className="w-full h-full object-cover" alt="Elite Rewards" />
                         </div>
-                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[85%] bg-[#CBA35C]/5 rounded-full blur-[100px] -z-10"></div>
+
+                        {/* FLOATING SECONDARY ASSET (IPHONE) */}
+                        <div className="absolute top-[5%] -left-12 w-[35%] aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-[6px] border-white z-30 group-hover:translate-x-[-10px] group-hover:translate-y-[-10px] transition-all duration-700">
+                           <img src="/assets/Apple iPhone 16 Pro Max 256 GH.jpg" className="w-full h-full object-cover" alt="Elite Asset" />
+                        </div>
+
+                        {/* FLOATING TERTIARY ASSET (LAPTOP) */}
+                        <div className="absolute -bottom-4 -right-12 w-[55%] aspect-[16/10] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border-[8px] border-white z-40 bg-white p-2 group-hover:translate-y-[-20px] transition-all duration-700">
+                           <img src="/assets/HP 15, 13 Gen Intel Core i5 - 1335U.webp" className="w-full h-full object-contain" alt="Elite Performance" />
+                        </div>
+
+                        {/* PREMIUM GLOW */}
+                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#CBA35C]/10 rounded-full blur-[120px] -z-10"></div>
                      </div>
                   </div>
                </div>
