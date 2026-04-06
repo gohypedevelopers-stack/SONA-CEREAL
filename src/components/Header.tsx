@@ -92,13 +92,6 @@ export default function Header() {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-4">
-            <button
-              onClick={handleLogout}
-              className="hidden lg:flex items-center justify-center w-10 h-10 text-zinc-400 hover:text-rose-500 hover:bg-rose-500/5 rounded-full transition-all duration-300"
-              title="Logout Partner Session"
-            >
-              <span className="material-symbols-outlined text-2xl">logout</span>
-            </button>
             <Link
               href="/dashboard"
               className={`hidden md:flex items-center justify-center w-12 h-12 rounded-full transition-all duration-500 shadow-xl group/dashboard border border-zinc-100/50 ${pathname === "/dashboard"

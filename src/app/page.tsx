@@ -42,6 +42,7 @@ export default function HomePage() {
    const [aadharFront, setAadharFront] = React.useState<File | null>(null);
    const [aadharBack, setAadharBack] = React.useState<File | null>(null);
    const [isSubmitting, setIsSubmitting] = React.useState(false);
+   const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
 
    // Handle smooth scroll to form
    const scrollToRegistration = () => {
@@ -53,16 +54,25 @@ export default function HomePage() {
 
    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
       const { name, value } = e.target;
-      if (name === 'phone' && !value.startsWith('+91 ')) {
-         return;
+      if (name === 'phone') {
+         if (!value.startsWith('+91 ')) return;
       }
       setFormData(prev => ({ ...prev, [name]: value }));
+      // Clear error when user types and if validation passes for phone
+      if (fieldErrors[name]) {
+         if (name === 'phone' && value.length < 14) return;
+         setFieldErrors(prev => {
+            const newErrors = { ...prev };
+            delete newErrors[name];
+            return newErrors;
+         });
+      }
    };
 
    const handleSendOtp = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (loginPhone.trim().length < 13) {
-         setLoginError("Please enter a valid phone number.");
+      if (loginPhone.trim().length < 14) {
+         setLoginError("Phone number must be exactly 10 digits (+91 00000 00000).");
          return;
       }
 
@@ -94,16 +104,21 @@ export default function HomePage() {
    };
 
    const handleRegistrationStep1Next = async () => {
-      if (formData.phone.trim().length < 13) {
-         setRegisterError("Please enter a valid phone number.");
-         return;
+      const errors: Record<string, string> = {};
+      if (formData.phone.trim().length < 14) {
+         errors.phone = "Phone number must be exactly 10 digits (+91 00000 00000).";
       }
-      if (!formData.name || !formData.shopName || !formData.city) {
-         setRegisterError("Please fill all fields.");
+      if (!formData.name.trim()) errors.name = "Proprietor name is required.";
+      if (!formData.shopName.trim()) errors.shopName = "Firm name is required.";
+      if (!formData.city.trim()) errors.city = "City/Region is required.";
+
+      if (Object.keys(errors).length > 0) {
+         setFieldErrors(errors);
          return;
       }
 
       try {
+         setIsSubmitting(true);
          const res = await fetch(`/api/register?phone=${encodeURIComponent(formData.phone)}`);
          const data = await res.json();
          if (data.exists) {
@@ -114,6 +129,8 @@ export default function HomePage() {
          setStep(2);
       } catch (err) {
          setRegisterError("Verification failed.");
+      } finally {
+         setIsSubmitting(false);
       }
    };
 
@@ -429,11 +446,12 @@ export default function HomePage() {
                                              name="name"
                                              value={formData.name}
                                              onChange={handleInputChange}
-                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.name ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
                                              placeholder="Full name"
                                              type="text"
                                              required
                                           />
+                                          {fieldErrors.name && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.name}</p>}
                                        </div>
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
@@ -443,11 +461,12 @@ export default function HomePage() {
                                              name="shopName"
                                              value={formData.shopName}
                                              onChange={handleInputChange}
-                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.shopName ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
                                              placeholder="Firm name"
                                              type="text"
                                              required
                                           />
+                                          {fieldErrors.shopName && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.shopName}</p>}
                                        </div>
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
@@ -457,11 +476,12 @@ export default function HomePage() {
                                              name="phone"
                                              value={formData.phone}
                                              onChange={handleInputChange}
-                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.phone ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
                                              placeholder="+91 00000 00000"
                                              type="tel"
                                              required
                                           />
+                                          {fieldErrors.phone && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.phone}</p>}
                                        </div>
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
@@ -471,11 +491,12 @@ export default function HomePage() {
                                              name="city"
                                              value={formData.city}
                                              onChange={handleInputChange}
-                                             className="w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border border-zinc-100 font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400"
+                                             className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.city ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
                                              placeholder="City, State"
                                              type="text"
                                              required
                                           />
+                                          {fieldErrors.city && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.city}</p>}
                                        </div>
                                     </div>
                                     {registerError && (
@@ -541,14 +562,26 @@ export default function HomePage() {
                                           </label>
                                        </div>
                                     </div>
+                                    {fieldErrors.aadhar && <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest italic text-center mb-6">{fieldErrors.aadhar}</p>}
                                     <div className="flex items-center justify-between pt-10 border-t border-zinc-100">
-                                       <button type="button" onClick={() => setStep(step - 1)} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
+                                       <button type="button" onClick={() => { setStep(step - 1); setFieldErrors({}); }} className="group flex items-center gap-4 text-zinc-400 hover:text-zinc-900 transition-all p-4 active:scale-90">
                                           <div className="w-12 h-12 rounded-full border border-zinc-200 flex items-center justify-center group-hover:border-zinc-900 transition-all">
                                              <span className="material-symbols-outlined text-xl transition-transform group-hover:-translate-x-1">arrow_back</span>
                                           </div>
                                           <span className="font-headline font-black text-sm uppercase tracking-widest italic">Back</span>
                                        </button>
-                                       <button type="button" onClick={() => setStep(3)} className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90">
+                                       <button 
+                                          type="button" 
+                                          onClick={() => {
+                                             if (!aadharFront || !aadharBack) {
+                                                setFieldErrors({ aadhar: "Please upload both front and back sides of Aadhar ID." });
+                                                return;
+                                             }
+                                             setFieldErrors({});
+                                             setStep(3);
+                                          }} 
+                                          className="group flex items-center gap-4 text-zinc-900 hover:text-[#CBA35C] transition-all p-4 active:scale-90"
+                                       >
                                           <span className="font-headline font-black text-sm md:text-lg uppercase tracking-widest italic">VALIDATE NOW</span>
                                           <div className="w-16 h-16 rounded-full border-2 border-zinc-100 flex items-center justify-center group-hover:border-[#CBA35C] group-hover:bg-[#CBA35C] group-hover:text-black transition-all">
                                              <span className="material-symbols-outlined text-3xl font-black transition-transform group-hover:translate-x-1">arrow_forward</span>

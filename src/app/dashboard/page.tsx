@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function DashboardPage() {
-   const [phone, setPhone] = useState("");
+   const [phone, setPhone] = useState("+91 ");
    const [userProfile, setUserProfile] = useState<any>(null);
    const [submissions, setSubmissions] = useState<any[]>([]);
    const [error, setError] = useState("");
@@ -18,7 +18,10 @@ export default function DashboardPage() {
    ];
 
    const checkStatus = async () => {
-      if (!phone) return;
+      if (phone.length < 14) {
+         setError("Please enter a valid 10-digit phone number (+91 00000 00000).");
+         return;
+      }
       setSearched(true);
       setLoading(true);
       try {
@@ -60,7 +63,18 @@ export default function DashboardPage() {
                         <span className="text-[#CBA35C]">DASHBOARD.</span>
                      </h3>
                      <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
-                        <input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+91 00000 00000" className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
+                        <input 
+                           type="tel" 
+                           value={phone} 
+                           onChange={(e) => {
+                              if (e.target.value.startsWith('+91 ')) {
+                                 setPhone(e.target.value);
+                              }
+                           }} 
+                           placeholder="+91 00000 00000" 
+                           className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" 
+                        />
+                        {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
                         <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
                      </div>
                   </div>
