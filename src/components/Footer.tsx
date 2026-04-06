@@ -142,7 +142,7 @@ export default function Footer() {
                   href="/helpdesk"
                   className="inline-flex items-center gap-2 text-sm font-black uppercase italic text-primary hover:gap-3 transition-all"
                 >
-                  Open Ticket{" "}
+                  PORTAL SUPPORT{" "}
                   <span className="material-symbols-outlined text-sm">
                     arrow_forward
                   </span>

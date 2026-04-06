@@ -3,30 +3,66 @@
 import React, { useState } from "react";
 
 export default function HelpdeskPage() {
-  const [openFaq, setOpenFaq] = useState<number | null>(1); // Default item 2 open as in original
+  const [openFaq, setOpenFaq] = useState<number | null>(1);
+  const [formData, setFormData] = useState({
+     category: "",
+     phone: "+91 ",
+     message: ""
+  });
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [submitError, setSubmitError] = useState("");
 
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
+   const scrollToTop = () => {
+     window.scrollTo({ top: 0, behavior: "smooth" });
+   };
+
+   const handleSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!formData.category || formData.phone.length < 14 || !formData.message) {
+         setSubmitError("Please fill all fields accurately.");
+         return;
+      }
+      setLoading(true);
+      setSubmitError("");
+      try {
+         const res = await fetch("/api/support", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData),
+         });
+         const data = await res.json();
+         if (data.success) {
+            setSuccess(true);
+            setFormData({ category: "", phone: "+91 ", message: "" });
+         } else {
+            setSubmitError(data.error || "Submission failed.");
+         }
+      } catch (err) {
+         setSubmitError("Connection error.");
+      } finally {
+         setLoading(false);
+      }
+   };
 
   const faqs = [
     {
       id: 0,
-      question: "Where is my voucher code?",
+      question: "When will my submitted QTL be updated?",
       answer:
-        "Your voucher code is sent via SMS within 5 minutes of a successful purchase. You can also find it in the 'My Rewards' section of your profile dashboard.",
+        "Standard invoice verification takes 24-48 hours. Once our audit team confirms the authenticity of the bill, the Quantity (QTL) will automatically sync to your dashboard and contribute to your Slab achievement.",
     },
     {
       id: 1,
-      question: "How long does UPI transfer take?",
+      question: "Why was my invoice rejected?",
       answer:
-        "Standard UPI transfers are processed instantly but can take up to 24-48 business hours depending on bank server availability. If your payment is pending, please wait 2 hours before contacting support.",
+        "Invoices are typically rejected if the image is blurry, the bill date falls outside the promotion window, or if it lacks a clear Sona Cereal itemized entry. We recommend re-uploading a high-resolution scan.",
     },
     {
       id: 2,
-      question: "What is the daily jackpot?",
+      question: "Can I redeem gifts multiple times?",
       answer:
-        "The daily jackpot is a high-stakes draw happening every night at 9 PM. Every rice pack scan earns you 1 entry. The more you scan, the higher your odds!",
+        "Gifts can be selected once per Slab milestone. As you progress from 200 QTL to higher tiers (up to 1000 QTL), you unlock new gift selections. Final redemption happens at the end of the campaign period.",
     },
   ];
 
@@ -75,41 +111,13 @@ export default function HelpdeskPage() {
               </span>
             </div>
             <h3 className="font-headline font-black text-2xl uppercase tracking-tighter text-zinc-900 group-hover:text-black mb-2">
-              Registration
+              Onboarding
             </h3>
             <p className="text-zinc-500 group-hover:text-black/70 text-sm">
-              Account setup, phone verification, and profile updates.
+              Retailer profile setup, business verification, and login help.
             </p>
           </div>
-          {/* Voucher Issues */}
-          <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
-            <div className="bg-primary group-hover:bg-white w-14 h-14 rounded-full flex items-center justify-center mb-6 transition-colors">
-              <span className="material-symbols-outlined text-white group-hover:text-primary text-3xl">
-                confirmation_number
-              </span>
-            </div>
-            <h3 className="font-headline font-black text-2xl uppercase tracking-tighter text-zinc-900 group-hover:text-black mb-2">
-              Voucher Issues
-            </h3>
-            <p className="text-zinc-500 group-hover:text-black/70 text-sm">
-              Missing codes, expired vouchers, or redemption errors.
-            </p>
-          </div>
-          {/* UPI Payments */}
-          <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
-            <div className="bg-primary group-hover:bg-white w-14 h-14 rounded-full flex items-center justify-center mb-6 transition-colors">
-              <span className="material-symbols-outlined text-white group-hover:text-primary text-3xl">
-                account_balance_wallet
-              </span>
-            </div>
-            <h3 className="font-headline font-black text-2xl uppercase tracking-tighter text-zinc-900 group-hover:text-black mb-2">
-              UPI Payments
-            </h3>
-            <p className="text-zinc-500 group-hover:text-black/70 text-sm">
-              Cashback tracking, bank link issues, and payout times.
-            </p>
-          </div>
-          {/* Prizes & Rewards */}
+          {/* Redemption Support */}
           <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
             <div className="bg-primary group-hover:bg-white w-14 h-14 rounded-full flex items-center justify-center mb-6 transition-colors">
               <span className="material-symbols-outlined text-white group-hover:text-primary text-3xl">
@@ -117,10 +125,38 @@ export default function HelpdeskPage() {
               </span>
             </div>
             <h3 className="font-headline font-black text-2xl uppercase tracking-tighter text-zinc-900 group-hover:text-black mb-2">
-              Prizes &amp; Rewards
+              Redemptions
             </h3>
             <p className="text-zinc-500 group-hover:text-black/70 text-sm">
-              Jackpot mechanics, physical prizes, and delivery status.
+              Slab milestone rewards, gift selection, and logistics.
+            </p>
+          </div>
+          {/* QTL Tracking */}
+          <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
+            <div className="bg-primary group-hover:bg-white w-14 h-14 rounded-full flex items-center justify-center mb-6 transition-colors">
+              <span className="material-symbols-outlined text-white group-hover:text-primary text-3xl">
+                monitoring
+              </span>
+            </div>
+            <h3 className="font-headline font-black text-2xl uppercase tracking-tighter text-zinc-900 group-hover:text-black mb-2">
+              QTL Tracking
+            </h3>
+            <p className="text-zinc-500 group-hover:text-black/70 text-sm">
+              Invoice processing time, audit status, and sync issues.
+            </p>
+          </div>
+          {/* Business Support */}
+          <div className="bg-white border border-zinc-100 p-8 rounded-xl group hover:bg-primary transition-all duration-300 cursor-pointer shadow-sm">
+            <div className="bg-primary group-hover:bg-white w-14 h-14 rounded-full flex items-center justify-center mb-6 transition-colors">
+              <span className="material-symbols-outlined text-white group-hover:text-primary text-3xl">
+                storefront
+              </span>
+            </div>
+            <h3 className="font-headline font-black text-2xl uppercase tracking-tighter text-zinc-900 group-hover:text-black mb-2">
+              Business Ops
+            </h3>
+            <p className="text-zinc-500 group-hover:text-black/70 text-sm">
+              Territory queries, sales policy, and partner guidelines.
             </p>
           </div>
         </div>
@@ -202,25 +238,36 @@ export default function HelpdeskPage() {
               </a>
             </div>
           </div>
-          {/* Right Side: Contact Form */}
           <div className="md:w-1/2 px-6 py-10 md:p-12 bg-zinc-900 text-white">
             <h3 className="font-headline font-black text-xl md:text-2xl uppercase tracking-widest mb-8 text-primary">
               SEND A MESSAGE
             </h3>
-            <form className="space-y-6">
+            {success ? (
+               <div className="bg-primary/10 border border-primary/20 p-8 rounded-2xl text-center space-y-4">
+                  <span className="material-symbols-outlined text-primary text-5xl">check_circle</span>
+                  <h4 className="font-headline font-black text-xl uppercase italic">Message Sent</h4>
+                  <p className="text-zinc-400 text-sm">Our elite support team will reach out to you shortly.</p>
+                  <button onClick={() => setSuccess(false)} className="text-primary font-black text-[10px] uppercase tracking-widest underline pt-4">Send another message</button>
+               </div>
+            ) : (
+            <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
                   Issue Category
                 </label>
-                <select className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm text-white appearance-none">
-                  <option>Select an option</option>
-                  <option>Registration Issue</option>
-                  <option>Voucher Not Received</option>
-                  <option>Payment Failure</option>
-                  <option>Other Query</option>
+                <select 
+                  value={formData.category}
+                  onChange={(e) => setFormData(prev => ({ ...prev, category: e.target.value }))}
+                  className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm text-white appearance-none"
+                >
+                  <option value="">Select an option</option>
+                  <option value="Registration Issue">Registration Issue</option>
+                  <option value="Redemption Problem">Redemption Problem</option>
+                  <option value="QTL Discrepancy">QTL Discrepancy</option>
+                  <option value="Other Query">Other Query</option>
                 </select>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 gap-4">
                 <div>
                   <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
                     Phone Number
@@ -229,16 +276,12 @@ export default function HelpdeskPage() {
                     className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
                     placeholder="+91 00000 00000"
                     type="text"
-                  />
-                </div>
-                <div>
-                  <label className="block font-label text-xs uppercase tracking-widest text-zinc-400 mb-2">
-                    Ticket ID (Optional)
-                  </label>
-                  <input
-                    className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
-                    placeholder="#12345"
-                    type="text"
+                    value={formData.phone}
+                    onChange={(e) => {
+                       if (e.target.value.startsWith('+91 ')) {
+                          setFormData(prev => ({ ...prev, phone: e.target.value }));
+                       }
+                    }}
                   />
                 </div>
               </div>
@@ -250,15 +293,20 @@ export default function HelpdeskPage() {
                   className="w-full bg-zinc-800 border-none rounded-lg p-4 focus:ring-2 focus:ring-primary text-sm"
                   placeholder="Tell us how we can help..."
                   rows={4}
+                  value={formData.message}
+                  onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                 ></textarea>
               </div>
+              {submitError && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest">{submitError}</p>}
               <button
-                className="w-full bg-primary text-black py-4 rounded-xl font-headline font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all shadow-lg"
+                className="w-full bg-primary text-black py-4 rounded-xl font-headline font-black uppercase tracking-widest hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all shadow-lg disabled:opacity-50"
                 type="submit"
+                disabled={loading}
               >
-                Submit Ticket
+                {loading ? 'Processing...' : 'Send Message'}
               </button>
             </form>
+            )}
           </div>
         </div>
       </section>

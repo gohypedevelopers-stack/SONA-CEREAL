@@ -42,6 +42,13 @@ export default function AdminLayout({
           >
             <span className="material-symbols-outlined">emoji_events</span> Manage Slabs
           </Link>
+
+          <Link 
+            href="/admin/support"
+            className={`flex items-center gap-3 p-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all ${pathname === '/admin/support' ? 'bg-[#CBA35C] text-black shadow-xl shadow-[#CBA35C]/10' : 'text-zinc-500 hover:text-white hover:bg-white/5'}`}
+          >
+            <span className="material-symbols-outlined">support_agent</span> Support Queries
+          </Link>
         </nav>
 
         <Link href="/" className="flex items-center gap-3 p-4 text-zinc-400 hover:text-white transition-colors font-black text-xs uppercase tracking-widest mt-auto">

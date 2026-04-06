@@ -43,19 +43,14 @@ export default function TermsPage() {
                 </span>
                 <div>
                   <h2 className="text-xl md:text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
-                    Introduction
+                    Retailer Partnership
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600 mb-4">
-                    Welcome to the Sona Cereal Rewards program. By participating
-                    in this promotion, you agree to be bound by these Terms and
-                    Conditions. This loyalty program is designed to reward our
-                    dedicated members for their continued support and engagement
-                    with our premium rice products.
-                  </p>
-                  <p className="text-body-md leading-relaxed text-zinc-600">
-                    Please read these terms carefully. If you do not agree with
-                    any part of these terms, you must refrain from
-                    participating in the rewards campaign.
+                    Welcome to the Sona Cereal Elite Retailer Rewards Program. 
+                    This initiative is designed to recognize and reward our authorized partners 
+                    who achieve significant sales milestones within their territory. 
+                    By registering your business on this portal, you agree to comply with 
+                    all logistical and verification standards set forth by Sona Cereal.
                   </p>
                 </div>
               </div>
@@ -69,26 +64,20 @@ export default function TermsPage() {
                 </span>
                 <div>
                   <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
-                    Eligibility
+                    Eligibility & Validation
                   </h2>
                   <ul className="space-y-4">
                     <li className="flex items-center gap-4 text-zinc-600">
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
-                      <span>
-                        Must be a registered member of Sona Cereal with a valid
-                        membership ID.
-                      </span>
+                      <span>Must be an authorized, registered retail entity of Sona Cereal products.</span>
                     </li>
                     <li className="flex items-center gap-4 text-zinc-600">
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
-                      <span>
-                        Participants must be at least 18 years of age at the
-                        time of entry.
-                      </span>
+                      <span>Possession of a valid Aadhar ID for the primary proprietor is mandatory for account verification.</span>
                     </li>
                     <li className="flex items-center gap-4 text-zinc-600">
                       <div className="w-2 h-2 rounded-full bg-primary shrink-0"></div>
-                      <span>Legal residents of the promotion territory only.</span>
+                      <span>Retailers must maintain active status throughout the promotion duration.</span>
                     </li>
                   </ul>
                 </div>
@@ -103,20 +92,13 @@ export default function TermsPage() {
                 </span>
                 <div>
                   <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
-                    Promotion Period
+                    Slab Campaign Duration
                   </h2>
                   <p className="text-body-md leading-relaxed text-zinc-600">
-                    The Sona Cereal Rewards campaign commences on{" "}
-                    <span className="font-bold text-primary">
-                      November 1, 2024
-                    </span>{" "}
-                    and concludes on{" "}
-                    <span className="font-bold text-primary">
-                      January 31, 2025
-                    </span>
-                    . All points must be redeemed before the final date. Any
-                    unused vouchers or points remaining after the closing date
-                    will be forfeited without liability.
+                    The current rewards campaign is active for a period of 5 months. 
+                    All verified sales quantities (QTL) submitted through the portal 
+                    within this window will contribute to your final Slab calculation. 
+                    Rewards distribution will initiate strictly after the 5-month consolidation period.
                   </p>
                 </div>
               </div>
@@ -130,27 +112,27 @@ export default function TermsPage() {
                 </span>
                 <div>
                   <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
-                    How to Participate
+                    Invoice Submission Workflow
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
                     <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
                       <h4 className="font-headline font-bold uppercase text-sm mb-3 text-primary">
-                        Step A: Purchase
+                        Phase A: Digital Recording
                       </h4>
                       <p className="text-sm text-zinc-600">
-                        Buy any participating Sona Cereal Premium Rice packs
-                        (5kg or 10kg) from authorized retailers during the
-                        campaign period.
+                        Retailers must upload clear, legible copies of their authentic 
+                        purchase invoices. The system automatically extracts the 
+                        Quantity (QTL) and Invoice Number for validation.
                       </p>
                     </div>
-                    <div className="p-6 bg-surface-container rounded-lg">
+                    <div className="p-6 bg-zinc-50 rounded-2xl border border-zinc-100">
                       <h4 className="font-headline font-bold uppercase text-sm mb-3 text-primary">
-                        Step B: Scan &amp; Register
+                        Phase B: Manual Audit
                       </h4>
-                      <p className="text-sm text-on-surface-variant">
-                        Locate the unique QR code inside the packaging. Scan the
-                        code and log in to your Rewards account to credit
-                        points.
+                      <p className="text-sm text-zinc-600">
+                        Our internal verification team audits each submission. 
+                        Once accepted, the quantity is added to your total 
+                        Portfolio Achievement, moving you closer to the next Slab.
                       </p>
                     </div>
                   </div>
@@ -166,34 +148,25 @@ export default function TermsPage() {
                 </span>
                 <div>
                   <h2 className="text-2xl font-black font-headline italic uppercase text-zinc-600 group-hover:text-primary transition-colors duration-300 mb-6">
-                    Prizes &amp; Rewards
+                    Slab Awards & Redemption
                   </h2>
-                  <p className="text-body-md leading-relaxed text-on-surface-variant mb-6">
-                    Rewards are non-transferable and cannot be exchanged for
-                    cash or credit. The tiered reward structure includes:
+                  <p className="text-body-md leading-relaxed text-zinc-600 mb-6">
+                    Rewards are distributed based on your total achieved QTL. 
+                    Retailers can select one high-octane gift per milestone reached. 
+                    Current rewards include:
                   </p>
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center p-4 bg-secondary-container/10 border-l-4 border-secondary-container">
-                      <span className="font-bold">
-                        Exclusive Kitchenware Sets
-                      </span>
-                      <span className="text-xs font-bold uppercase text-secondary">
-                        Tier 3
-                      </span>
+                    <div className="flex justify-between items-center p-4 bg-zinc-50 border-l-4 border-primary">
+                      <span className="font-bold">Elite Luxury Assets (Apache, iPhone 16 Pro)</span>
+                      <span className="text-xs font-bold uppercase text-primary">Slab 4</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-secondary-container/10 border-l-4 border-secondary-container">
-                      <span className="font-bold">Grocery Gift Vouchers</span>
-                      <span className="text-xs font-bold uppercase text-secondary">
-                        Tier 2
-                      </span>
+                    <div className="flex justify-between items-center p-4 bg-zinc-50 border-l-4 border-zinc-200">
+                      <span className="font-bold">Premium Appliances (Sony Smart TV, Refrigerator)</span>
+                      <span className="text-xs font-bold uppercase text-zinc-400">Slab 3</span>
                     </div>
-                    <div className="flex justify-between items-center p-4 bg-secondary-container/10 border-l-4 border-secondary-container">
-                      <span className="font-bold">
-                        Premium Appliance Sweepstakes
-                      </span>
-                      <span className="text-xs font-bold uppercase text-secondary">
-                        Tier 1
-                      </span>
+                    <div className="flex justify-between items-center p-4 bg-zinc-50 border-l-4 border-zinc-200 text-zinc-400">
+                      <span className="font-bold">Essential Tech (Microwave, JBL Speakers)</span>
+                      <span className="text-xs font-bold uppercase">Slab 1 & 2</span>
                     </div>
                   </div>
                 </div>

@@ -59,3 +59,12 @@ model Slab {
   updatedAt DateTime @updatedAt
 }
 
+model SupportTicket {
+  id        String   @id @default(uuid())
+  phone     String
+  category  String
+  message   String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+}
+
