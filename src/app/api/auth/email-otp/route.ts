@@ -40,7 +40,10 @@ export async function POST(req: Request) {
   const result = await sendOtpEmail(normalizedEmail, otp);
   return NextResponse.json({
     success: true,
-    message: result.mocked ? 'OTP generated in mock mode. Check server logs.' : 'OTP sent to your email.'
+    message:
+      'mocked' in result && result.mocked
+        ? 'OTP generated in mock mode. Check server logs.'
+        : 'OTP sent to your email.'
   });
 }
 
