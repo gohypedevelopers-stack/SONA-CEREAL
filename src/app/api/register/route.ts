@@ -1,23 +1,29 @@
 import { NextResponse } from 'next/server';
-import { saveUser, getUsers } from '@/lib/data';
+import { saveUser, getUserByEmail, getUserByPhone, getLatestVerificationCode } from '@/lib/data';
 import { uploadToCloudinary } from '@/lib/cloudinary';
-import fs from 'fs';
-import path from 'path';
+import { hashSecret, isStrongPassword, isValidEmail } from '@/lib/auth';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const phone = searchParams.get('phone');
+  const email = searchParams.get('email');
 
-  if (!phone) {
-    return NextResponse.json({ error: 'Phone is required' }, { status: 400 });
+  if (!phone && !email) {
+    return NextResponse.json({ error: 'Phone or email is required' }, { status: 400 });
   }
 
-  const users = await getUsers();
-  const user = users.find((u: any) => u.phone === phone);
+  const userByPhone = phone ? await getUserByPhone(phone) : null;
+  const userByEmail = email ? await getUserByEmail(email.trim().toLowerCase()) : null;
 
   return NextResponse.json({
-    exists: !!user,
-    user: user ? { name: user.name, shopName: user.shopName, city: user.city } : null
+    exists: !!userByPhone || !!userByEmail,
+    phoneExists: !!userByPhone,
+    emailExists: !!userByEmail,
+    user: userByPhone || userByEmail ? {
+      name: (userByPhone || userByEmail)?.name,
+      shopName: (userByPhone || userByEmail)?.shopName,
+      city: (userByPhone || userByEmail)?.city
+    } : null
   });
 }
 
@@ -28,10 +34,32 @@ export async function POST(req: Request) {
     const name = formData.get('name') as string;
     const shopName = formData.get('shopName') as string;
     const phone = formData.get('phone') as string;
+    const email = (formData.get('email') as string || '').trim().toLowerCase();
     const city = formData.get('city') as string;
+    const authMethod = (formData.get('authMethod') as string || 'password').trim();
+    const password = (formData.get('password') as string || '').trim();
 
-    if (!phone || !name) {
-      return NextResponse.json({ success: false, error: "Phone and Name are required" }, { status: 400 });
+    if (!phone || !name || !shopName || !city) {
+      return NextResponse.json({ success: false, error: "Name, shop name, phone, and city are required" }, { status: 400 });
+    }
+
+    if (!isValidEmail(email)) {
+      return NextResponse.json({ success: false, error: "A valid email address is required" }, { status: 400 });
+    }
+
+    if (authMethod === 'password' && !isStrongPassword(password)) {
+      return NextResponse.json({ success: false, error: "Password must be at least 8 characters and include letters and numbers." }, { status: 400 });
+    }
+
+    if (authMethod === 'email_otp') {
+      const verification = await getLatestVerificationCode(email, 'register');
+      if (!verification?.verifiedAt) {
+        return NextResponse.json({ success: false, error: "Verify your email OTP before completing registration." }, { status: 400 });
+      }
+    }
+
+    if (authMethod !== 'password' && authMethod !== 'email_otp') {
+      return NextResponse.json({ success: false, error: "Invalid registration method" }, { status: 400 });
     }
 
     let aadharFrontPath = '';
@@ -58,18 +86,29 @@ export async function POST(req: Request) {
       }
     }
 
-    // Check if user already exists
-    const users = await getUsers();
-    const existing = users.find((u: any) => u.phone === phone);
+    const existingByPhone = await getUserByPhone(phone);
+    const existingByEmail = await getUserByEmail(email);
+
+    if (existingByPhone) {
+      return NextResponse.json({ success: false, error: "Phone number already registered.", code: "PHONE_EXISTS" }, { status: 409 });
+    }
+
+    if (existingByEmail) {
+      return NextResponse.json({ success: false, error: "Email already registered.", code: "EMAIL_EXISTS" }, { status: 409 });
+    }
 
     await saveUser({
       phone,
+      email,
       name,
       shopName,
       city,
-      aadharFront: aadharFrontPath || (existing ? existing.aadharFront : ''),
-      aadharBack: aadharBackPath || (existing ? existing.aadharBack : ''),
-      registeredAt: existing ? existing.registeredAt : new Date().toISOString()
+      passwordHash: authMethod === 'password' ? await hashSecret(password) : null,
+      authMethod,
+      emailVerified: authMethod === 'email_otp',
+      aadharFront: aadharFrontPath,
+      aadharBack: aadharBackPath,
+      registeredAt: new Date().toISOString()
     });
 
     return NextResponse.json({ success: true, message: "Business Registered Successfully" });

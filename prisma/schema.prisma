@@ -10,14 +10,30 @@ datasource db {
 model User {
   id             String   @id @default(uuid())
   phone          String   @unique
+  email          String?  @unique
   name           String
   shopName       String
   city           String
+  passwordHash   String?
+  authMethod     String   @default("phone_otp")
+  emailVerified  Boolean  @default(false)
   aadharFront    String?
   aadharBack     String?
   overrideSlabId String?
   createdAt      DateTime @default(now())
   registeredAt   DateTime @default(now())
+}
+
+model VerificationCode {
+  id         String   @id @default(uuid())
+  email      String
+  purpose    String
+  codeHash   String
+  expiresAt  DateTime
+  verifiedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([email, purpose, createdAt])
 }
 
 model Submission {

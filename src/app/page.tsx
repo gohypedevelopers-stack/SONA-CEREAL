@@ -4,6 +4,9 @@ import React from "react";
 import Link from "next/link";
 
 export default function HomePage() {
+   type LoginMethod = 'email_otp' | 'password';
+   type RegisterMethod = 'password' | 'email_otp';
+
    const [step, setStep] = React.useState(0);
    const [mode, setMode] = React.useState<'selection' | 'login' | 'register'>('selection');
    const [activeSlide, setActiveSlide] = React.useState(0);
@@ -27,22 +30,38 @@ export default function HomePage() {
    // Login/Register credential state
    const [loginError, setLoginError] = React.useState("");
    const [registerError, setRegisterError] = React.useState("");
-   const [loginPhone, setLoginPhone] = React.useState("+91 ");
+   const [loginMethod, setLoginMethod] = React.useState<LoginMethod>('email_otp');
+   const [loginIdentifier, setLoginIdentifier] = React.useState("");
+   const [loginPassword, setLoginPassword] = React.useState("");
    const [loginOtp, setLoginOtp] = React.useState("");
-   const [loginStep, setLoginStep] = React.useState<'phone' | 'otp'>('phone');
+   const [loginStep, setLoginStep] = React.useState<'email' | 'otp'>('email');
+   const [registerMethod, setRegisterMethod] = React.useState<RegisterMethod>('password');
+   const [emailOtp, setEmailOtp] = React.useState("");
+   const [emailOtpStatus, setEmailOtpStatus] = React.useState("");
+   const [emailOtpVerified, setEmailOtpVerified] = React.useState(false);
+   const [showEmailOtpToast, setShowEmailOtpToast] = React.useState(false);
 
    // Dashboard form data
    const [formData, setFormData] = React.useState({
       name: "",
       shopName: "",
       phone: "+91 ",
-      city: ""
+      city: "",
+      email: "",
+      password: "",
+      confirmPassword: ""
    });
 
    const [aadharFront, setAadharFront] = React.useState<File | null>(null);
    const [aadharBack, setAadharBack] = React.useState<File | null>(null);
    const [isSubmitting, setIsSubmitting] = React.useState(false);
    const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({});
+
+   React.useEffect(() => {
+      if (!showEmailOtpToast) return;
+      const timer = setTimeout(() => setShowEmailOtpToast(false), 4500);
+      return () => clearTimeout(timer);
+   }, [showEmailOtpToast]);
 
    // Handle smooth scroll to form
    const scrollToRegistration = () => {
@@ -57,6 +76,11 @@ export default function HomePage() {
       if (name === 'phone') {
          if (!value.startsWith('+91 ')) return;
       }
+      if (name === 'email') {
+         setEmailOtpVerified(false);
+         setEmailOtpStatus("");
+         setShowEmailOtpToast(false);
+      }
       setFormData(prev => ({ ...prev, [name]: value }));
       // Clear error when user types and if validation passes for phone
       if (fieldErrors[name]) {
@@ -69,27 +93,107 @@ export default function HomePage() {
       }
    };
 
-   const handleSendOtp = async (e: React.FormEvent) => {
+   const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+
+   const handlePasswordLogin = async (e: React.FormEvent) => {
       e.preventDefault();
-      if (loginPhone.trim().length < 14) {
-         setLoginError("Phone number must be exactly 10 digits (+91 00000 00000).");
+
+      try {
+         setLoginError("");
+         const res = await fetch("/api/auth/password", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ identifier: loginIdentifier, password: loginPassword })
+         });
+         const data = await res.json();
+
+         if (data.success) {
+            localStorage.setItem("current_user_phone", data.user.phone);
+            window.location.href = "/invoice-details";
+            return;
+         }
+
+         setLoginError(data.message || "Invalid credentials.");
+      } catch (err) {
+         setLoginError("Connection error.");
+      }
+   };
+
+   const handleSendEmailOtp = async () => {
+      if (!validateEmail(formData.email)) {
+         setFieldErrors(prev => ({ ...prev, email: "Valid email is required." }));
+         return;
+      }
+
+      try {
+         setRegisterError("");
+         setEmailOtpStatus("Sending verification code...");
+         const res = await fetch("/api/auth/email-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formData.email.trim().toLowerCase() })
+         });
+         const data = await res.json();
+
+         if (data.success) {
+            setEmailOtpStatus(data.message || "OTP sent to your email.");
+            return;
+         }
+
+         setEmailOtpStatus("");
+         setRegisterError(data.message || "Failed to send email OTP.");
+      } catch (err) {
+         setEmailOtpStatus("");
+         setRegisterError("Failed to send email OTP.");
+      }
+   };
+
+   const handleVerifyEmailOtp = async () => {
+      if (emailOtp.trim().length !== 6) {
+         setRegisterError("Enter the 6-digit email OTP.");
+         return;
+      }
+
+      try {
+         setRegisterError("");
+         const res = await fetch("/api/auth/email-otp", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: formData.email.trim().toLowerCase(), otp: emailOtp.trim() })
+         });
+         const data = await res.json();
+
+         if (data.success) {
+            setEmailOtpVerified(true);
+            setEmailOtpStatus("Email verified.");
+            setShowEmailOtpToast(true);
+            return;
+         }
+
+         setEmailOtpVerified(false);
+         setShowEmailOtpToast(false);
+         setRegisterError(data.message || "Invalid OTP.");
+      } catch (err) {
+         setEmailOtpVerified(false);
+         setShowEmailOtpToast(false);
+         setRegisterError("Verification failed.");
+      }
+   };
+
+   const handleSendLoginOtp = async (e: React.FormEvent) => {
+      e.preventDefault();
+      const normalizedEmail = loginIdentifier.trim().toLowerCase();
+      if (!validateEmail(normalizedEmail)) {
+         setLoginError("Enter a valid registered email.");
          return;
       }
 
       try {
          setLoginError("");
-         const checkRes = await fetch(`/api/register?phone=${encodeURIComponent(loginPhone)}`);
-         const checkData = await checkRes.json();
-
-         if (!checkData.exists) {
-            setLoginError("NotRegistered");
-            return;
-         }
-
-         const res = await fetch("/api/auth/otp", {
+         const res = await fetch("/api/auth/email-otp", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ phone: loginPhone })
+            body: JSON.stringify({ email: normalizedEmail, purpose: "login" })
          });
          const data = await res.json();
          if (data.success) {
@@ -111,6 +215,18 @@ export default function HomePage() {
       if (!formData.name.trim()) errors.name = "Proprietor name is required.";
       if (!formData.shopName.trim()) errors.shopName = "Firm name is required.";
       if (!formData.city.trim()) errors.city = "City/Region is required.";
+      if (!validateEmail(formData.email)) errors.email = "Valid email is required.";
+      if (registerMethod === 'password') {
+         if (formData.password.length < 8 || !/[A-Za-z]/.test(formData.password) || !/\d/.test(formData.password)) {
+            errors.password = "Password must be 8+ chars with letters and numbers.";
+         }
+         if (formData.password !== formData.confirmPassword) {
+            errors.confirmPassword = "Passwords do not match.";
+         }
+      }
+      if (registerMethod === 'email_otp' && !emailOtpVerified) {
+         errors.emailOtp = "Verify your email OTP before continuing.";
+      }
 
       if (Object.keys(errors).length > 0) {
          setFieldErrors(errors);
@@ -119,10 +235,18 @@ export default function HomePage() {
 
       try {
          setIsSubmitting(true);
-         const res = await fetch(`/api/register?phone=${encodeURIComponent(formData.phone)}`);
+         const params = new URLSearchParams({
+            phone: formData.phone,
+            email: formData.email.trim().toLowerCase()
+         });
+         const res = await fetch(`/api/register?${params.toString()}`);
          const data = await res.json();
-         if (data.exists) {
-            setRegisterError("AlreadyRegistered");
+         if (data.phoneExists) {
+            setRegisterError("PhoneAlreadyRegistered");
+            return;
+         }
+         if (data.emailExists) {
+            setRegisterError("EmailAlreadyRegistered");
             return;
          }
          setRegisterError("");
@@ -138,18 +262,18 @@ export default function HomePage() {
       e.preventDefault();
 
       try {
-         const res = await fetch("/api/auth/otp", {
+         const res = await fetch("/api/auth/email-otp", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ phone: loginPhone, otp: loginOtp })
+            body: JSON.stringify({ email: loginIdentifier.trim().toLowerCase(), otp: loginOtp, purpose: "login" })
          });
          const data = await res.json();
 
          if (data.success) {
-            localStorage.setItem("current_user_phone", loginPhone);
+            localStorage.setItem("current_user_phone", data.user?.phone || "");
             window.location.href = "/invoice-details";
          } else {
-            setLoginError(data.message || "Invalid OTP. Use 1234 for testing.");
+            setLoginError(data.message || "Invalid OTP.");
          }
       } catch (err) {
          setLoginError("Connection error.");
@@ -162,8 +286,11 @@ export default function HomePage() {
 
       const data = new FormData();
       Object.entries(formData).forEach(([key, value]) => {
-         data.append(key, value);
+         if (key !== 'confirmPassword') {
+            data.append(key, value);
+         }
       });
+      data.append('authMethod', registerMethod);
       if (aadharFront) data.append('aadharFront', aadharFront);
       if (aadharBack) data.append('aadharBack', aadharBack);
 
@@ -176,14 +303,18 @@ export default function HomePage() {
          if (result.success) {
             alert("Business Registered Successfully!");
             setMode('login');
-            setLoginStep('phone');
-            setLoginPhone(formData.phone);
+            setLoginStep(registerMethod === 'password' ? 'email' : 'email');
+            setLoginMethod(registerMethod === 'password' ? 'password' : 'email_otp');
+            setLoginIdentifier(formData.email.trim().toLowerCase());
             setStep(0);
-         } else {
-            alert("Error: " + (result.error || "Failed to submit."));
-         }
+            setEmailOtp("");
+            setEmailOtpStatus("");
+            setEmailOtpVerified(false);
+          } else {
+            setRegisterError(result.error || "Failed to submit.");
+          }
       } catch (err) {
-         alert("Network error. Please try again.");
+         setRegisterError("Network error. Please try again.");
       } finally {
          setIsSubmitting(false);
       }
@@ -191,6 +322,17 @@ export default function HomePage() {
 
    return (
       <div className="bg-white">
+         {showEmailOtpToast && (
+            <div className="fixed bottom-6 right-6 z-50 max-w-sm rounded-2xl border border-green-200 bg-white px-4 py-3 shadow-2xl">
+               <div className="flex items-start gap-3">
+                  <span className="material-symbols-outlined text-green-600">verified</span>
+                  <div className="space-y-1">
+                     <p className="text-sm font-black uppercase tracking-widest text-zinc-900">Email verified successfully</p>
+                     <p className="text-xs text-zinc-600">Use the Next button below to continue.</p>
+                  </div>
+               </div>
+            </div>
+         )}
          {/* Optimized Responsive Hero Carousel */}
          <section className="relative h-[220px] md:min-h-[90vh] md:h-auto overflow-hidden bg-white select-none">
             <div className="absolute inset-0 z-0">
@@ -325,7 +467,7 @@ export default function HomePage() {
                            </div>
 
                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 max-w-2xl mx-auto pt-4 md:pt-8">
-                              <button onClick={() => { setMode('login'); setLoginStep('phone'); setLoginError(""); }} className="group p-6 md:p-10 bg-zinc-900 rounded-[2rem] md:rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center flex items-center justify-center md:flex-col gap-6 md:gap-0">
+                              <button onClick={() => { setMode('login'); setLoginMethod('email_otp'); setLoginStep('email'); setLoginError(""); }} className="group p-6 md:p-10 bg-zinc-900 rounded-[2rem] md:rounded-[3rem] border border-white/10 text-white hover:scale-105 transition-all shadow-2xl relative overflow-hidden text-center flex items-center justify-center md:flex-col gap-6 md:gap-0">
                                  <div className="absolute top-0 right-0 w-32 h-22 bg-[#CBA35C]/20 rounded-full blur-3xl group-hover:bg-[#CBA35C]/40 transition-all"></div>
                                  <span className="material-symbols-outlined text-3xl md:text-5xl text-[#CBA35C] group-hover:rotate-12 transition-transform">login</span>
                                  <div className="text-left md:text-center relative z-10">
@@ -334,7 +476,7 @@ export default function HomePage() {
                                  </div>
                               </button>
 
-                              <button onClick={() => { setMode('register'); setStep(1); }} className="group p-6 md:p-10 bg-zinc-50 rounded-[2rem] md:rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center flex items-center justify-center md:flex-col gap-6 md:gap-0">
+                              <button onClick={() => { setMode('register'); setStep(1); setRegisterMethod('password'); setRegisterError(""); }} className="group p-6 md:p-10 bg-zinc-50 rounded-[2rem] md:rounded-[3rem] border border-zinc-100 text-zinc-900 hover:scale-105 transition-all shadow-xl relative overflow-hidden text-center flex items-center justify-center md:flex-col gap-6 md:gap-0">
                                  <div className="absolute top-0 right-0 w-32 h-32 bg-[#CBA35C]/5 rounded-full blur-3xl group-hover:bg-[#CBA35C]/10 transition-all"></div>
                                  <span className="material-symbols-outlined text-3xl md:text-5xl text-zinc-400 group-hover:rotate-12 transition-transform">how_to_reg</span>
                                  <div className="text-left md:text-center relative z-10">
@@ -353,55 +495,97 @@ export default function HomePage() {
                               <h3 className="text-2xl md:text-5xl font-headline font-black uppercase text-zinc-900 leading-none italic">
                                  SECURE <span className="text-[#CBA35C]">LOGIN.</span>
                               </h3>
-                              <p className="text-zinc-400 text-sm md:text-lg font-medium italic">
-                                 {loginStep === 'phone' ? 'Enter your registered phone number to receive a secure code.' : 'Enter the 4-digit code sent to your device.'}
-                              </p>
+                               <p className="text-zinc-400 text-sm md:text-lg font-medium italic">
+                                  {loginMethod === 'email_otp'
+                                     ? (loginStep === 'email' ? 'Enter your registered email to receive a secure code.' : 'Enter the 6-digit code sent to your email.')
+                                     : 'Use your registered email or phone number with the password you created.'}
+                               </p>
+                            </div>
+
+                            <div className="inline-flex rounded-full border border-zinc-200 bg-zinc-50 p-1 w-fit">
+                               <button
+                                  type="button"
+                                  onClick={() => { setLoginMethod('email_otp'); setLoginStep('email'); setLoginError(""); }}
+                                  className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${loginMethod === 'email_otp' ? 'bg-zinc-900 text-white' : 'text-zinc-500'}`}
+                               >
+                                  Email OTP
+                               </button>
+                              <button
+                                 type="button"
+                                 onClick={() => { setLoginMethod('password'); setLoginError(""); }}
+                                 className={`px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${loginMethod === 'password' ? 'bg-zinc-900 text-white' : 'text-zinc-500'}`}
+                              >
+                                 Password
+                              </button>
                            </div>
 
-                           <form onSubmit={loginStep === 'phone' ? handleSendOtp : handleLoginSubmit} className="space-y-6 max-w-md">
-                              {loginStep === 'phone' ? (
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Registered Phone</label>
-                                    <input
-                                       type="tel"
-                                       value={loginPhone}
-                                       onChange={(e) => {
-                                          if (e.target.value.startsWith('+91 ')) {
-                                             setLoginPhone(e.target.value);
-                                          }
-                                       }}
-                                       placeholder="+91 00000 00000"
-                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
-                                       required
-                                    />
-                                    <p className="text-[9px] text-zinc-400 italic">Secure validation for authorized partners only.</p>
-                                 </div>
+                            <form onSubmit={loginMethod === 'email_otp' ? (loginStep === 'email' ? handleSendLoginOtp : handleLoginSubmit) : handlePasswordLogin} className="space-y-6 max-w-md">
+                              {loginMethod === 'email_otp' ? (
+                                 loginStep === 'email' ? (
+                                    <div className="space-y-2">
+                                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Registered Email</label>
+                                       <input
+                                          type="email"
+                                          value={loginIdentifier}
+                                          onChange={(e) => setLoginIdentifier(e.target.value)}
+                                          placeholder="name@example.com"
+                                          className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                          required
+                                       />
+                                       <p className="text-[9px] text-zinc-400 italic">Secure validation for authorized partners only.</p>
+                                    </div>
+                                 ) : (
+                                    <div className="space-y-2">
+                                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Secure OTP Code</label>
+                                       <input
+                                          type="text"
+                                          value={loginOtp}
+                                          onChange={(e) => setLoginOtp(e.target.value)}
+                                          placeholder="Enter 6-digit OTP"
+                                          className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium text-center text-3xl tracking-[0.5em]"
+                                          maxLength={6}
+                                          required
+                                       />
+                                       <button type="button" onClick={() => setLoginStep('email')} className="text-[10px] font-black uppercase tracking-widest text-[#CBA35C] hover:underline mt-2">Change Email</button>
+                                    </div>
+                                 )
                               ) : (
-                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Secure OTP Code</label>
-                                    <input
-                                       type="text"
-                                       value={loginOtp}
-                                       onChange={(e) => setLoginOtp(e.target.value)}
-                                       placeholder="Enter 1234"
-                                       className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium text-center text-3xl tracking-[0.5em]"
-                                       maxLength={4}
-                                       required
-                                    />
-                                    <button type="button" onClick={() => setLoginStep('phone')} className="text-[10px] font-black uppercase tracking-widest text-[#CBA35C] hover:underline mt-2">Change Number</button>
-                                 </div>
+                                 <>
+                                    <div className="space-y-2">
+                                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Registered Email</label>
+                                       <input
+                                          type="email"
+                                          value={loginIdentifier}
+                                          onChange={(e) => setLoginIdentifier(e.target.value)}
+                                          placeholder="name@example.com"
+                                          className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                          required
+                                       />
+                                    </div>
+                                    <div className="space-y-2">
+                                       <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic">Password</label>
+                                       <input
+                                          type="password"
+                                          value={loginPassword}
+                                          onChange={(e) => setLoginPassword(e.target.value)}
+                                          placeholder="Enter your password"
+                                          className="w-full p-5 rounded-2xl bg-zinc-50 border border-zinc-100 outline-none focus:border-[#CBA35C] font-medium"
+                                          required
+                                       />
+                                    </div>
+                                 </>
                               )}
 
                               {loginError && (
                                  <div className="bg-red-50 p-4 rounded-xl border border-red-100 animate-fade-in">
-                                    {loginError === "NotRegistered" ? (
+                                    {loginMethod === 'email_otp' && loginError === "This email is not registered." ? (
                                        <div className="flex flex-col gap-3 items-start">
                                           <p className="text-red-600 text-[10px] font-black uppercase tracking-widest leading-relaxed">
-                                             This phone number is not registered in our retailer database.
+                                             This email is not registered in our retailer database.
                                           </p>
                                           <button
                                              type="button"
-                                             onClick={() => { setMode('register'); setStep(1); setLoginError(""); setFormData(prev => ({ ...prev, phone: loginPhone })); }}
+                                             onClick={() => { setMode('register'); setStep(1); setRegisterMethod('password'); setLoginError(""); setFormData(prev => ({ ...prev, email: loginIdentifier })); }}
                                              className="text-[10px] font-black uppercase tracking-widest text-zinc-900 bg-white px-4 py-2 rounded-lg border border-red-200 hover:bg-zinc-50 transition-all flex items-center gap-2"
                                           >
                                              REGISTER NOW <span className="material-symbols-outlined text-sm">arrow_forward</span>
@@ -414,8 +598,12 @@ export default function HomePage() {
                               )}
 
                               <button type="submit" className="w-full bg-zinc-900 text-white hover:bg-[#CBA35C] hover:text-black py-5 rounded-2xl font-headline font-black uppercase text-lg transition-all shadow-xl flex items-center justify-center gap-3 active:scale-95">
-                                 {loginStep === 'phone' ? 'GENERATE SECURE CODE' : 'VALIDATE & ACCESS PORTAL'}
-                                 <span className="material-symbols-outlined">{loginStep === 'phone' ? 'send' : 'verified_user'}</span>
+                                 {loginMethod === 'email_otp'
+                                    ? (loginStep === 'email' ? 'GENERATE SECURE CODE' : 'VALIDATE & ACCESS PORTAL')
+                                    : 'LOGIN WITH PASSWORD'}
+                                 <span className="material-symbols-outlined">
+                                    {loginMethod === 'email_otp' ? (loginStep === 'email' ? 'send' : 'verified_user') : 'key'}
+                                 </span>
                               </button>
                            </form>
                         </div>
@@ -437,6 +625,26 @@ export default function HomePage() {
                            <form className="space-y-8 md:space-y-10" onSubmit={step === 3 ? handleFinalSubmit : (e) => e.preventDefault()}>
                               {step === 1 && (
                                  <div className="space-y-6 md:space-y-10">
+                                    <div className="space-y-4 text-left">
+                                       <label className="text-[10px] mr-4 font-black uppercase tracking-widest text-zinc-500 italic">Registration Method</label>
+                                       <div className="mt-2 inline-flex rounded-full border-2 border-zinc-200 bg-white p-2 shadow-sm gap-2">
+                                          <button
+                                             type="button"
+                                             onClick={() => { setRegisterMethod('password'); setEmailOtpVerified(false); setEmailOtpStatus(""); setRegisterError(""); }}
+                                             className={`px-5 py-2.5 rounded-full text-[11px] md:text-xs font-black uppercase tracking-widest transition-all ${registerMethod === 'password' ? 'bg-zinc-900 text-white shadow-lg' : 'bg-white text-zinc-700'}`}
+                                          >
+                                             Password Signup
+                                          </button>
+                                          <button
+                                             type="button"
+                                             onClick={() => { setRegisterMethod('email_otp'); setRegisterError(""); }}
+                                             className={`px-5 py-2.5 rounded-full text-[11px] md:text-xs font-black uppercase tracking-widest transition-all ${registerMethod === 'email_otp' ? 'bg-zinc-900 text-white shadow-lg' : 'bg-white text-zinc-700'}`}
+                                          >
+                                             Email OTP Signup
+                                          </button>
+                                       </div>
+                                    </div>
+
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 text-left">
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
@@ -485,6 +693,21 @@ export default function HomePage() {
                                        </div>
                                        <div className="space-y-2">
                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                             <span className="material-symbols-outlined text-sm text-[#CBA35C]">mail</span> Business Email
+                                          </label>
+                                          <input
+                                             name="email"
+                                             value={formData.email}
+                                             onChange={handleInputChange}
+                                             className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.email ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
+                                             placeholder="retailer@example.com"
+                                             type="email"
+                                             required
+                                          />
+                                          {fieldErrors.email && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.email}</p>}
+                                        </div>
+                                        <div className="space-y-2">
+                                           <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
                                              <span className="material-symbols-outlined text-sm text-[#CBA35C]">location_on</span> City / Region
                                           </label>
                                           <input
@@ -497,21 +720,109 @@ export default function HomePage() {
                                              required
                                           />
                                           {fieldErrors.city && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.city}</p>}
-                                       </div>
-                                    </div>
-                                    {registerError && (
-                                       <div className="bg-red-50 p-4 rounded-xl border border-red-100 animate-fade-in mt-4 text-left">
-                                          {registerError === "AlreadyRegistered" ? (
+                                        </div>
+                                     </div>
+
+                                     {registerMethod === 'password' ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-10 text-left">
+                                           <div className="space-y-2">
+                                              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                                 <span className="material-symbols-outlined text-sm text-[#CBA35C]">key</span> Create Password
+                                              </label>
+                                              <input
+                                                 name="password"
+                                                 value={formData.password}
+                                                 onChange={handleInputChange}
+                                                 className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.password ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
+                                                 placeholder="Minimum 8 characters"
+                                                 type="password"
+                                                 required
+                                              />
+                                              {fieldErrors.password && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.password}</p>}
+                                           </div>
+                                           <div className="space-y-2">
+                                              <label className="text-[10px] font-black uppercase tracking-widest text-zinc-500 italic flex items-center gap-2">
+                                                 <span className="material-symbols-outlined text-sm text-[#CBA35C]">verified</span> Confirm Password
+                                              </label>
+                                              <input
+                                                 name="confirmPassword"
+                                                 value={formData.confirmPassword}
+                                                 onChange={handleInputChange}
+                                                 className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-zinc-50 border ${fieldErrors.confirmPassword ? 'border-red-500' : 'border-zinc-100'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors`}
+                                                 placeholder="Re-enter password"
+                                                 type="password"
+                                                 required
+                                              />
+                                              {fieldErrors.confirmPassword && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.confirmPassword}</p>}
+                                           </div>
+                                        </div>
+                                     ) : (
+                                        <div className="rounded-[2rem] border border-zinc-200 bg-zinc-50 p-5 md:p-8 text-left space-y-5">
+                                           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                                              <div>
+                                                 <h4 className="text-lg font-headline font-black uppercase italic text-zinc-900">Verify Email OTP</h4>
+                                                 <p className="text-zinc-500 text-xs">Send a 6-digit code to the business email and verify it before moving ahead.</p>
+                                              </div>
+                                              <button type="button" onClick={handleSendEmailOtp} className="px-6 py-3.5 rounded-full bg-zinc-900 text-white text-[11px] md:text-xs font-black uppercase tracking-[0.2em] shadow-lg hover:bg-[#CBA35C] hover:text-black transition-all">
+                                                 Send OTP
+                                              </button>
+                                           </div>
+                                           <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-4 items-start">
+                                              <div className="space-y-2">
+                                                 <input
+                                                    value={emailOtp}
+                                                    onChange={(e) => { setEmailOtp(e.target.value); setEmailOtpVerified(false); }}
+                                                    className={`w-full p-4 md:p-5 rounded-xl md:rounded-2xl bg-white border ${fieldErrors.emailOtp ? 'border-red-500' : 'border-zinc-200'} font-medium focus:border-[#CBA35C] outline-none text-base md:text-lg text-zinc-900 placeholder:text-zinc-400 transition-colors tracking-[0.25em] text-center`}
+                                                    placeholder="000000"
+                                                    type="text"
+                                                    maxLength={6}
+                                                 />
+                                                 {fieldErrors.emailOtp && <p className="text-red-500 text-[9px] font-bold uppercase tracking-widest italic">{fieldErrors.emailOtp}</p>}
+                                                 {emailOtpStatus && (
+                                                    <p className={`text-[11px] md:text-xs font-black uppercase tracking-widest ${emailOtpVerified ? 'text-green-700' : 'text-zinc-500'}`}>
+                                                       {emailOtpStatus}
+                                                    </p>
+                                                 )}
+                                                 {emailOtpVerified && (
+                                                    <div className="inline-flex items-center gap-2 rounded-full border border-green-200 bg-green-50 px-3 py-2 text-[11px] font-black uppercase tracking-widest text-green-700">
+                                                       <span className="material-symbols-outlined text-base">check_circle</span>
+                                                       Email verified
+                                                    </div>
+                                                 )}
+                                              </div>
+                                              <button type="button" onClick={handleVerifyEmailOtp} className="px-6 py-4 rounded-full border-2 border-zinc-900 bg-white text-zinc-900 text-[11px] md:text-xs font-black uppercase tracking-[0.2em] shadow-sm hover:border-[#CBA35C] hover:text-[#CBA35C] transition-all">
+                                                 Verify OTP
+                                              </button>
+                                           </div>
+                                        </div>
+                                     )}
+
+                                     {registerError && (
+                                        <div className="bg-red-50 p-4 rounded-xl border border-red-100 animate-fade-in mt-4 text-left">
+                                          {registerError === "PhoneAlreadyRegistered" ? (
                                              <div className="flex flex-col gap-3 items-start">
                                                 <p className="text-red-600 text-[10px] font-black uppercase tracking-widest leading-relaxed">
                                                    This number is already registered for another business.
                                                 </p>
                                                 <button
                                                    type="button"
-                                                   onClick={() => { setMode('login'); setLoginStep('phone'); setRegisterError(""); setLoginPhone(formData.phone); }}
+                                                   onClick={() => { setMode('login'); setLoginMethod('email_otp'); setLoginStep('email'); setRegisterError(""); setLoginIdentifier(formData.email.trim().toLowerCase()); }}
                                                    className="text-[10px] font-black uppercase tracking-widest text-zinc-900 bg-white px-4 py-2 rounded-lg border border-red-200 hover:bg-zinc-50 transition-all flex items-center gap-2"
                                                 >
-                                                   GO TO LOGIN <span className="material-symbols-outlined text-sm">login</span>
+                                                   GO TO LOGIN <span className="material-symbols-outlined text-sm">mail</span>
+                                                </button>
+                                             </div>
+                                          ) : registerError === "EmailAlreadyRegistered" ? (
+                                             <div className="flex flex-col gap-3 items-start">
+                                                <p className="text-red-600 text-[10px] font-black uppercase tracking-widest leading-relaxed">
+                                                   This email is already registered in the retailer database.
+                                                </p>
+                                                <button
+                                                   type="button"
+                                                   onClick={() => { setMode('login'); setLoginMethod('password'); setRegisterError(""); setLoginIdentifier(formData.email.trim().toLowerCase()); }}
+                                                   className="text-[10px] font-black uppercase tracking-widest text-zinc-900 bg-white px-4 py-2 rounded-lg border border-red-200 hover:bg-zinc-50 transition-all flex items-center gap-2"
+                                                >
+                                                   LOGIN WITH PASSWORD <span className="material-symbols-outlined text-sm">key</span>
                                                 </button>
                                              </div>
                                           ) : (

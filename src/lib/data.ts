@@ -9,6 +9,20 @@ export async function getUserByPhone(phone: string) {
   });
 }
 
+export async function getUserByEmail(email: string) {
+  return await prisma.user.findUnique({
+    where: { email }
+  });
+}
+
+export async function getUserByIdentifier(identifier: string) {
+  return await prisma.user.findFirst({
+    where: {
+      OR: [{ phone: identifier }, { email: identifier }]
+    }
+  });
+}
+
 export async function getUsers() {
   return await prisma.user.findMany({
     orderBy: { createdAt: 'desc' }
@@ -20,6 +34,41 @@ export async function saveUser(data: any) {
     where: { phone: data.phone },
     update: data,
     create: data
+  });
+}
+
+/**
+ * Verification code helpers
+ */
+export async function createVerificationCode(data: {
+  email: string;
+  purpose: string;
+  codeHash: string;
+  expiresAt: Date;
+}) {
+  await prisma.verificationCode.deleteMany({
+    where: {
+      email: data.email,
+      purpose: data.purpose
+    }
+  });
+
+  return await prisma.verificationCode.create({
+    data
+  });
+}
+
+export async function getLatestVerificationCode(email: string, purpose: string) {
+  return await prisma.verificationCode.findFirst({
+    where: { email, purpose },
+    orderBy: { createdAt: 'desc' }
+  });
+}
+
+export async function markVerificationCodeVerified(id: string) {
+  return await prisma.verificationCode.update({
+    where: { id },
+    data: { verifiedAt: new Date() }
   });
 }
 

@@ -1,19 +1,28 @@
 import { NextResponse } from 'next/server';
-import { getUsers } from '@/lib/data';
+import { getUserByPhone } from '@/lib/data';
 
 export async function POST(req: Request) {
   const { phone } = await req.json();
-  // In a real app, send actual OTP via SMS
+
+  if (!phone) {
+    return NextResponse.json({ success: false, message: 'Phone is required' }, { status: 400 });
+  }
+
   console.log(`Sending mock OTP 1234 to ${phone}`);
   return NextResponse.json({ success: true, message: 'OTP sent' });
 }
 
 export async function PUT(req: Request) {
   const { phone, otp } = await req.json();
-  if (otp === '1234') {
-    const users = await getUsers();
-    const user = users.find((u: any) => u.phone === phone);
-    return NextResponse.json({ success: true, user: user || { phone } });
+
+  if (!phone || !otp) {
+    return NextResponse.json({ success: false, message: 'Phone and OTP are required' }, { status: 400 });
   }
-  return NextResponse.json({ success: false, message: 'Invalid OTP' }, { status: 400 });
+
+  if (otp !== '1234') {
+    return NextResponse.json({ success: false, message: 'Invalid OTP' }, { status: 400 });
+  }
+
+  const user = await getUserByPhone(phone);
+  return NextResponse.json({ success: true, user: user || { phone } });
 }
