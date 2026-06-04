@@ -220,45 +220,12 @@ export default function HelpdeskPage() {
               Our dedicated support team is available 24/7 to assist you with
               any queries or concerns.
             </p>
-            <div className="space-y-8 mb-10 relative z-10">
-              {/* WhatsApp Entry */}
-              <div className="flex items-center gap-5 group">
-                <div className="bg-black text-primary w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl group-hover:rotate-6 transition-all duration-300 flex-shrink-0">
-                  <span className="material-symbols-outlined text-2xl sm:text-3xl">chat</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-black/40 italic">WhatsApp Support</span>
-                  <a
-                    href="https://wa.me/919012182182"
-                    target="_blank"
-                    className="text-lg sm:text-xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-tight"
-                  >
-                    +91 90121 82182
-                  </a>
-                </div>
-              </div>
 
-              {/* Email Entry */}
-              <div className="flex items-center gap-5 group">
-                <div className="bg-white/20 backdrop-blur-md border border-white/40 text-white w-11 h-11 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl group-hover:-rotate-6 transition-all duration-300 flex-shrink-0">
-                  <span className="material-symbols-outlined text-2xl sm:text-3xl">mail</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-black/40 italic">Official Email</span>
-                  <a
-                    href="mailto:garv@sonacereal.com"
-                    className="text-lg sm:text-xl md:text-4xl font-headline font-black italic text-black hover:text-white transition-colors leading-tight break-words"
-                  >
-                    garv@sonacereal.com
-                  </a>
-                </div>
-              </div>
-            </div>
 
             <div className="flex flex-wrap gap-4 relative z-10 pt-4 border-t border-black/5">
               <a
                 className="bg-black text-primary flex items-center gap-3 px-8 py-4 rounded-full font-headline font-black uppercase italic tracking-widest text-sm hover:scale-105 transition-all shadow-xl"
-                href="https://wa.me/919012182182"
+                href="https://wa.me/918368926325"
                 target="_blank"
               >
                 <span className="material-symbols-outlined">chat</span>
@@ -266,7 +233,7 @@ export default function HelpdeskPage() {
               </a>
               <a
                 className="bg-white/10 backdrop-blur-md text-white border border-white/20 flex items-center justify-center w-14 h-14 rounded-full font-bold hover:bg-white/20 transition-all shadow-lg"
-                href="mailto:garv@sonacereal.com"
+                href="mailto:support@gohypemedia.com"
                 title="Send Email"
               >
                 <span className="material-symbols-outlined">mail</span>

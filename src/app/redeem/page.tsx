@@ -4,22 +4,47 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 
 export default function RedeemPage() {
+   const [redeemMode, setRedeemMode] = useState<"INVOICE" | "COUPON">("INVOICE");
+   
+   // Invoice Flow State
    const [phone, setPhone] = useState("+91 ");
    const [userData, setUserData] = useState<any>(null);
+   const [totalAcceptedQty, setTotalAcceptedQty] = useState(0);
+
+   // Coupon Flow State
+   const [couponCode, setCouponCode] = useState("");
+   const [couponData, setCouponData] = useState<any>(null);
+   const [userDetails, setUserDetails] = useState({ phone: "+91 ", name: "", shopName: "", city: "" });
+   const [couponVerified, setCouponVerified] = useState(false);
+
+   // Shared State
    const [error, setError] = useState("");
    const [searched, setSearched] = useState(false);
    const [selectedGift, setSelectedGift] = useState<string | null>(null);
    const [settings, setSettings] = useState<any>(null);
-   const [totalAcceptedQty, setTotalAcceptedQty] = useState(0);
    const [loading, setLoading] = useState(false);
    const [slabs, setSlabs] = useState<any[]>([]);
 
-   const checkStatus = async () => {
-      if (phone.length < 14) {
+   useEffect(() => {
+      fetch('/api/settings', { cache: 'no-store' }).then(res => res.json()).then(setSettings).catch(console.error);
+      fetch('/api/slabs', { cache: 'no-store' }).then(res => res.json()).then(data => {
+         setSlabs(Array.isArray(data) ? data.sort((a: any, b: any) => a.target - b.target) : []);
+      }).catch(console.error);
+
+      const storedPhone = localStorage.getItem("current_user_phone");
+      if (storedPhone) {
+         setPhone(storedPhone);
+         // Do not auto-check on load if we have dual modes, let user click.
+      }
+   }, []);
+
+   const checkStatus = async (phoneToCheck?: string | React.MouseEvent) => {
+      const ph = typeof phoneToCheck === "string" ? phoneToCheck : phone;
+      if (ph.length < 14) {
          setError("Please enter a valid 10-digit phone number.");
          return;
       }
-      const cleanPhone = phone.replace(/\D/g, '');
+      const cleanPhone = ph.replace(/\D/g, '');
       setSearched(true);
       setLoading(true);
       try {
@@ -64,26 +89,48 @@ export default function RedeemPage() {
       }
    };
 
-   useEffect(() => {
-      fetch('/api/settings', { cache: 'no-store' }).then(res => res.json()).then(setSettings).catch(console.error);
-      fetch('/api/slabs', { cache: 'no-store' }).then(res => res.json()).then(data => {
-         setSlabs(Array.isArray(data) ? data.sort((a: any, b: any) => a.target - b.target) : []);
-      }).catch(console.error);
-
-      const storedPhone = localStorage.getItem("current_user_phone");
-      if (storedPhone) {
-         setPhone(storedPhone);
-         checkStatus();
+   const verifyCoupon = async () => {
+      if (!couponCode.trim()) {
+         setError("Please enter a valid coupon code.");
+         return;
       }
-   }, []);
+      setLoading(true);
+      try {
+         const res = await fetch("/api/coupons/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ code: couponCode })
+         });
+         const data = await res.json();
+         if (data.valid) {
+            setCouponData(data);
+            setCouponVerified(true);
+            setError("");
+         } else {
+            setError(data.error || "Invalid coupon");
+         }
+      } catch (err) {
+         setError("Connection error.");
+      } finally {
+         setLoading(false);
+      }
+   };
+
+   const handleCouponUserSubmit = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (userDetails.phone.length < 14) {
+         setError("Please enter a valid phone number.");
+         return;
+      }
+      setError("");
+      await checkStatus(userDetails.phone);
+      setSearched(true);
+   };
 
    const getSlabData = (totalQty: number) => {
-      // Priority 1: Manual Override
       if (userData?.overrideSlabId) {
          return slabs.find(s => s.id === userData.overrideSlabId);
       }
-
-      // Priority 2: Auto Calculation
       const achievedSlabs = slabs.filter(s => totalQty >= s.target);
       if (achievedSlabs.length === 0) return null;
       return achievedSlabs[achievedSlabs.length - 1];
@@ -100,26 +147,59 @@ export default function RedeemPage() {
       ].filter(g => g.name);
    };
 
-
    const handleGiftSelect = async (giftName: string) => {
-      if (!userData || selectedGift) return;
+      if (selectedGift) return;
 
-      try {
-         const res = await fetch("/api/submissions", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id: userData.id, claimedGift: giftName })
-         });
-         const data = await res.json();
-         if (data.success) {
-            setSelectedGift(giftName);
-            setUserData({ ...userData, claimedGift: giftName, status: 'claimed' });
-         } else {
-            alert("Error: " + (data.error || "Failed to select gift"));
+      if (redeemMode === "INVOICE") {
+         if (!userData) return;
+         try {
+            const res = await fetch("/api/submissions", {
+               method: "PATCH",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ id: userData.id, claimedGift: giftName })
+            });
+            const data = await res.json();
+            if (data.success) {
+               setSelectedGift(giftName);
+               setUserData({ ...userData, claimedGift: giftName, status: 'claimed' });
+            } else {
+               alert("Error: " + (data.error || "Failed to select gift"));
+            }
+         } catch (err) {
+            alert("Network error.");
          }
-      } catch (err) {
-         alert("Network error.");
+      } else {
+         // COUPON MODE
+         try {
+            const cleanPhone = userDetails.phone.replace(/\D/g, '');
+            const res = await fetch("/api/coupons/redeem", {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ 
+                  couponCode, 
+                  userDetails: { ...userDetails, phone: cleanPhone }, 
+                  selectedGift: giftName 
+               })
+            });
+            const data = await res.json();
+            if (data.success) {
+               setSelectedGift(giftName);
+            } else {
+               alert("Error: " + (data.error || "Failed to redeem coupon"));
+            }
+         } catch (err) {
+            alert("Network error.");
+         }
       }
+   };
+
+   const resetState = () => {
+      setSearched(false);
+      setUserData(null);
+      setSelectedGift(null);
+      setCouponVerified(false);
+      setCouponData(null);
+      setError("");
    };
 
    return (
@@ -150,22 +230,15 @@ export default function RedeemPage() {
 
                   <div className="relative group lg:block hidden">
                      <div className="relative w-full h-[500px] ml-auto">
-                        {/* MAIN ASSET IMAGE (BIKE) */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[85%] h-[85%] rounded-[3rem] md:rounded-[4.5rem] overflow-hidden shadow-[0_40px_100px_-20px_rgba(0,0,0,0.15)] border-[8px] border-white z-20 group-hover:rotate-1 group-hover:scale-[1.02] transition-all duration-1000">
                            <img src="/assets/Harley-Davidson X440.avif" className="w-full h-full object-cover" alt="Elite Rewards" />
                         </div>
-
-                        {/* FLOATING SECONDARY ASSET (IPHONE) */}
                         <div className="absolute top-[5%] -left-12 w-[35%] aspect-square rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-2xl border-[6px] border-white z-30 group-hover:translate-x-[-10px] group-hover:translate-y-[-10px] transition-all duration-700">
                            <img src="/assets/Apple iPhone 16 Pro Max 256 GH.jpg" className="w-full h-full object-cover" alt="Elite Asset" />
                         </div>
-
-                        {/* FLOATING TERTIARY ASSET (LAPTOP) */}
                         <div className="absolute -bottom-4 -right-12 w-[55%] aspect-[16/10] rounded-[2rem] md:rounded-[3rem] overflow-hidden shadow-[0_50px_100px_-20px_rgba(0,0,0,0.3)] border-[8px] border-white z-40 bg-white p-2 group-hover:translate-y-[-20px] transition-all duration-700">
                            <img src="/assets/HP 15, 13 Gen Intel Core i5 - 1335U.webp" className="w-full h-full object-contain" alt="Elite Performance" />
                         </div>
-
-                        {/* PREMIUM GLOW */}
                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#CBA35C]/10 rounded-full blur-[120px] -z-10"></div>
                      </div>
                   </div>
@@ -177,27 +250,59 @@ export default function RedeemPage() {
          <section className="py-20 bg-white relative z-10">
             <div className="container mx-auto px-6 max-w-[1440px]">
                <div className="w-full">
-                  {!searched ? (
-                     <div className="bg-zinc-50 p-8 md:p-24 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
+                  {!searched && !couponVerified ? (
+                     <div className="bg-zinc-50 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
                         <h3 className="font-headline font-black text-2xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-8 md:mb-12 text-center">
                            REDEEM <br />
                            <span className="text-[#CBA35C]">OFFER.</span>
                         </h3>
-                        <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
-                           <input
-                              type="tel"
-                              value={phone}
-                              onChange={(e) => {
-                                 if (e.target.value.startsWith('+91 ')) {
-                                    setPhone(e.target.value);
-                                 }
-                              }}
-                              placeholder="+91 00000 00000"
-                              className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner"
-                           />
-                           {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
-                           <button onClick={checkStatus} className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">CHECK STATUS</button>
+                        
+                        <div className="flex justify-center gap-4 mb-8">
+                           <button 
+                              onClick={() => { setRedeemMode("INVOICE"); setError(""); }}
+                              className={`px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-colors ${redeemMode === "INVOICE" ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-500 hover:bg-zinc-200'}`}
+                           >
+                              Via Invoice
+                           </button>
+                           <button 
+                              onClick={() => { setRedeemMode("COUPON"); setError(""); }}
+                              className={`px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-colors ${redeemMode === "COUPON" ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-500 hover:bg-zinc-200'}`}
+                           >
+                              Via Coupon
+                           </button>
                         </div>
+
+                        {redeemMode === "INVOICE" ? (
+                           <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
+                              <input
+                                 type="tel"
+                                 value={phone}
+                                 onChange={(e) => {
+                                    if (e.target.value.startsWith('+91 ')) setPhone(e.target.value);
+                                 }}
+                                 placeholder="+91 00000 00000"
+                                 className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner"
+                              />
+                              {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
+                              <button onClick={checkStatus} disabled={loading} className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">
+                                 {loading ? "CHECKING..." : "CHECK STATUS"}
+                              </button>
+                           </div>
+                        ) : (
+                           <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
+                              <input
+                                 type="text"
+                                 value={couponCode}
+                                 onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                                 placeholder="ENTER COUPON CODE"
+                                 className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner uppercase"
+                              />
+                              {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
+                              <button onClick={verifyCoupon} disabled={loading} className="w-full bg-[#CBA35C] text-black py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-zinc-900 hover:text-white transition-all shadow-xl">
+                                 {loading ? "VERIFYING..." : "VERIFY COUPON"}
+                              </button>
+                           </div>
+                        )}
                      </div>
                   ) : loading ? (
                      <div className="py-24 text-center space-y-8 animate-in fade-in duration-700">
@@ -210,9 +315,23 @@ export default function RedeemPage() {
                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Verifying secure database node</p>
                         </div>
                      </div>
-                  ) : userData ? (
+                  ) : redeemMode === "COUPON" && couponVerified && !searched ? (
+                     <div className="bg-zinc-50 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto animate-in slide-in-from-bottom-8">
+                        <h3 className="font-headline font-black text-2xl md:text-4xl italic uppercase text-zinc-900 tracking-tighter mb-4">
+                           COUPON <span className="text-[#CBA35C]">VERIFIED</span>
+                        </h3>
+                        <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-8">Please confirm your details to continue</p>
+                        
+                        <form onSubmit={handleCouponUserSubmit} className="max-w-md mx-auto space-y-4">
+                           <input type="tel" value={userDetails.phone} onChange={e => { if (e.target.value.startsWith('+91 ')) setUserDetails({...userDetails, phone: e.target.value}); }} placeholder="+91 00000 00000" className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
+                           {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
+                           <button type="submit" className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">
+                              CONTINUE TO REWARDS
+                           </button>
+                        </form>
+                     </div>
+                  ) : (userData || (redeemMode === "COUPON" && searched)) ? (
                      <div className="space-y-16 animate-in slide-in-from-bottom-8 duration-700">
-
                         {/* GIFT SELECTION GRID */}
                         {(!settings?.rewardsDistributed) ? (
                            <div className="space-y-12 py-6 md:py-10 animate-in fade-in duration-1000">
@@ -227,18 +346,7 @@ export default function RedeemPage() {
                                     </p>
                                     <p className="text-zinc-400 font-medium text-sm md:text-lg italic max-w-xl mx-auto">
                                        Your verified submissions are being tracked. The reward claim portal will unlock automatically once the campaign duration is complete.
-                                       <br />
-                                       <span className="text-[10px] text-primary/60 uppercase font-black tracking-widest mt-2 block">Scheme Valid in - Maharashtra, Gujarat, Madhya Pradesh & Delhi</span>
                                     </p>
-                                 </div>
-                                 <div className="pt-6 md:pt-8 relative z-10">
-                                    <button disabled className="group relative bg-zinc-800 text-zinc-500 px-8 md:px-16 py-4 md:py-8 rounded-xl md:rounded-[2.5rem] font-headline font-black uppercase text-sm md:text-2xl tracking-widest cursor-not-allowed border border-white/5 shadow-2xl">
-                                       <span className="flex items-center gap-3">
-                                          <span className="material-symbols-outlined text-xl md:text-3xl">lock</span>
-                                          CLAIM REWARD
-                                       </span>
-                                       <div className="absolute -top-2 -right-2 bg-[#CBA35C] text-black text-[8px] md:text-[10px] px-2 md:px-4 py-0.5 md:py-1 rounded-full font-black tracking-widest animate-bounce shadow-xl">LOCKED</div>
-                                    </button>
                                  </div>
                               </div>
                            </div>
@@ -255,10 +363,6 @@ export default function RedeemPage() {
                                        — {getSlabData(totalAcceptedQty)?.level ? `SLAB ${getSlabData(totalAcceptedQty)?.level}` : "NO MILESTONE REACHED"} —
                                     </div>
                                  </h3>
-
-                                 <p className="text-zinc-500 font-medium text-lg italic tracking-widest uppercase">
-                                    Based on your total verified quantity of <span className="text-zinc-900 font-black">{totalAcceptedQty} Qtl</span>, you qualify for the slab below.
-                                 </p>
                               </div>
 
                               {!getSlabData(totalAcceptedQty) ? (
@@ -267,9 +371,6 @@ export default function RedeemPage() {
                                     <h4 className="text-2xl font-headline font-black uppercase italic tracking-tighter text-zinc-400">
                                        Sorry, you are not rewarded any gift yet.
                                     </h4>
-                                    <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest leading-loose">
-                                       Keep submitting your invoices {slabs[0]?.target ? `to reach the first milestone of ${slabs[0].target} QTL!` : "to reach your first milestone!"}
-                                    </p>
                                  </div>
                               ) : selectedGift ? (
                                  <div className="max-w-xl mx-auto p-12 rounded-[4rem] border-4 border-[#CBA35C] bg-zinc-50 text-center space-y-8 animate-in zoom-in-95 duration-500">
@@ -318,7 +419,6 @@ export default function RedeemPage() {
                                              </div>
                                           </div>
 
-                                          {/* Hover Indicator */}
                                           <div className="absolute bottom-0 left-0 w-full h-1.5 bg-[#CBA35C] scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
                                        </button>
                                     ))}
@@ -329,14 +429,13 @@ export default function RedeemPage() {
                         )}
 
                         <div className="text-center pt-8">
-                           <Link href="/dashboard" className="text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-zinc-900 transition-colors underline mr-8">View Records Portfolio</Link>
-                           <button onClick={() => { setSearched(false); setUserData(null); setSelectedGift(null); }} className="text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-zinc-900 transition-colors underline">Use Different Number</button>
+                           <button onClick={resetState} className="text-zinc-400 font-black text-[10px] uppercase tracking-widest hover:text-zinc-900 transition-colors underline">Reset & Go Back</button>
                         </div>
                      </div>
                   ) : (
                      <div className="text-center p-24 bg-zinc-50 rounded-[4rem] border-2 border-dashed border-zinc-200">
                         <p className="text-zinc-400 font-headline font-black text-2xl uppercase italic mb-8 tracking-tighter">No Active Registration Found.</p>
-                        <Link href="/dashboard" className="inline-block text-[#CBA35C] font-black text-[10px] uppercase tracking-[0.5em] underline">Check Records Archive</Link>
+                        <button onClick={resetState} className="inline-block text-[#CBA35C] font-black text-[10px] uppercase tracking-[0.5em] underline">Try Again</button>
                      </div>
                   )}
                </div>

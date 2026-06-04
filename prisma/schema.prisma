@@ -22,6 +22,9 @@ model User {
   overrideSlabId String?
   createdAt      DateTime @default(now())
   registeredAt   DateTime @default(now())
+
+  redeemedCoupons Coupon[]
+  couponRedemptions CouponRedemption[]
 }
 
 model VerificationCode {
@@ -73,6 +76,8 @@ model Slab {
   giftD     String?
   giftDImg  String?
   updatedAt DateTime @updatedAt
+
+  couponRedemptions CouponRedemption[]
 }
 
 model SupportTicket {
@@ -84,3 +89,69 @@ model SupportTicket {
   createdAt DateTime @default(now())
 }
 
+enum CouponStatus {
+  AVAILABLE
+  RESERVED
+  REDEEMED
+  EXPIRED
+  DISABLED
+}
+
+model Coupon {
+  id             String         @id @default(cuid())
+  code           String         @unique
+  status         CouponStatus   @default(AVAILABLE)
+
+  campaignId     String?
+  batchId        String?
+  note           String?
+
+  expiresAt      DateTime?
+  redeemedAt     DateTime?
+  redeemedById   String?
+  redeemedBy     User?          @relation(fields: [redeemedById], references: [id])
+
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  redemption     CouponRedemption?
+  
+  createdById    String?
+  updatedById    String?
+
+  @@index([code])
+  @@index([status])
+  @@index([redeemedById])
+  @@index([campaignId])
+  @@index([batchId])
+}
+
+model CouponRedemption {
+  id             String   @id @default(cuid())
+
+  couponId       String   @unique
+  coupon         Coupon   @relation(fields: [couponId], references: [id])
+
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+
+  slabId         String?
+  slab           Slab?    @relation(fields: [slabId], references: [id])
+
+  selectedGift   String
+
+  phone          String?
+  name           String?
+
+  redeemedAt     DateTime @default(now())
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  ipAddress      String?
+  userAgent      String?
+
+  @@index([userId])
+  @@index([couponId])
+  @@index([slabId])
+  @@index([phone])
+}
