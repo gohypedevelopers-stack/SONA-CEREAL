@@ -83,22 +83,6 @@ export default function HelpdeskPage() {
         </div>
       </section>
 
-      {/* Search Section (Overlapping Hero) */}
-      <section className="max-w-4xl mx-auto px-6 -mt-12 md:-mt-24 relative z-20">
-        <div className="bg-white p-4 rounded-full shadow-2xl flex items-center gap-4 transition-all focus-within:ring-4 focus-within:ring-primary/20 border border-zinc-100">
-          <span className="material-symbols-outlined text-primary text-3xl ml-4">
-            search
-          </span>
-          <input
-            className="w-full bg-transparent border-none focus:ring-0 text-xl font-medium placeholder:text-zinc-400 text-zinc-900"
-            placeholder="Find answers instantly..."
-            type="text"
-          />
-          <button className="hidden md:block bg-primary text-black font-headline font-black uppercase px-8 py-3 rounded-full hover:shadow-[0_0_20px_rgba(203,163,92,0.4)] transition-all tracking-wider">
-            Search
-          </button>
-        </div>
-      </section>
 
       {/* FAQ Categories: Bento Grid Style */}
       <section className="max-w-7xl mx-auto px-6 py-10 md:py-20">
