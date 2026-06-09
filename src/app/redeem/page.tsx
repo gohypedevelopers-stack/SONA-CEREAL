@@ -1,17 +1,18 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+
+const showCouponRedemption = false;
 
 export default function RedeemPage() {
    const [redeemMode, setRedeemMode] = useState<"INVOICE" | "COUPON">("INVOICE");
-   
+
    // Invoice Flow State
    const [phone, setPhone] = useState("+91 ");
    const [userData, setUserData] = useState<any>(null);
    const [totalAcceptedQty, setTotalAcceptedQty] = useState(0);
 
-   // Coupon Flow State
+   // Coupon Flow State - hidden while showCouponRedemption is false.
    const [couponCode, setCouponCode] = useState("");
    const [couponData, setCouponData] = useState<any>(null);
    const [userDetails, setUserDetails] = useState({ phone: "+91 ", name: "", shopName: "", city: "" });
@@ -34,7 +35,7 @@ export default function RedeemPage() {
       const storedPhone = localStorage.getItem("current_user_phone");
       if (storedPhone) {
          setPhone(storedPhone);
-         // Do not auto-check on load if we have dual modes, let user click.
+         // Do not auto-check on load if coupon mode is re-enabled, let user click.
       }
    }, []);
 
@@ -63,8 +64,9 @@ export default function RedeemPage() {
          setSettings(settingsData);
          setSlabs(Array.isArray(slabsData) ? slabsData.sort((a: any, b: any) => a.target - b.target) : []);
 
-         if (subData.submissions && subData.submissions.length > 0) {
-            const acceptedSubs = subData.submissions.filter((s: any) => s.status === 'accepted' || s.status === 'claimed');
+         const hasUser = subData.user && subData.user.id;
+         if ((subData.submissions && subData.submissions.length > 0) || hasUser) {
+            const acceptedSubs = (subData.submissions || []).filter((s: any) => s.status === 'accepted' || s.status === 'claimed');
             const total = acceptedSubs.reduce((acc: number, s: any) => acc + (parseFloat(s.capacity) || 0), 0);
             setTotalAcceptedQty(total);
 
@@ -75,7 +77,7 @@ export default function RedeemPage() {
                setSelectedGift(claimedSub.claimedGift);
                setUserData({ ...baseUser, ...claimedSub, totalQty: total });
             } else {
-               setUserData({ ...baseUser, ...subData.submissions[0], totalQty: total });
+               setUserData({ ...baseUser, ...((subData.submissions && subData.submissions[0]) || {}), totalQty: total });
             }
             setError("");
          } else {
@@ -150,7 +152,7 @@ export default function RedeemPage() {
    const handleGiftSelect = async (giftName: string) => {
       if (selectedGift) return;
 
-      if (redeemMode === "INVOICE") {
+      if (!showCouponRedemption || redeemMode === "INVOICE") {
          if (!userData) return;
          try {
             const res = await fetch("/api/submissions", {
@@ -169,16 +171,15 @@ export default function RedeemPage() {
             alert("Network error.");
          }
       } else {
-         // COUPON MODE
          try {
             const cleanPhone = userDetails.phone.replace(/\D/g, '');
             const res = await fetch("/api/coupons/redeem", {
                method: "POST",
                headers: { "Content-Type": "application/json" },
-               body: JSON.stringify({ 
-                  couponCode, 
-                  userDetails: { ...userDetails, phone: cleanPhone }, 
-                  selectedGift: giftName 
+               body: JSON.stringify({
+                  couponCode,
+                  userDetails: { ...userDetails, phone: cleanPhone },
+                  selectedGift: giftName
                })
             });
             const data = await res.json();
@@ -250,29 +251,31 @@ export default function RedeemPage() {
          <section className="py-20 bg-white relative z-10">
             <div className="container mx-auto px-6 max-w-[1440px]">
                <div className="w-full">
-                  {!searched && !couponVerified ? (
+                  {!searched && (!showCouponRedemption || !couponVerified) ? (
                      <div className="bg-zinc-50 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto">
                         <h3 className="font-headline font-black text-2xl md:text-6xl italic uppercase text-zinc-900 leading-none tracking-tighter mb-8 md:mb-12 text-center">
                            REDEEM <br />
                            <span className="text-[#CBA35C]">OFFER.</span>
                         </h3>
-                        
-                        <div className="flex justify-center gap-4 mb-8">
-                           <button 
-                              onClick={() => { setRedeemMode("INVOICE"); setError(""); }}
-                              className={`px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-colors ${redeemMode === "INVOICE" ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-500 hover:bg-zinc-200'}`}
-                           >
-                              Via Invoice
-                           </button>
-                           <button 
-                              onClick={() => { setRedeemMode("COUPON"); setError(""); }}
-                              className={`px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-colors ${redeemMode === "COUPON" ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-500 hover:bg-zinc-200'}`}
-                           >
-                              Via Coupon
-                           </button>
-                        </div>
 
-                        {redeemMode === "INVOICE" ? (
+                        {showCouponRedemption && (
+                           <div className="flex justify-center gap-4 mb-8">
+                              <button
+                                 onClick={() => { setRedeemMode("INVOICE"); setError(""); }}
+                                 className={`px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-colors ${redeemMode === "INVOICE" ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-500 hover:bg-zinc-200'}`}
+                              >
+                                 Via Invoice
+                              </button>
+                              <button
+                                 onClick={() => { setRedeemMode("COUPON"); setError(""); }}
+                                 className={`px-8 py-3 rounded-full font-black text-sm uppercase tracking-widest transition-colors ${redeemMode === "COUPON" ? 'bg-zinc-900 text-white' : 'bg-white text-zinc-500 hover:bg-zinc-200'}`}
+                              >
+                                 Via Coupon
+                              </button>
+                           </div>
+                        )}
+                        
+                        {!showCouponRedemption || redeemMode === "INVOICE" ? (
                            <div className="relative max-w-md mx-auto space-y-4 md:space-y-6">
                               <input
                                  type="tel"
@@ -315,22 +318,22 @@ export default function RedeemPage() {
                            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-zinc-400">Verifying secure database node</p>
                         </div>
                      </div>
-                  ) : redeemMode === "COUPON" && couponVerified && !searched ? (
+                  ) : showCouponRedemption && redeemMode === "COUPON" && couponVerified && !searched ? (
                      <div className="bg-zinc-50 p-8 md:p-16 rounded-[3rem] md:rounded-[4rem] text-center shadow-xl border border-zinc-100 max-w-4xl mx-auto animate-in slide-in-from-bottom-8">
                         <h3 className="font-headline font-black text-2xl md:text-4xl italic uppercase text-zinc-900 tracking-tighter mb-4">
                            COUPON <span className="text-[#CBA35C]">VERIFIED</span>
                         </h3>
                         <p className="text-sm font-bold uppercase tracking-widest text-zinc-500 mb-8">Please confirm your details to continue</p>
-                        
+
                         <form onSubmit={handleCouponUserSubmit} className="max-w-md mx-auto space-y-4">
-                           <input type="tel" value={userDetails.phone} onChange={e => { if (e.target.value.startsWith('+91 ')) setUserDetails({...userDetails, phone: e.target.value}); }} placeholder="+91 00000 00000" className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
+                           <input type="tel" value={userDetails.phone} onChange={e => { if (e.target.value.startsWith('+91 ')) setUserDetails({ ...userDetails, phone: e.target.value }); }} placeholder="+91 00000 00000" className="w-full p-6 md:p-8 rounded-2xl md:rounded-[2rem] bg-white border border-zinc-100 outline-none text-xl md:text-2xl font-headline font-black text-zinc-900 text-center shadow-inner" />
                            {error && <p className="text-red-500 text-[10px] font-black uppercase tracking-widest mt-2">{error}</p>}
                            <button type="submit" className="w-full bg-zinc-900 text-white py-6 md:py-8 rounded-2xl md:rounded-[2rem] font-headline font-black uppercase text-lg md:text-xl hover:bg-[#CBA35C] hover:text-black transition-all shadow-xl">
                               CONTINUE TO REWARDS
                            </button>
                         </form>
                      </div>
-                  ) : (userData || (redeemMode === "COUPON" && searched)) ? (
+                  ) : (userData || (showCouponRedemption && redeemMode === "COUPON" && searched)) ? (
                      <div className="space-y-16 animate-in slide-in-from-bottom-8 duration-700">
                         {/* GIFT SELECTION GRID */}
                         {(!settings?.rewardsDistributed) ? (
